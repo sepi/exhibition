@@ -1,0 +1,40 @@
+{% load cms_tags %}
+
+<div class="card mb-3">
+    <div class="row">
+        <div class="col-sm p-0">
+            {% for plugin in instance.child_plugin_instances %}
+            {% render_plugin plugin %}
+            {% endfor %}
+        </div>
+
+        <div class="col">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{ instance.author }} - <span class="fst-italic">{{ instance.date }}</span>
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <div class="card-text">
+                    <h6>FR - {{ instance.name_fr }}</h6>
+                    <div>{{ instance.description_fr }}</div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="card-text">
+                    <h6 class="fst-italic">DE - {{ instance.name_de }}</h6>
+                    <div class="fst-italic">{{ instance.description_de }}</div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="card-text">
+                    <h6>EN - {{ instance.name_en }}</h6>
+                    <div>{{ instance.description_en }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

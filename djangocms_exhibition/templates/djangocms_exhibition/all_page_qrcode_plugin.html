@@ -1,0 +1,12 @@
+{% if request.user.is_authenticated %}
+{% for qrcode in qrcode_objs %}
+<div class="card m-2">
+    {{ qrcode.svg|safe }}
+
+    <div class="card-body">
+        <h5 class="card-title">{{ qrcode.title }}</h5>
+        <h5 class="card-subtitle">{{ qrcode.url }}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}

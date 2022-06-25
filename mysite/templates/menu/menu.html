@@ -1,0 +1,6 @@
+{% load menu_tags %}
+{% for child in children %}
+<li class="nav-item">
+	  <a class="nav-link {% if child.selected %}active{% endif %}" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}"  {% if child.selected %}aria-current="page"{% endif %}>{{ child.get_menu_title }}</a>
+</li>
+{% endfor %}

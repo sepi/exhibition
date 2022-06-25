@@ -1,0 +1,9 @@
+{% if request.user.is_authenticated %}
+<div class="card m-2">
+    {{ qrcode_svg|safe }}
+
+    <div class="card-body">
+        <h5 class="card-title">{{ page_url }}</h5>
+    </div>
+</div>
+{% endif %}
