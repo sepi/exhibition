@@ -70,7 +70,7 @@ class AllPageQRCodePlugin(CMSPluginBase):
             request = context['request']
             full_url = request.build_absolute_uri(page_url)
             img = qrcode.make(full_url,
-                              image_factory=qrcode.image.svg.SvgImage,
+                              image_factory=qrcode.image.svg.SvgPathImage,
                               error_correction=qrcode.ERROR_CORRECT_H,
                               box_size=20)
             obj = {
