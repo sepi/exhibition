@@ -65,7 +65,7 @@ class AllPageQRCodePlugin(CMSPluginBase):
         context = super().render(context, instance, placeholder)
 
         qrcode_objs = []
-        for page in Page.objects.on_site():
+        for page in Page.objects.public():
             page_url = page.get_absolute_url()
             request = context['request']
             full_url = request.build_absolute_uri(page_url)
