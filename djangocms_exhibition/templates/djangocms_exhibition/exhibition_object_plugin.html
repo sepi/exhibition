@@ -6,44 +6,44 @@
                 {% for plugin in instance.child_plugin_instances %}
                 {% render_plugin plugin %}
                 {% endfor %}
-                <figcaption class="figure-caption text-begin px-2 py-1">
-                    {{ instance.info_object }}
-                    {% if instance.info_object and instance.date_object %} - {% endif %}
-                    {% if instance.date_object %}<span class="fst-italic">{{ instance.date_object }}</span>{% endif %}
-                </figcaption>
             </figure>
         </div>
 
         <div class="col">
             <div class="card-body">
-                <h4 class="card-title mb-0">
+                {% if instance.author %}
+                <div class="card-title mb-0 display-6 fs-3">
                     {{ instance.author }}
-                    {% if instance.author and instance.date_author %} - {% endif %}
-                    {% if instance.date_author %}<span class="fst-italic">{{ instance.date_author }}</span>{% endif %}
-                </h4>
+                </div>
+                {% endif %}
+
+                {% if instance.date_author %}
+                <div class="fst-italic mt-1">{{ instance.date_author }}</div>
+                {% endif %}
             </div>
 
             <hr />
 
             <div class="card-body">
                 <div class="card-text">
-                    <h6>Français</h6>
-                    <div>{{ instance.comment_fr|default:'-' }}</div>
+                    <div class="h5">{{ instance.info_object_fr|default:'' }}</div>
+                    <div class="fw-light pb-4">{{ instance.date_object_fr|default:'' }}</div>
+                    <div>{{ instance.comment_fr|default:'' }}</div>
                 </div>
             </div>
 
             <div class="card-body">
                 <div class="card-text">
-                    <h6 class="fst-italic">Deutsch</h6>
-                    <div class="fst-italic">{{ instance.comment_de|default:'-' }}</div>
+                    <div class="h5">{{ instance.info_object_de|default:'' }}</div>
+                    <div class="fw-light pb-4">{{ instance.date_object_de|default:'' }}</div>
+                    <div>{{ instance.comment_de|default:'' }}</div>
                 </div>
             </div>
 
             <div class="card-body">
-                <div class="card-text">
-                    <h6>English</h6>
-                    <div>{{ instance.comment_en|default:'-' }}</div>
-                </div>
+                <div class="h5">{{ instance.info_object_en|default:'' }}</div>
+                <div class="fw-light pb-4">{{ instance.date_object_en|default:'' }}</div>
+                <div>{{ instance.comment_en|default:'' }}</div>
             </div>
         </div>
     </div>
