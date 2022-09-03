@@ -10,6 +10,7 @@
         </div>
 
         <div class="col">
+            {% if instance.author %}
             <div class="card-body">
                 {% if instance.author %}
                 <div class="card-title mb-0 display-6 fs-3">
@@ -23,6 +24,7 @@
             </div>
 
             <hr />
+            {% endif %}
 
             <div class="card-body">
                 <div class="card-text">
@@ -41,9 +43,11 @@
             </div>
 
             <div class="card-body">
-                <div class="h5">{{ instance.info_object_en|default:'' }}</div>
-                <div class="fw-light pb-4">{{ instance.date_object_en|default:'' }}</div>
-                <div>{{ instance.comment_en|default:'' }}</div>
+		<div class="card-text">
+                    <div class="h5">{{ instance.info_object_en|default:'' }}</div>
+                    <div class="fw-light pb-4">{{ instance.date_object_en|default:'' }}</div>
+                    <div>{{ instance.comment_en|default:'' }}</div>
+                </div>
             </div>
         </div>
     </div>

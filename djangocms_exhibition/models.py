@@ -17,3 +17,6 @@ class ExhibitionObject(CMSPlugin):
     info_object_en = models.TextField(null=True, blank=True)
     date_object_en = models.CharField(max_length=128, null=True, blank=True)
     comment_en = HTMLField(null=True, blank=True)
+
+    def __str__(self):
+        return self.author or self.info_object_fr

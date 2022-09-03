@@ -25,6 +25,7 @@ class ExhibitionObjectPlugin(CMSPluginBase):
     allow_children = True
     require_parent = True
     parent_classes = ['ExhibitionPlugin']
+    child_classes = ['PicturePlugin']
     module = _('Exhibition')
 
     def render(self, context, instance, placeholder):
