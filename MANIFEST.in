@@ -1,0 +1,3 @@
+recursive-include exhibition/exhibition/templates/ *.html
+recursive-include exhibition/djangocms_exhibition/templates/ *.html
+graft exhibition/static/

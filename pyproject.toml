@@ -1,0 +1,23 @@
+[project]
+name = "exhibition"
+version = "24.2.27"
+dynamic = ["dependencies"]
+
+[project.scripts]
+estate_cms = "exhibition.manage:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+# Create separate distribution modules for each app and for static
+# files to emulate the way a regular manage.py managed django project works
+exhibition_static = "exhibition/static"
+exhibition = "exhibition/exhibition"
+djangocms_exhibition = "exhibition/djangocms_exhibition"
+
+[tool.setuptools.dynamic]
+# Dependencies are read from requirements.txt generate using pip-tools
+# compile and sync
+dependencies = {file = ["exhibition/requirements.txt"]}
