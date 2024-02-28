@@ -112,6 +112,8 @@ easy-thumbnails[svg]==2.8.5
     #   -r requirements.in
     #   django-filer
     #   djangocms-picture
+gunicorn==21.2.0
+    # via -r requirements.in
 html5lib==1.1
     # via
     #   -r requirements.in
@@ -122,6 +124,7 @@ packaging==23.2
     # via
     #   django-cms
     #   djangocms-text-ckeditor
+    #   gunicorn
 pillow==10.2.0
     # via
     #   -r requirements.in

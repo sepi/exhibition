@@ -1,6 +1,6 @@
 [project]
 name = "exhibition"
-version = "24.2.27"
+version = "24.2.28"
 dynamic = ["dependencies"]
 
 [project.scripts]
