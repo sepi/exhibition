@@ -21,7 +21,7 @@ class ExhibitionObjectPlugin(CMSPluginBase):
     model = ExhibitionObject
     name = _('Exhibition Object')
     render_template = 'djangocms_exhibition/exhibition_object_plugin.html'
-    cache = False
+    cache = True
     allow_children = True
     require_parent = True
     parent_classes = ['ExhibitionPlugin']
@@ -37,7 +37,7 @@ class PageQRCodePlugin(CMSPluginBase):
     model = CMSPlugin
     name = _('Page QRCode')
     render_template = 'djangocms_exhibition/page_qrcode_plugin.html'
-    cache = False
+    cache = True
     module = _('Exhibition')
 
     def render(self, context, instance, placeholder):
