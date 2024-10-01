@@ -1,6 +1,6 @@
 gunicorn
 
-django-cms==3.11.5
+django-cms<=4
 djangocms-admin-style
 django-treebeard
 
