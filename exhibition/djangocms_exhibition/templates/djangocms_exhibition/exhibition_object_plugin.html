@@ -1,11 +1,15 @@
-{% load cms_tags %}
+{% load cms_tags easy_thumbnails_tags %}
 <div class="card mb-3">
     <div class="row">
         <div class="col-sm p-0">
-            <figure class="figure">
+          <figure class="figure">
+	    {% if plugin.image %}
+	    <img src="{% thumbnail plugin.image 512x0 crop %}" />
+	    {% else %}
                 {% for plugin in instance.child_plugin_instances %}
                 {% render_plugin plugin %}
                 {% endfor %}
+	    {% endif %}
             </figure>
         </div>
 
