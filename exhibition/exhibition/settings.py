@@ -102,7 +102,7 @@ SITE_ID = 1
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'exhibition' / 'exhibition' / 'templates'],
+        'DIRS': [BASE_DIR / 'exhibition' / 'templates'],
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
