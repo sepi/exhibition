@@ -28,6 +28,7 @@ class Common(Configuration):
         'djangocms_picture',
         'djangocms_icon',
         'djangocms_text_ckeditor',
+        'import_export',
         'cms',
         'menus',
         'sekizai',

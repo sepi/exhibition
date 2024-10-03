@@ -17,6 +17,7 @@ django-sekizai
 django-mptt
 django-constance
 django-configurations
+django-import-export
 easy_thumbnails
 html5lib
 Pillow

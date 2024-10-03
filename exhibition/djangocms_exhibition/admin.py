@@ -1,6 +1,11 @@
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
+
 from cms.models.titlemodels import Title
+
+from import_export import resources, fields
+from import_export.admin import ExportMixin
+
 
 from .models import ExhibitionObject
 
@@ -18,11 +23,18 @@ class PageFilter(admin.SimpleListFilter):
         else:
             return queryset
 
-# Register your models here.
-@admin.register(ExhibitionObject)
-class ExhibitionObjectAdmin(admin.ModelAdmin):
-    model = ExhibitionObject
+class ExhibitionObjectResource(resources.ModelResource):
+    class Meta:
+        model = ExhibitionObject
+        fields = ('author', 'date_author',
+                  'info_object_fr', 'date_object_fr', 'comment_fr',
+                  'info_object_de', 'date_object_de', 'comment_de',
+                  'info_object_en', 'date_object_en', 'comment_en')
 
+@admin.register(ExhibitionObject)
+class ExhibitionObjectAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ["author", "date_author", "page", "image_thumbnail"]
 
     list_filter = (PageFilter, "author", "date_author")
+
+    resource_classes = [ExhibitionObjectResource]
