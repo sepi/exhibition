@@ -1,5 +1,6 @@
 import os  # isort:skip
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 
 gettext = lambda s: s
 
@@ -28,9 +29,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '-ir%hxck9q_--em=$@@dpkfrv=9x*_ox#itig!7duq*!_5q=3a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["xbtn.site"]
+ALLOWED_HOSTS = ["xbtn.site", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -105,6 +106,7 @@ TEMPLATES = [
         'DIRS': [BASE_DIR / 'exhibition' / 'templates'],
         'OPTIONS': {
             'context_processors': [
+                'constance.context_processors.config',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
@@ -136,7 +138,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
@@ -146,6 +148,7 @@ MIDDLEWARE = [
 ]
 
 INSTALLED_APPS = [
+    'constance',
     'djangocms_admin_style',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -212,4 +215,22 @@ DATABASES = {
         'PORT': '',
         'USER': ''
     }
+}
+
+CONSTANCE_BACKEND='constance.backends.database.DatabaseBackend'
+
+CONSTANCE_ADDITIONAL_FIELDS = {
+    'color_field': ['django.forms.fields.CharField', {
+        'widget': 'django.forms.TextInput',
+        'widget_kwargs': {'attrs': {'type': "color"}}
+    }],
+    'light_dark': ['django.forms.fields.ChoiceField', {
+        'widget': 'django.forms.Select',
+        'choices': (("light", "Light"), ("dark", "Dark"))
+    }],
+}
+
+CONSTANCE_CONFIG={
+    'NAVBAR_BACKGROUND_COLOR': ("#ffffff", _("The color of the background of the top navigation bar as a string you can use in css, eg. '#000000' for black or 'red'."), 'color_field'),
+    'NAVBAR_BACKGROUND_TYPE': ("light", _("Selects how the navigation button and link colors are set. If the background color is light, select light here, if it's dark, select dark."), 'light_dark')
 }

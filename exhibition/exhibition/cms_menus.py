@@ -9,7 +9,7 @@ class ExhibitionToolbar(CMSToolbar):
     def populate(self):
         menu = self.toolbar.get_or_create_menu(
             key='exhibitioncms_objects',
-            verbose_name=_('Exhibition')
+            verbose_name=_('museo.pro/cms')
         )
 
         menu.add_sideframe_item(
@@ -18,8 +18,14 @@ class ExhibitionToolbar(CMSToolbar):
         )
 
         menu.add_sideframe_item(
-            name=_('Objects'),
+            name=_('Exhibition Objects'),
             url=admin_reverse('djangocms_exhibition_exhibitionobject_changelist')
         )
+
+        menu.add_sideframe_item(
+            name=_('CMS Configuration'),
+            url=admin_reverse('constance_config_changelist')
+        )
+
 
 toolbar_pool.register(ExhibitionToolbar)

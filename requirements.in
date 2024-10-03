@@ -1,9 +1,7 @@
 gunicorn
-
 django-cms<=4
-djangocms-admin-style
 django-treebeard
-
+djangocms-admin-style
 djangocms-text-ckeditor
 djangocms-link
 djangocms-style
@@ -13,12 +11,12 @@ djangocms-video
 djangocms-file
 djangocms-picture
 djangocms-bootstrap4
-easy_thumbnails
 django-filer
-Django
 django-classy-tags
 django-sekizai
 django-mptt
+django-constance
+easy_thumbnails
 html5lib
 Pillow
 six
