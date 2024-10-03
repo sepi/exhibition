@@ -14,6 +14,7 @@ django==5.0.2
     # via
     #   django-classy-tags
     #   django-cms
+    #   django-configurations
     #   django-filer
     #   django-formtools
     #   django-js-asset
@@ -41,6 +42,8 @@ django-cms==3.11.8
     #   djangocms-style
     #   djangocms-text-ckeditor
     #   djangocms-video
+django-configurations==2.5.1
+    # via -r requirements.in
 django-constance==4.1.2
     # via -r requirements.in
 django-filer==3.1.1

@@ -16,6 +16,7 @@ django-classy-tags
 django-sekizai
 django-mptt
 django-constance
+django-configurations
 easy_thumbnails
 html5lib
 Pillow
