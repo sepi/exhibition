@@ -1,9 +1,41 @@
 {% if request.user.is_authenticated %}
-<div class="card m-2">
+<div class="card mb-2">
+  <div class="img-top">
     {{ qrcode_svg|safe }}
+  </div>
 
-    <div class="card-body">
-        <h5 class="card-title">{{ page_url }}</h5>
-    </div>
+  <div class="card-body">
+    <h5 class="card-title">QR-code for <i>{{ page_slug }}</i></h5>
+    <p class="card-text">This QR-code will send the user here: <a href="{{ page_url }}">{{ page_url }}</a></p>
+    <a id="download-button"
+       href="#"
+       class="btn btn-primary">Download QR-Code</a>
+  </div>
 </div>
+
+<script>
+  document.getElementById('download-button').addEventListener('click', function () {
+      // Get the SVG element
+      var svgElement = document.querySelector('div.card svg');
+            
+      // Serialize the SVG XML
+      var svgData = new XMLSerializer().serializeToString(svgElement);
+
+      // Create a Blob from the SVG data
+      var svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+
+      // Create a download link
+      var url = URL.createObjectURL(svgBlob);
+      var downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = 'qr-code-{{ page_slug }}.svg';
+
+      // Programmatically click the link to trigger download
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      // Remove the link after download
+      document.body.removeChild(downloadLink);
+  });
+</script>
 {% endif %}

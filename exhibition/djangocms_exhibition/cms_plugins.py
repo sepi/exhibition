@@ -25,6 +25,12 @@ class ExhibitionObjectPlugin(CMSPluginBase):
         context = super().render(context, instance, placeholder)
         return context
 
+def gen_qrcode(full_url):
+    return qrcode.make(full_url,
+                       image_factory=qrcode.image.svg.SvgPathImage,
+                       error_correction=qrcode.ERROR_CORRECT_H,
+                       box_size=20)
+    
 @plugin_pool.register_plugin
 class PageQRCodePlugin(CMSPluginBase):
     model = CMSPlugin
@@ -39,12 +45,10 @@ class PageQRCodePlugin(CMSPluginBase):
         request = context['request']
         page_url = request.current_page.get_absolute_url()
         full_url = request.build_absolute_uri(page_url)
-        img = qrcode.make(full_url,
-                          image_factory=qrcode.image.svg.SvgImage,
-                          error_correction=qrcode.ERROR_CORRECT_H,
-                          box_size=20)
+        img = gen_qrcode(full_url)
         context['page_url'] = full_url
         context['qrcode_svg'] = img.to_string().decode('UTF-8')
+        context['page_slug'] = request.current_page.get_title_obj().slug
 
         return context
 
@@ -63,10 +67,7 @@ class AllPageQRCodePlugin(CMSPluginBase):
             page_url = page.get_absolute_url()
             request = context['request']
             full_url = request.build_absolute_uri(page_url)
-            img = qrcode.make(full_url,
-                              image_factory=qrcode.image.svg.SvgPathImage,
-                              error_correction=qrcode.ERROR_CORRECT_H,
-                              box_size=20)
+            img = get_qrcode(full_url)
             obj = {
                 'url': full_url,
                 'title': page.get_title(),
