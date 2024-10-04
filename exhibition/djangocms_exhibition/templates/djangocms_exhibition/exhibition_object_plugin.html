@@ -3,8 +3,8 @@
     <div class="row">
         <div class="col-sm p-0">
           <figure class="figure">
-	    {% if plugin.image %}
-	    <img src="{% thumbnail plugin.image 512x0 crop %}" />
+	    {% if instance.image %}
+	    <img src="{% thumbnail instance.image 512x0 crop %}" />
 	    {% else %}
                 {% for plugin in instance.child_plugin_instances %}
                 {% render_plugin plugin %}
