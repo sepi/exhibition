@@ -37,4 +37,12 @@ class ExhibitionObjectAdmin(ExportMixin, admin.ModelAdmin):
 
     list_filter = (PageFilter, "author", "date_author")
 
+    def get_queryset(self, request):
+        qs = (
+            super()
+            .get_queryset(request)
+            .exclude(placeholder__page__publisher_is_draft=True)
+        )
+        return qs
+    
     resource_classes = [ExhibitionObjectResource]
