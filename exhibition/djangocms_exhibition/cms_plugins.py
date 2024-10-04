@@ -10,21 +10,14 @@ import qrcode
 import qrcode.image.svg
 
 @plugin_pool.register_plugin
-class ExhibitionPlugin(CMSPluginBase):
-    name = _('Exhibition')
-    render_template = 'djangocms_exhibition/exhibition_plugin.html'
-    allow_children = True
-    module = _('Exhibition')
-
-@plugin_pool.register_plugin
 class ExhibitionObjectPlugin(CMSPluginBase):
     model = ExhibitionObject
     name = _('Exhibition Object')
     render_template = 'djangocms_exhibition/exhibition_object_plugin.html'
     cache = True
     allow_children = True
-    require_parent = True
-    parent_classes = ['ExhibitionPlugin']
+    require_parent = False
+    parent_classes = []
     child_classes = ['PicturePlugin']
     module = _('Exhibition')
 
