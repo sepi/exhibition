@@ -40,4 +40,7 @@ class ExhibitionObject(CMSPlugin):
 
     @property
     def page(self):
-        return self.placeholder.page
+        if self.placeholder:
+            return self.placeholder.page
+        else:
+            '-'
