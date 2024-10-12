@@ -1,10 +1,10 @@
 [project]
 name = "exhibition"
-version = "24.2.28"
+version = "24.10.12"
 dynamic = ["dependencies"]
 
-[project.scripts]
-estate_cms = "exhibition.manage:main"
+# [project.scripts]
+# exhibition = "exhibition.manage:main"
 
 [build-system]
 requires = ["setuptools"]
@@ -20,4 +20,4 @@ djangocms_exhibition = "exhibition/djangocms_exhibition"
 [tool.setuptools.dynamic]
 # Dependencies are read from requirements.txt generate using pip-tools
 # compile and sync
-dependencies = {file = ["exhibition/requirements.txt"]}
+dependencies = {file = ["requirements.txt"]}
