@@ -83,3 +83,7 @@ class ExhibitionObjectAdmin(ImportExportMixin, admin.ModelAdmin):
         return qs
     
     resource_classes = [ExhibitionObjectResource]
+
+    # This disable the add button which makes no sense here.
+    def has_add_permission(self, request, obj=None):
+        return False
