@@ -1,6 +1,7 @@
 import os 
 from pathlib import Path
 
+from django.utils.log import DEFAULT_LOGGING
 from django.utils.translation import gettext_lazy as _
 
 from configurations import Configuration, values
@@ -189,6 +190,7 @@ class Common(Configuration):
     }
     
     CONSTANCE_CONFIG={
+        'CATALOG_SITE_NAME': ("catalog", _("The name used in urls behind the / in order to identify which catalog to show.")),
         'NAVBAR_BACKGROUND_COLOR': ("#ffffff", _("The color of the background of the top navigation bar as a string you can use in css, eg. '#000000' for black or 'red'."), 'color_field'),
         'NAVBAR_BACKGROUND_TYPE': ("light", _("Selects how the navigation button and link colors are set. If the background color is light, select light here, if it's dark, select dark."), 'light_dark')
     }
@@ -206,3 +208,23 @@ class Prod(Common):
     ALLOWED_HOSTS = ['museo.pro', '.museo.pro']
     DEBUG = False
     SECRET_KEY = values.SecretValue()
+
+    SITE_DIR = Path(f'/usr/local/share/django/{PROJECT_NAME}/venv/lib/python3.11/site-packages/')
+    VAR_DIR = Path(f'/var/local/django/{INSTANCE}')
+
+    STATIC_ROOT = SITE_DIR / f'{PROJECT_NAME}_static' / 'static'
+
+    # Override these in .env-file
+    EMAIL_HOST = values.Value('localhost')
+    EMAIL_PORT = values.Value('25')
+    EMAIL_HOST_USER = values.Value('')
+    EMAIL_HOST_PASSWORD = values.Value('')
+    EMAIL_USE_TLS= values.BooleanValue(True)
+
+    # Remove the filter that disables console output on DEBUG=False
+    @property
+    def LOGGING(self):
+        logging = DEFAULT_LOGGING
+        logging['handlers']['console']['filters'] = []
+        return logging
+    
