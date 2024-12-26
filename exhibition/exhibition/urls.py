@@ -16,6 +16,7 @@ admin.autodiscover()
 catalog_site_url = f'{config.CATALOG_SITE_NAME}/'
 
 urlpatterns = [
+    path('games/', include('django_jigsaw_puzzle.urls')),
     path('admin/', admin.site.urls),
     path('sitemap.xml', sitemap,
          {'sitemaps': {'cmspages': CMSSitemap}}),

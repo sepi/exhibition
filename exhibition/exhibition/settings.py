@@ -38,6 +38,7 @@ class Common(Configuration):
         'filer',
         'exhibition',
         'djangocms_exhibition',
+        'django_jigsaw_puzzle',
     ]
 
     MIDDLEWARE = [
