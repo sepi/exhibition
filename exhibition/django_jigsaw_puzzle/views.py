@@ -53,3 +53,8 @@ def image_set_detail(request, id):
             resp_json[i.id][ta] = tn.url
 
     return JsonResponse(resp_json)
+
+from django.views.generic.base import TemplateView
+
+class JigsawPuzzleView(TemplateView):
+    template_name = "django_jigsaw_puzzle/jigsaw_puzzle.html"

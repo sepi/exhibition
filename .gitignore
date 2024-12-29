@@ -2,3 +2,4 @@
 env
 media/
 project.db
+/exhibition/django_jigsaw_puzzle/node_modules/

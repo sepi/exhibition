@@ -1,0 +1,35 @@
+{
+  "name": "exhibition",
+  "version": "1.0.0",
+  "description": "Js code for exhibition project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-sepi:sepi/exhibition.git"
+  },
+  "author": "",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.3.0",
+    "@mui/material": "^6.3.0",
+    "jigsaw-puzzle": "file:../../../jigsaw-puzzle",
+    "mui": "^0.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "webpack": "^5.97.1",
+    "webpack-bundle-tracker": "^3.1.1",
+    "webpack-cli": "^6.0.1"
+  }
+}
