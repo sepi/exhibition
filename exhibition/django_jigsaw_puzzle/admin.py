@@ -38,7 +38,8 @@ class JigsawPuzzleAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('info_text', 'name', 'copyright_notice', 'color', 'image_set'),
+            'fields': ('info_text', 'name', 'copyright_notice', 'color',
+                       'randomize_images', 'image_set'),
         }),
     )
 
@@ -49,7 +50,10 @@ class JigsawPuzzleAdmin(admin.ModelAdmin):
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     def info_text(self, obj):
-        link = reverse('jigsaw_puzzle_detail', args=[obj.id])
-        return mark_safe(f"<a href='{link}'>{link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
+        if obj.id:
+            link = reverse('jigsaw_puzzle_detail', args=[obj.id])
+            return mark_safe(f"<a href='{link}'>{link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
+        else:
+            return "No link available yet"
 
     info_text.short_description = "Direct link to puzzle"

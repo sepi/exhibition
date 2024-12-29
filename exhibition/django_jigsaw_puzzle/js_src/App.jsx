@@ -36,6 +36,10 @@ const fetchImagePaths = async (imageUrl) => {
     return images2;
 }
 
+function randImg(randomizeImages) {
+    return randomizeImages.toLowerCase() == 'true';
+}
+
 function App({imageUrl,
 	      title,
 	      logoUrl,
@@ -58,7 +62,7 @@ function App({imageUrl,
 	    const images_ = await fetchImagePaths(imageUrl);
 	    const imagesRand = [];
 
-	    if (randomizeImages) {
+	    if (randImg(randomizeImages)) {
 		do {
 		    const randIdx = Math.floor(Math.random() * images_.length);
 		    const img = images_[randIdx];
@@ -77,7 +81,7 @@ function App({imageUrl,
 	setScreen('select_image');
 	setShowSucces(false);
 	window.pzleInitialied = false;
-	if (randomizeImages) {
+	if (randImg(randomizeImages)) {
 	    setRandomizer(Math.random()); // will re-fetch and randomize images in selection
 	}
     };
