@@ -14,16 +14,19 @@ export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint}) {
     return (
 	<AppBar position="sticky" sx={{top: 0, left: 0}} >
 	    <Toolbar variant="dense"
-		     sx={{backgroundColor: '#dfb431', color: '#333'}}>
+		     sx={{backgroundColor: '#dfb431',
+			  color: '#333',
+			  justifyContent: 'space-between'}}>
 		{ logoUrl &&
 		  <img src={logoUrl}
 		       alt="Logo"
 		       height={38} />
 		}
-		<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+		<Typography variant="h6" component="div">
 		    {title}
 		</Typography>
 
+		<div>
 		<IconButton
 		    size="large"
 		    edge="start"
@@ -33,7 +36,6 @@ export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint}) {
 		    onClick={onShowInfo} >
 		    <InfoIcon/>
 		</IconButton>
-
 		{ onBack &&
 		  <IconButton
 		      size="large"
@@ -45,19 +47,6 @@ export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint}) {
 		      <QuestionMarkIcon />
 		  </IconButton>
 		}
-		
-		{/* { onBack && */} 
-		{/*   <IconButton */} 
-		{/*       size="large" */} 
-		{/*       edge="start" */} 
-		{/*       color="inherit" */} 
-		{/*       aria-label="back" */} 
-		{/*       sx={{ mr: 1 }} */} 
-		{/*       onClick={puzzleCenter} > */} 
-		{/*       <CenterFocusStrongIcon/> */} 
-		{/*   </IconButton> */} 
-		{/* } */} 
-
 		{ onBack && 
 		  <IconButton
 		      size="large"
@@ -69,6 +58,7 @@ export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint}) {
 		      <ArrowBackIcon/>
 		  </IconButton>
 		}
+		</div>
 	    </Toolbar>
 	</AppBar>
     );

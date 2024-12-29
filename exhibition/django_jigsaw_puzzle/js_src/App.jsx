@@ -15,8 +15,6 @@ import { PuzzlePage } from './PuzzlePage.jsx';
 import { InfoDialog } from './InfoDialog.jsx';
 import { HintDialog } from './HintDialog.jsx';
 
-import './App.css';
-
 // Global state because puzzle would initialize twice without this "Mutex"
 window.pzleInitialied = undefined;
 window.pzle = undefined;
