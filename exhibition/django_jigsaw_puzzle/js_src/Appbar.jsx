@@ -10,11 +10,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 
-export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint}) {
+export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint, navbarBackgroundColor}) {
     return (
 	<AppBar position="sticky" sx={{top: 0, left: 0}} >
 	    <Toolbar variant="dense"
-		     sx={{backgroundColor: '#dfb431',
+		     sx={{backgroundColor: navbarBackgroundColor,
 			  color: '#333',
 			  justifyContent: 'space-between'}}>
 		{ logoUrl &&

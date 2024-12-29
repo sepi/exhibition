@@ -20,7 +20,12 @@ window.pzleInitialied = undefined;
 window.pzle = undefined;
 
 const fetchImagePaths = async (imageUrl) => {
-    const resp = await fetch(imageUrl);
+    const fetchOptions = {
+	headers: {
+	    'Content-Type': 'application/json'
+	}
+    };
+    const resp = await fetch(imageUrl, fetchOptions);
     const images = await resp.json();
     let images2 = [];
 
@@ -37,7 +42,8 @@ function App({imageUrl,
 	      randomizeImages,
 	      idleFirstSeconds,
 	      idleSecondSeconds,
-	      copyrightNotice}) {
+	      copyrightNotice,
+	      navbarBackgroundColor}) {
     const [ screen, setScreen ] = useState("select_image");
     const [ images, setImages ] = useState([]);
     const [ puzzleImageUrl, setPuzzleImageUrl ] = useState();
@@ -92,7 +98,8 @@ function App({imageUrl,
 		    logoUrl={logoUrl}
 		    onBack={back}
 		    onShowInfo={() => setShowInfo(true)}
-		    setShowHint={setShowHint} />
+		    setShowHint={setShowHint}
+		    navbarBackgroundColor={navbarBackgroundColor} />
 	    <InfoDialog showInfo={showInfo}
 			setShowInfo={setShowInfo}
 			dialogTitle={"About Best of Posters puzzle"}/>

@@ -19,6 +19,7 @@ const idleFirstSeconds = rootEl.dataset.idleFirstSeconds;
 // If warning was shown for this amount of seconds, stop game.
 const idleSecondSeconds = rootEl.dataset.idleSecondSeconds;
 const copyrightNotice = rootEl.dataset.copyrightNotice;
+const navbarBackgroundColor = rootEl.dataset.navbarBackgroundColor;
 
 const root = ReactDOM.createRoot(rootEl);
 root.render(
@@ -30,6 +31,7 @@ root.render(
 	     idleFirstSeconds={idleFirstSeconds}
 	     idleSecondSeconds={idleSecondSeconds}
 	     copyrightNotice={copyrightNotice}
+	     navbarBackgroundColor={navbarBackgroundColor}
 	/>
     </React.StrictMode>
 );

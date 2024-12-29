@@ -1,12 +1,16 @@
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.views.generic.base import TemplateView
+
 
 from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
 
+
 from .models import ImageSet, ImageSetImage, JigsawPuzzle, JigsawPuzzleDifficultyLevel
+
 
 def jigsaw_puzzle_list(request):
     jps = JigsawPuzzle.objects.all()
@@ -15,17 +19,34 @@ def jigsaw_puzzle_list(request):
                           'url': reverse('jigsaw_puzzle_detail', args=[jp.id])} 
                          for jp in jps], safe=False)
 
+
 def jigsaw_puzzle_detail(request, id):
     jp = get_object_or_404(JigsawPuzzle, pk=id)
     dos = JigsawPuzzleDifficultyLevel.objects.filter(jigsaw_puzzle=jp)
-    return JsonResponse({
-        'id': jp.id,
-        'name': jp.name,
-        'image_set_url': reverse('image_set_detail', args=[jp.image_set.id]),
-        'difficulty_levels': [{'name': do.difficulty_level.name,
-                               'rows': do.difficulty_level.rows,
-                               'columns': do.difficulty_level.columns} for do in dos]
-    })
+    if request.content_type == 'application/json':
+        return JsonResponse({
+            'id': jp.id,
+            'name': jp.name,
+            'image_set_url': reverse('image_set_detail', args=[jp.image_set.id]),
+            'difficulty_levels': [{'name': do.difficulty_level.name,
+                                   'rows': do.difficulty_level.rows,
+                                   'columns': do.difficulty_level.columns} for do in dos]
+        })
+    else: # For browsers
+        context = {
+            'image_url': reverse('image_set_detail', args=[jp.image_set.id]) + "?thumbnail_alias=thumbnail,puzzle",
+            'title': jp.name,
+            'logo_url': "/media/filer_public/85/1e/851e2b33-e94b-44d1-b353-141f23e3c0d4/lcm.svg",
+            'randomize_images': jp.randomize_images,
+            'idle_first_seconds': 300,
+            'idle_second_seconds': 330,
+            'copyright_notice': jp.copyright_notice,
+            'navbar_color': jp.color,
+        }
+        return render(request, 
+                      'django_jigsaw_puzzle/jigsaw_puzzle.html',
+                      context)
+
 
 def _get_thumbnail(image, alias_name):
     tn_db = ThumbnailOption.objects.get(name=alias_name)
@@ -34,6 +55,7 @@ def _get_thumbnail(image, alias_name):
         return tnl.get_thumbnail(tn_db.as_dict)
     elif alias_name in tnl:
         return tnl[alias_name]
+
 
 def image_set_detail(request, id):
     thumbnail_alias_str = request.GET.get('thumbnail_alias')
@@ -53,8 +75,3 @@ def image_set_detail(request, id):
             resp_json[i.id][ta] = tn.url
 
     return JsonResponse(resp_json)
-
-from django.views.generic.base import TemplateView
-
-class JigsawPuzzleView(TemplateView):
-    template_name = "django_jigsaw_puzzle/jigsaw_puzzle.html"

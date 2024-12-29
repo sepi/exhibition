@@ -35,6 +35,9 @@ class JigsawPuzzleDifficultyLevel(models.Model):
 
 class JigsawPuzzle(models.Model):
     name = models.CharField(max_length=512)
+    copyright_notice = models.CharField(max_length=2048)
+    randomize_images = models.BooleanField(default=True)
+    color = models.CharField(max_length=7, default="#fff")
 
     jigsaw_puzzle_difficulty_level = models.ForeignKey(JigsawPuzzleDifficultyLevel,
                                                        on_delete=models.PROTECT,
