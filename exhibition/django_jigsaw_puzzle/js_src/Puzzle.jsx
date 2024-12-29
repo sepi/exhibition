@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 
 import { puzzle } from 'jigsaw-puzzle';
 
-async function initPuzzle(id, imageUrl, pieces, onComplete, initialZoom) {
+async function initPuzzle(id, imageUrl, rows, cols, onComplete, initialZoom) {
     const p = puzzle({
 	element: id,
 	image: imageUrl,
-	pieces: { x: pieces, y: pieces },
+	pieces: { x: rows, y: cols },
 	attraction: 5,   // distance to snap pieces
 	aligned: true,   // don't overlap pieces on start
 	zoom: initialZoom,       // initial zoom of context
@@ -22,12 +22,12 @@ async function initPuzzle(id, imageUrl, pieces, onComplete, initialZoom) {
     return p;
 }
 
-export function Puzzle({imageUrl, pieces, onComplete, initialZoom}) {
+export function Puzzle({imageUrl, rows, cols, onComplete, initialZoom}) {
     useEffect(() => {
 	(async () => {
 	    if (!window.pzleInitialied) {
 		window.pzleInitialied = true;
-		window.pzle = await initPuzzle('#puzzle', imageUrl, pieces, onComplete, initialZoom);
+		window.pzle = await initPuzzle('#puzzle', imageUrl, rows, cols, onComplete, initialZoom);
 	    }
 	})();
     }, []);

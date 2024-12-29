@@ -19,12 +19,13 @@ import { HintDialog } from './HintDialog.jsx';
 window.pzleInitialied = undefined;
 window.pzle = undefined;
 
+const fetchOptions = {
+    headers: {
+	'Content-Type': 'application/json'
+    }
+};
+
 const fetchImagePaths = async (imageUrl) => {
-    const fetchOptions = {
-	headers: {
-	    'Content-Type': 'application/json'
-	}
-    };
     const resp = await fetch(imageUrl, fetchOptions);
     const images = await resp.json();
     let images2 = [];
@@ -36,11 +37,17 @@ const fetchImagePaths = async (imageUrl) => {
     return images2;
 }
 
+async function fetchJigsawPuzzle(url) {
+    const resp = await fetch(url, fetchOptions);
+    const respJson = await resp.json();
+    return respJson;
+}
+
 function randImg(randomizeImages) {
     return randomizeImages.toLowerCase() == 'true';
 }
 
-function App({imageUrl,
+function App({jigsawPuzzleUrl,
 	      title,
 	      logoUrl,
 	      randomizeImages,
@@ -51,15 +58,18 @@ function App({imageUrl,
     const [ screen, setScreen ] = useState("select_image");
     const [ images, setImages ] = useState([]);
     const [ puzzleImageUrl, setPuzzleImageUrl ] = useState();
-    const [ puzzlePieces, setPuzzlePieces ] = useState();
+    const [ puzzlePieces, setPuzzlePieces ] = useState([undefined, undefined]);
     const [ showSuccess, setShowSucces ] = useState(false);
     const [ showInfo, setShowInfo ] = useState(false);
     const [ showHint, setShowHint ] = useState(false);
     const [ randomizer, setRandomizer ] = useState();
+    const [ difficultyLevels, setDifficultyLevels ] = useState([]);
 
     useEffect(() => {
 	const get = async ()=> {
-	    const images_ = await fetchImagePaths(imageUrl);
+	    const jigsawPuzzle = await fetchJigsawPuzzle(jigsawPuzzleUrl);
+	    setDifficultyLevels(jigsawPuzzle.difficulty_levels);
+	    const images_ = await fetchImagePaths(jigsawPuzzle.image_set_url+'?thumbnail_alias=thumbnail,puzzle');
 	    const imagesRand = [];
 
 	    if (randImg(randomizeImages)) {
@@ -111,10 +121,11 @@ function App({imageUrl,
 			setShowHint={setShowHint}
 			puzzleImageUrl={puzzleImageUrl} />
 	    { screen === 'select_image' && images ?
-	      <ImageSelectionPage setScreen={setScreen}
-			  setPuzzleImageUrl={setPuzzleImageUrl}
-			  setPuzzlePieces={setPuzzlePieces}
-			  images={images}/> : null }
+	      <ImageSelectionPage difficultyLevels={difficultyLevels}
+				  setScreen={setScreen}
+				  setPuzzleImageUrl={setPuzzleImageUrl}
+				  setPuzzlePieces={setPuzzlePieces}
+				  images={images}/> : null }
 	    { screen === 'puzzle' ?
 	      <PuzzlePage puzzleImageUrl={puzzleImageUrl}
 			  puzzlePieces={puzzlePieces}

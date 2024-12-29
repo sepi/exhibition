@@ -55,6 +55,7 @@ export function PuzzlePage({puzzleImageUrl,
     const runningSinceS = runningSinceForMessage / 1000;
     const runningSinceStr =
 	  `${Math.floor(runningSinceS / 60)} minutes and ${ Math.floor(runningSinceS) % 60} seconds`;
+
     return (puzzleImageUrl && puzzlePieces ?
 	    (<>
 		 <Snackbar open={timeoutWarn} onClose={setLastActionNow}>
@@ -70,7 +71,8 @@ export function PuzzlePage({puzzleImageUrl,
 		   </Alert>
 		 </Snackbar>
 		 <Puzzle imageUrl={puzzleImageUrl}
-			 pieces={puzzlePieces}
+			 rows={puzzlePieces[0]}
+			 cols={puzzlePieces[1]}
 			 onComplete={onComplete}
 			 initialZoom={initialZoom}/>
 	     </>) : null

@@ -22,17 +22,15 @@ const modalStyle = {
     p: 4,
 };
 
-const difficulties = [{label: 'Easy', pieces: 4},
-		      {label: 'Medium', pieces: 6},
-		      {label: 'Hard', pieces: 9},
-		      {label: 'Very hard', pieces: 11}];
 
-export function ImageSelectionPage({ setScreen, setPuzzlePieces, setPuzzleImageUrl, images, showSuccess }) {
+export function ImageSelectionPage({ setScreen, setPuzzlePieces,
+				     setPuzzleImageUrl, images,
+				     showSuccess, difficultyLevels }) {
     const [ showDifficultyModal, setShowDifficultyModal ] = useState(false);
     
-    const switchToPuzzle = (pieces) => {
+    const switchToPuzzle = (rows, cols) => {
 	setShowDifficultyModal(false);
-	setPuzzlePieces(pieces);
+	setPuzzlePieces([rows, cols]);
 	setScreen('puzzle');
     };
     
@@ -53,10 +51,10 @@ export function ImageSelectionPage({ setScreen, setPuzzlePieces, setPuzzleImageU
 			Select the difficulty
 		    </Typography>
 		    <Stack spacing={2}>
-			{difficulties.map(level => 
+			{difficultyLevels.map(level => 
 			      <Button variant="outlined"
-                                      key={level.label}
-				      onClick={() => switchToPuzzle(level.pieces)}>{`${level.label} (${level.pieces} x ${level.pieces} = ${level.pieces * level.pieces} pieces)`}</Button>
+                                      key={level.name}
+				      onClick={() => switchToPuzzle(level.rows, level.columns)}>{`${level.name} (${level.rows} x ${level.columns} = ${level.rows * level.columns} pieces)`}</Button>
 			  )}
 		    </Stack>
 		</Box>
