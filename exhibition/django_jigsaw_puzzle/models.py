@@ -1,7 +1,7 @@
 from django.db import models
 from filer.fields.image import FilerImageField
 from django.utils.translation import gettext_lazy as _
-
+from cms.models import CMSPlugin
 
 class DifficultyLevel(models.Model):
     name = models.CharField(max_length=128)
@@ -47,3 +47,7 @@ class JigsawPuzzle(models.Model):
 
     def __str__(self):
         return self.name
+
+class JigsawPuzzlePluginModel(CMSPlugin):
+    jigsaw_puzzle = models.ForeignKey(JigsawPuzzle,
+                                      on_delete=models.PROTECT)

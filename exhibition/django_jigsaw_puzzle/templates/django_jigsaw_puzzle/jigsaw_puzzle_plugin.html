@@ -1,0 +1,18 @@
+{% load static sekizai_tags %}
+<div id="jigsaw-puzzle"
+     data-jigsaw-puzzle-url="{{ jigsaw_puzzle_url }}"
+     data-title="{{ title }}"
+     data-logo-url="{{ logo_url }}"
+     data-randomize-images="{{ randomize_images }}"
+     data-idle-first-seconds="{{ idle_first_seconds }}"
+     data-idle-second-seconds="{{ idle_second_seconds }}"
+     data-copyright-notice="{{ copyright_notice }}"
+     data-navbar-background-color="{{ navbar_color }}"></div>
+
+{#% addtoblock 'css' %#}
+<link rel="stylesheet" href="{% static 'django_jigsaw_puzzle/css/django_jigsaw_puzzle.css' %}">
+{#% endaddtoblock %#}
+
+{#% addtoblock 'js' %#}
+<script src="{% static 'django_jigsaw_puzzle/js/bundle.js' %}"></script>
+{#% endaddtoblock %#}
