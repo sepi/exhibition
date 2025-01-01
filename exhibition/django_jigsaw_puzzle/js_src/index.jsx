@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import App from './App';
+import JigsawPuzzleApp from './JigsawPuzzleApp';
+import MemoryGameApp from './MemoryGameApp';
 
 const rootEl = document.getElementById('jigsaw-puzzle');
 const root = ReactDOM.createRoot(rootEl);
+const mode = rootEl.dataset.mode;
 root.render(
     <React.StrictMode>
-	<App { ...rootEl.dataset } />
+	{ mode === 'JIGSAW_PUZZLE' && 
+	  <JigsawPuzzleApp { ...rootEl.dataset } />
+	}
+	{ mode === 'MEMORY_GAME' &&
+	  <MemoryGameApp { ...rootEl.dataset } />
+	}
     </React.StrictMode>
 );

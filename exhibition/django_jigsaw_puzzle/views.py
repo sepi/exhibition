@@ -34,7 +34,7 @@ def jigsaw_puzzle_detail(request, id):
         })
     else: # For browsers
         context = {
-            'jigsaw_puzzle_url': reverse('jigsaw_puzzle_detail', args=[jp.image_set.id]),
+            'jigsaw_puzzle_url': reverse('jigsaw_puzzle_detail', args=[jp.id]),
             'title': jp.name,
             'logo_url': "/media/filer_public/85/1e/851e2b33-e94b-44d1-b353-141f23e3c0d4/lcm.svg",
             'randomize_images': jp.randomize_images,

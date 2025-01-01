@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -14,47 +13,26 @@ import { ImageSelectionPage } from './ImageSelectionPage.jsx';
 import { PuzzlePage } from './PuzzlePage.jsx';
 import { InfoDialog } from './InfoDialog.jsx';
 import { HintDialog } from './HintDialog.jsx';
+import { fetchImagePaths, fetchJigsawPuzzle } from './api.js';
 
 // Global state because puzzle would initialize twice without this "Mutex"
 window.pzleInitialied = undefined;
 window.pzle = undefined;
 
-const fetchOptions = {
-    headers: {
-	'Content-Type': 'application/json'
-    }
-};
-
-const fetchImagePaths = async (imageUrl) => {
-    const resp = await fetch(imageUrl, fetchOptions);
-    const images = await resp.json();
-    let images2 = [];
-
-    for (let image_id in images) {
-	images2.push(images[image_id]);
-    }
-    
-    return images2;
-}
-
-async function fetchJigsawPuzzle(url) {
-    const resp = await fetch(url, fetchOptions);
-    const respJson = await resp.json();
-    return respJson;
-}
 
 function randImg(randomizeImages) {
     return randomizeImages.toLowerCase() == 'true';
 }
 
-function App({jigsawPuzzleUrl,
-	      title,
-	      logoUrl,
-	      randomizeImages,
-	      idleFirstSeconds,
-	      idleSecondSeconds,
-	      copyrightNotice,
-	      navbarBackgroundColor}) {
+export default
+function JigsawPuzzleApp({jigsawPuzzleUrl,
+			  title,
+			  logoUrl,
+			  randomizeImages,
+			  idleFirstSeconds,
+			  idleSecondSeconds,
+			  copyrightNotice,
+			  navbarBackgroundColor}) {
     const [ screen, setScreen ] = useState("select_image");
     const [ images, setImages ] = useState([]);
     const [ puzzleImageUrl, setPuzzleImageUrl ] = useState();
@@ -126,7 +104,7 @@ function App({jigsawPuzzleUrl,
 				  setPuzzleImageUrl={setPuzzleImageUrl}
 				  setPuzzlePieces={setPuzzlePieces}
 				  images={images}/> : null }
-	    { screen === 'puzzle' ?
+	    { screen === 'game' ?
 	      <PuzzlePage puzzleImageUrl={puzzleImageUrl}
 			  puzzlePieces={puzzlePieces}
 			  onComplete={onComplete}
@@ -145,6 +123,3 @@ function App({jigsawPuzzleUrl,
 	</div>
     );
 }
-
-
-export default App;
