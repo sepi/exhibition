@@ -14,7 +14,7 @@ function chooseAndRemoveRandomEl(a) {
     if (randEl['removed'] === 1) {
 	a.splice(randIdx, 1);
     } else {
-	randEl['removed'] = 1;
+	a[randIdx]['removed'] = 1;
     }
     return randEl;
 }
@@ -48,10 +48,10 @@ function MemoryGameApp({jigsawPuzzleUrl,
 	
 	const [rows, cols] = pieces;
 	let randImgs = Array(rows).fill(0).map(x => Array(cols).fill(0));
+	// Work only with the images needed
+	const images_trimmed = images.slice(0, rows*cols/2);
 	[...Array(rows).keys()].map((row) =>
 	    [...Array(cols).keys()].map((col) => {
-		// Work only with the images needed
-		const images_trimmed = images.slice(0, rows*cols/2);
 		const img = chooseAndRemoveRandomEl(images_trimmed)['memory_game'];
 		randImgs[row][col] = img;
 	    })
