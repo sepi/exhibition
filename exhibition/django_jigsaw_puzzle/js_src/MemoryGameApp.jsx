@@ -31,6 +31,7 @@ function MemoryGameApp({jigsawPuzzleUrl,
     const [ difficultyLevels, setDifficultyLevels ] = useState([]);
     const [ pieces, setPieces ] = useState([undefined, undefined]);
 
+    // Load puzzle data (difficulty levels, name and images) from API
     useEffect(() => {
 	const get = async ()=> {
 	    const jigsawPuzzle = await fetchJigsawPuzzle(jigsawPuzzleUrl);
@@ -42,7 +43,7 @@ function MemoryGameApp({jigsawPuzzleUrl,
 	get();
     }, []);
 
-
+    // Once images were fetched, assign images to cards
     useEffect(() => {
 	if (!pieces[0] || !images) return;
 	
@@ -85,6 +86,7 @@ function MemoryGameApp({jigsawPuzzleUrl,
 	      <MemoryGame jigsawPuzzleUrl={jigsawPuzzleUrl}
 			  randomImages={randomImages}
 			  pieces={pieces}
+			  onWin={(flips) => alert("Win in " + flips + " flips")}
 	      />
 	    }
 	</div>

@@ -24,30 +24,45 @@ class ImageSet(models.Model):
 
     def __str__(self):
         return self.name
+    
 
-
-class JigsawPuzzleDifficultyLevel(models.Model):
+class GridDifficultyLevel(models.Model):
     difficulty_level = models.ForeignKey(DifficultyLevel,
                                          on_delete=models.PROTECT)
-    jigsaw_puzzle = models.ForeignKey('JigsawPuzzle',
-                                      on_delete=models.PROTECT)
+    game = models.ForeignKey('Game',
+                             on_delete=models.PROTECT)
 
 
-class JigsawPuzzle(models.Model):
+class Game(models.Model):
     name = models.CharField(max_length=512)
     copyright_notice = models.CharField(max_length=2048)
-    randomize_images = models.BooleanField(default=True)
     color = models.CharField(max_length=7, default="#fff")
-
-    jigsaw_puzzle_difficulty_level = models.ForeignKey(JigsawPuzzleDifficultyLevel,
-                                                       on_delete=models.PROTECT,
-                                                       null=True)
-    image_set = models.ForeignKey(ImageSet,
-                                  on_delete=models.PROTECT)
+    # grid_difficulty_level = models.ForeignKey(GridDifficultyLevel,
+    #                                           on_delete=models.PROTECT,
+    #                                           null=True)
 
     def __str__(self):
         return self.name
 
+
+class ImageGame(Game):
+    image_set = models.ForeignKey(ImageSet,
+                                  on_delete=models.PROTECT)
+
+    
+class JigsawPuzzle(ImageGame):
+    randomize_images = models.BooleanField(default=True)
+
+
 class JigsawPuzzlePluginModel(CMSPlugin):
     jigsaw_puzzle = models.ForeignKey(JigsawPuzzle,
                                       on_delete=models.PROTECT)
+
+
+class MemoryGame(ImageGame):
+    pass
+
+
+class MemoryGamePluginModel(CMSPlugin):
+    memory_game = models.ForeignKey(MemoryGame,
+                                    on_delete=models.PROTECT)

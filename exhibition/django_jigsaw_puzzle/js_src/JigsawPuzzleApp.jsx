@@ -75,7 +75,7 @@ function JigsawPuzzleApp({jigsawPuzzleUrl,
     };
     
     let back = null;
-    if (screen === 'puzzle') {
+    if (screen === 'game') {
 	back = navigateToSelectScreen;
     }
 

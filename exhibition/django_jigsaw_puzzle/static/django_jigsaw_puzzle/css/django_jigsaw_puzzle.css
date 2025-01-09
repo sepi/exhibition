@@ -54,7 +54,8 @@ code {
 }
 
 img.card-locked {
-   border: 2px solid rgb(100, 200, 100);
+    border: 2px solid rgb(100, 250, 200);
+    filter: drop-shadow(0 0 1px rgb(100, 250, 200));
 }
 
 .card-inner {

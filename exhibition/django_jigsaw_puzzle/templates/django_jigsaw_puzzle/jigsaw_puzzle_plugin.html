@@ -1,5 +1,5 @@
 {% load static sekizai_tags %}
-<div id="jigsaw-puzzle"
+<div id="game"
      data-jigsaw-puzzle-url="{{ jigsaw_puzzle_url }}"
      data-title="{{ title }}"
      data-logo-url="{{ logo_url }}"
@@ -8,7 +8,7 @@
      data-idle-second-seconds="{{ idle_second_seconds }}"
      data-copyright-notice="{{ copyright_notice }}"
      data-navbar-background-color="{{ navbar_color }}"
-     data-mode="MEMORY_GAME"></div>
+     data-mode="{{ mode }}"></div>
 
 {#% addtoblock 'css' %#}
 <link rel="stylesheet" href="{% static 'django_jigsaw_puzzle/css/django_jigsaw_puzzle.css' %}">

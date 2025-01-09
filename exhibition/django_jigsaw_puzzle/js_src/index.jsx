@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import JigsawPuzzleApp from './JigsawPuzzleApp';
 import MemoryGameApp from './MemoryGameApp';
 
-const rootEl = document.getElementById('jigsaw-puzzle');
+const rootEl = document.getElementById('game');
 const root = ReactDOM.createRoot(rootEl);
 const mode = rootEl.dataset.mode;
 root.render(

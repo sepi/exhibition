@@ -9,7 +9,7 @@ from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
 
 
-from .models import ImageSet, ImageSetImage, JigsawPuzzle, JigsawPuzzleDifficultyLevel
+from .models import ImageSet, ImageSetImage, JigsawPuzzle, GridDifficultyLevel
 
 
 def jigsaw_puzzle_list(request):
@@ -22,7 +22,7 @@ def jigsaw_puzzle_list(request):
 
 def jigsaw_puzzle_detail(request, id):
     jp = get_object_or_404(JigsawPuzzle, pk=id)
-    dos = JigsawPuzzleDifficultyLevel.objects.filter(jigsaw_puzzle=jp)
+    dos = GridDifficultyLevel.objects.filter(game=jp)
     if request.content_type == 'application/json':
         return JsonResponse({
             'id': jp.id,

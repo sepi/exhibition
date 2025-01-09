@@ -1,17 +1,30 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-export function MemoryGame({randomImages, pieces}) {
+export function MemoryGame({randomImages, pieces, onWin}) {
     const [rows, cols] = pieces;
 
     const [flipFirst, setFlipFirst] = useState();
     const [flipSecond, setFlipSecond] = useState();
     const [flipBackTimeout, setFlipBackTimeout] = useState();
     const [locked, setLocked] = useState(false);
+    const [flipCount, setFlipCount] = useState(0);
 
     function getEl(prefix, rowCol) {
 	const [row, col] = rowCol;
 	return document.getElementById(`${prefix}-${row}-${col}`);
+    }
+
+    function checkGameFinished() {
+	for (let row = 0; row < rows; ++row) {
+	    for (let col = 0; col < cols; ++col) {
+		const frontEl = getEl('front', [row, col]);
+		if (!frontEl.classList.contains('card-locked')) {
+		    return false;
+		}
+	    }
+	}
+	return true;
     }
 
     function flipReveal(ev) {
@@ -25,6 +38,8 @@ export function MemoryGame({randomImages, pieces}) {
 	const turnBackTimeout = 1600;
 	const flipDuration = 600;
 
+	setFlipCount((prev) => prev+1);
+	
 	if (!flipFirst) { // First card flipped
 	    inner.classList.add("flip-reveal");
 	    setFlipFirst([row, col]);
@@ -49,6 +64,10 @@ export function MemoryGame({randomImages, pieces}) {
 		    firstEl.classList.add("card-locked");
 		    secondEl.classList.add("card-locked");
 		    setLocked(false);
+
+		    if (checkGameFinished()) {
+			onWin(flipCount);
+		    }
 		}, flipDuration));
 	    } else { // Nope, flip back soon
 		setFlipBackTimeout(setTimeout(() => {

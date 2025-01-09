@@ -3,7 +3,7 @@ from django import forms
 from django.utils.html import mark_safe
 from django.urls import reverse
 
-from .models import ImageSet, ImageSetImage, DifficultyLevel, JigsawPuzzleDifficultyLevel, JigsawPuzzle
+from .models import ImageSet, ImageSetImage, DifficultyLevel, GridDifficultyLevel, JigsawPuzzle, MemoryGame
 
 
 class ImageSetImageInline(admin.TabularInline):
@@ -23,17 +23,22 @@ class DifficultyLevelAdmin(admin.ModelAdmin):
     pass
 
 
-class JigsawPuzzleDifficultyLevelInline(admin.TabularInline):
-    model = JigsawPuzzleDifficultyLevel
+class GridDifficultyLevelInline(admin.TabularInline):
+    model = GridDifficultyLevel
     extra = 0
 
 
 @admin.register(JigsawPuzzle)
 class JigsawPuzzleAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        self.request = request
+        return qs
+    
     readonly_fields = ('info_text',)
     
     inlines = [
-        JigsawPuzzleDifficultyLevelInline
+        GridDifficultyLevelInline
     ]
 
     fieldsets = (
@@ -52,8 +57,47 @@ class JigsawPuzzleAdmin(admin.ModelAdmin):
     def info_text(self, obj):
         if obj.id:
             link = reverse('jigsaw_puzzle_detail', args=[obj.id])
-            return mark_safe(f"<a href='{link}'>{link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
+            abs_link = self.request.build_absolute_uri(link)
+            return mark_safe(f"<a href='{abs_link}'>{abs_link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
         else:
             return "No link available yet"
 
     info_text.short_description = "Direct link to puzzle"
+
+
+@admin.register(MemoryGame)
+class MemoryGameAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        self.request = request
+        return qs
+    
+    # readonly_fields = ('info_text',)
+    
+    inlines = [
+        GridDifficultyLevelInline
+    ]
+
+    fieldsets = (
+        (None, {
+            'fields': (# 'info_text',
+                       'name', 'copyright_notice', 'color',
+                       'image_set'),
+        }),
+    )
+
+    # set type="color" to the color field so the color picker is used
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'color':
+            kwargs['widget'] = forms.TextInput(attrs={'type': 'color'})
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    # def info_text(self, obj):
+    #     if obj.id:
+    #         link = reverse('jigsaw_puzzle_detail', args=[obj.id])
+    #         abs_link = self.request.build_absolute_uri(link)
+    #         return mark_safe(f"<a href='{abs_link}'>{abs_link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
+    #     else:
+    #         return "No link available yet"
+
+    # info_text.short_description = "Direct link to puzzle"
