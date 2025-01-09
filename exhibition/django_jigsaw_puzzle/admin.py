@@ -58,7 +58,7 @@ class JigsawPuzzleAdmin(admin.ModelAdmin):
         if obj.id:
             link = reverse('jigsaw_puzzle_detail', args=[obj.id])
             abs_link = self.request.build_absolute_uri(link)
-            return mark_safe(f"<a href='{abs_link}'>{abs_link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
+            return mark_safe(f"<a href=\"{abs_link}\" target=\"_blank\">{abs_link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this puzzle.")
         else:
             return "No link available yet"
 

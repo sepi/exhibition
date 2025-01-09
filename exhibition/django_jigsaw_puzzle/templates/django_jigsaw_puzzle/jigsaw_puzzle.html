@@ -1,15 +1,6 @@
 {% load static %}
 <html>
   <body style="margin: 0;">
-    <div id="jigsaw-puzzle"
-	 data-jigsaw-puzzle-url="{{ jigsaw_puzzle_url }}"
-	 data-title="{{ title }}"
-	 data-logo-url="{{ logo_url }}"
-	 data-randomize-images="{{ randomize_images }}"
-	 data-idle-first-seconds="{{ idle_first_seconds }}"
-	 data-idle-second-seconds="{{ idle_second_seconds }}"
-	 data-copyright-notice="{{ copyright_notice }}"
-	 data-navbar-background-color="{{ navbar_color }}"></div>
-    <script src="{% static 'django_jigsaw_puzzle/js/bundle.js' %}"></script>
+    {% include "django_jigsaw_puzzle/jigsaw_puzzle_plugin.html" %}
   </body>
 </html>
