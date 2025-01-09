@@ -25,7 +25,7 @@ function MemoryGameApp({gameUrl,
 			logoUrl,
 			copyrightNotice,
 			navbarBackgroundColor}) {
-    const [ screen, setScreen ] = useState('welcome');
+    const [ screen, setScreen ] = useState('select_difficulty');
     const [ images, setImages ] = useState();
     const [ randomImages, setRandomImages ] = useState([]);
     const [ difficultyLevels, setDifficultyLevels ] = useState([]);
@@ -69,15 +69,12 @@ function MemoryGameApp({gameUrl,
     
     return (
 	<div className="App">
-	    <Appbar title={"Memory game"}
+	    <Appbar title={title}
 		    logoUrl={logoUrl}
 		    onBack={() => true}
 		    onShowInfo={() => true}
 		    setShowHint={() => true}
 		    navbarBackgroundColor={navbarBackgroundColor} />
-	    { screen === 'welcome' &&
-	      <WelcomeScreen next={selectDifficulty} />
-	    }
 	    { screen === 'select_difficulty' &&
 	      <DifficultySelector difficultyLevels={difficultyLevels}
 				  onClick={startGame}/>

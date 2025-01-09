@@ -9,6 +9,15 @@ export function MemoryGame({randomImages, pieces, onWin}) {
     const [flipBackTimeout, setFlipBackTimeout] = useState();
     const [locked, setLocked] = useState(false);
     const [flipCount, setFlipCount] = useState(0);
+    const [showRevealedImages, setShowRevealedImages] = useState(false);
+
+    // Only show the real images once first animation is finished.
+    // The 600ms are synchrized with the animation duration in static/css/django_jigsaw_puzzle.css
+    useEffect(() => {
+	setTimeout(() => {
+	    setShowRevealedImages(true);
+	}, 600);
+    }, []);
 
     function getEl(prefix, rowCol) {
 	const [row, col] = rowCol;
@@ -89,37 +98,39 @@ export function MemoryGame({randomImages, pieces, onWin}) {
 
     return (
 	<div className="memory-container">
-	<div className="card-area"
-	     style={{gridTemplateColumns: `repeat(${cols}, auto)`}}>
-	    { [...Array(rows).keys()].map((row) =>
-		[...Array(cols).keys()].map((col) => {
-		    if (randomImages.length === 0) return null;
-		    const front_image_src = randomImages[row][col];
-		    return (
-			<div className="card"
-			     key={"card-"+row+"-"+col}>
-			    <div className="card-inner"
-				 id={"inner-"+row+"-"+col}
-			    	 key={"card-inner-"+row+"-"+col}>
-				<img id={"back-"+row+"-"+col}
-				     key={"back-"+row+"-"+col}
-				     className="card-back"
-				     src="/static/django_jigsaw_puzzle/images/card-back.svg"
-			    	     onClick={flipReveal}
-				     draggable={false}
-				/>
-				<img id={"front-"+row+"-"+col}
-				     key={"front-"+row+"-"+col}
-				     className="card-front"
-				     src={front_image_src}
-				     draggable={false}
-				/>
+	    <div className="card-area"
+		 style={{gridTemplateColumns: `repeat(${cols}, auto)`}}>
+		{ [...Array(rows).keys()].map((row) =>
+		    [...Array(cols).keys()].map((col) => {
+			let front_image_src = "/static/django_jigsaw_puzzle/images/card-unknown.svg";
+			if (randomImages.length !== 0 && showRevealedImages) {
+			    front_image_src = randomImages[row][col];
+			}
+			return (
+			    <div className="card"
+				 key={"card-"+row+"-"+col}>
+				<div className="card-inner"
+				     id={"inner-"+row+"-"+col}
+			    	     key={"card-inner-"+row+"-"+col}>
+				    <img id={"back-"+row+"-"+col}
+					 key={"back-"+row+"-"+col}
+					 className="card-back"
+					 src="/static/django_jigsaw_puzzle/images/card-back.svg"
+			    		 onClick={flipReveal}
+					 draggable={false}
+				    />
+				    <img id={"front-"+row+"-"+col}
+					 key={"front-"+row+"-"+col}
+					 className="card-front"
+					 src={front_image_src}
+					 draggable={false}
+				    />
+				</div>
 			    </div>
-			</div>
-		    );
-		})
-	    )}
-	</div>
+			);
+		    })
+		)}
+	    </div>
 	</div>
     );
 }
