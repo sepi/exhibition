@@ -48,3 +48,10 @@ cd /usr/local/share/django/$(app_name) && sudo python3 -m venv venv'
 update :
 	scp $$(ls -tp dist/*.whl | grep -v /$$ | head -n1) $(host):/tmp/
 	ssh $(host) 'sudo /usr/local/bin/django-install $$(ls -tp /tmp/*.whl | grep -v /$$ | head -n1) /usr/local/share/django/$(app_name)/ $(app_name) $(instance_name)'
+
+.PHONY: manage
+manage:
+	ssh $(host) ' \
+cd /usr/local/share/django/$(app_name) ;\
+sudo -u www-data bash -c ". venv/bin/activate; DJANGO_CONFIGURATION=Prod DJANGO_INSTANCE=$(instance_name) python3 manage.py $(COMMAND)" ;\
+'

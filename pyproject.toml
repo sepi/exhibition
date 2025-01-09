@@ -1,6 +1,6 @@
 [project]
 name = "exhibition"
-version = "24.10.12"
+version = "25.01.09"
 dynamic = ["dependencies"]
 
 # [project.scripts]
@@ -16,6 +16,7 @@ build-backend = "setuptools.build_meta"
 exhibition_static = "exhibition/static"
 exhibition = "exhibition/exhibition"
 djangocms_exhibition = "exhibition/djangocms_exhibition"
+django_jigsaw_puzzle = "exhibition/django_jigsaw_puzzle"
 
 [tool.setuptools.dynamic]
 # Dependencies are read from requirements.txt generate using pip-tools
