@@ -76,7 +76,7 @@ def memory_game_detail(request, id):
         })
     else: # For browsers
         return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
-                      jigsaw_puzzle_context(game))
+                      memory_game_context(game))
 
 
 def _get_thumbnail(image, alias_name):
