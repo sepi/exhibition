@@ -9,7 +9,7 @@ from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
 
 
-from .models import ImageSet, ImageSetImage, JigsawPuzzle, GridDifficultyLevel
+from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, GridDifficultyLevel
 
 
 def jigsaw_puzzle_list(request):
@@ -20,32 +20,63 @@ def jigsaw_puzzle_list(request):
                          for jp in jps], safe=False)
 
 
+def jigsaw_puzzle_context(game):
+    return {
+        'game_url': reverse('jigsaw_puzzle_detail', args=[game.id]),
+        'title': game.name,
+        'logo_url': "/media/filer_public/85/1e/851e2b33-e94b-44d1-b353-141f23e3c0d4/lcm.svg",
+        'randomize_images': game.randomize_images,
+        'idle_first_seconds': 300,
+        'idle_second_seconds': 330,
+        'copyright_notice': game.copyright_notice,
+        'navbar_color': game.color,
+        'mode': 'JIGSAW_PUZZLE',
+    }
+
+
 def jigsaw_puzzle_detail(request, id):
-    jp = get_object_or_404(JigsawPuzzle, pk=id)
-    dos = GridDifficultyLevel.objects.filter(game=jp)
+    game = get_object_or_404(JigsawPuzzle, pk=id)
+    gdl = GridDifficultyLevel.objects.filter(game=game)
     if request.content_type == 'application/json':
         return JsonResponse({
-            'id': jp.id,
-            'name': jp.name,
-            'image_set_url': reverse('image_set_detail', args=[jp.image_set.id]),
+            'id': game.id,
+            'name': game.name,
+            'image_set_url': reverse('image_set_detail', args=[game.image_set.id]),
             'difficulty_levels': [{'name': do.difficulty_level.name,
                                    'rows': do.difficulty_level.rows,
-                                   'columns': do.difficulty_level.columns} for do in dos]
+                                   'columns': do.difficulty_level.columns} for do in gdl]
         })
     else: # For browsers
-        context = {
-            'jigsaw_puzzle_url': reverse('jigsaw_puzzle_detail', args=[jp.id]),
-            'title': jp.name,
-            'logo_url': "/media/filer_public/85/1e/851e2b33-e94b-44d1-b353-141f23e3c0d4/lcm.svg",
-            'randomize_images': jp.randomize_images,
-            'idle_first_seconds': 300,
-            'idle_second_seconds': 330,
-            'copyright_notice': jp.copyright_notice,
-            'navbar_color': jp.color,
-        }
-        return render(request, 
-                      'django_jigsaw_puzzle/jigsaw_puzzle.html',
-                      context)
+        return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
+                      jigsaw_puzzle_context(game))
+
+
+def memory_game_context(game):
+    return {
+        'game_url': reverse('memory_game_detail', args=[game.id]),
+        'title': game.name,
+        'logo_url': "/media/filer_public/85/1e/851e2b33-e94b-44d1-b353-141f23e3c0d4/lcm.svg",
+        'copyright_notice': game.copyright_notice,
+        'navbar_color': game.color,
+        'mode': 'MEMORY_GAME',
+    }
+
+
+def memory_game_detail(request, id):
+    game = get_object_or_404(MemoryGame, pk=id)
+    gdl = GridDifficultyLevel.objects.filter(game=game)
+    if request.content_type == 'application/json':
+        return JsonResponse({
+            'id': game.id,
+            'name': game.name,
+            'image_set_url': reverse('image_set_detail', args=[game.image_set.id]),
+            'difficulty_levels': [{'name': do.difficulty_level.name,
+                                   'rows': do.difficulty_level.rows,
+                                   'columns': do.difficulty_level.columns} for do in gdl]
+        })
+    else: # For browsers
+        return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
+                      jigsaw_puzzle_context(game))
 
 
 def _get_thumbnail(image, alias_name):

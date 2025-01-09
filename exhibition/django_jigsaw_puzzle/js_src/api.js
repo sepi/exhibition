@@ -16,7 +16,7 @@ export const fetchImagePaths = async (imageUrl) => {
     return images2;
 }
 
-export async function fetchJigsawPuzzle(url) {
+export async function fetchGameData(url) {
     const resp = await fetch(url, fetchOptions);
     const respJson = await resp.json();
     return respJson;

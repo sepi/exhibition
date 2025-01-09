@@ -55,8 +55,8 @@ class JigsawPuzzle(ImageGame):
 
 
 class JigsawPuzzlePluginModel(CMSPlugin):
-    jigsaw_puzzle = models.ForeignKey(JigsawPuzzle,
-                                      on_delete=models.PROTECT)
+    game = models.ForeignKey(JigsawPuzzle,
+                             on_delete=models.PROTECT)
 
 
 class MemoryGame(ImageGame):
@@ -64,5 +64,5 @@ class MemoryGame(ImageGame):
 
 
 class MemoryGamePluginModel(CMSPlugin):
-    memory_game = models.ForeignKey(MemoryGame,
-                                    on_delete=models.PROTECT)
+    game = models.ForeignKey(MemoryGame,
+                             on_delete=models.PROTECT)

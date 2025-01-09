@@ -13,7 +13,7 @@ import { ImageSelectionPage } from './ImageSelectionPage.jsx';
 import { PuzzlePage } from './PuzzlePage.jsx';
 import { InfoDialog } from './InfoDialog.jsx';
 import { HintDialog } from './HintDialog.jsx';
-import { fetchImagePaths, fetchJigsawPuzzle } from './api.js';
+import { fetchImagePaths, fetchGameData } from './api.js';
 
 // Global state because puzzle would initialize twice without this "Mutex"
 window.pzleInitialied = undefined;
@@ -25,7 +25,7 @@ function randImg(randomizeImages) {
 }
 
 export default
-function JigsawPuzzleApp({jigsawPuzzleUrl,
+function JigsawPuzzleApp({gameUrl,
 			  title,
 			  logoUrl,
 			  randomizeImages,
@@ -45,9 +45,9 @@ function JigsawPuzzleApp({jigsawPuzzleUrl,
 
     useEffect(() => {
 	const get = async ()=> {
-	    const jigsawPuzzle = await fetchJigsawPuzzle(jigsawPuzzleUrl);
-	    setDifficultyLevels(jigsawPuzzle.difficulty_levels);
-	    const images_ = await fetchImagePaths(jigsawPuzzle.image_set_url+'?thumbnail_alias=thumbnail,puzzle');
+	    const game = await fetchGameData(gameUrl);
+	    setDifficultyLevels(game.difficulty_levels);
+	    const images_ = await fetchImagePaths(game.image_set_url+'?thumbnail_alias=thumbnail,puzzle');
 	    const imagesRand = [];
 
 	    if (randImg(randomizeImages)) {

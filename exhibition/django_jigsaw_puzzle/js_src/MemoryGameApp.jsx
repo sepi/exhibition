@@ -6,7 +6,7 @@ import { WelcomeScreen } from './WelcomeScreen.jsx';
 import { MemoryGame } from './MemoryGame.jsx';
 import { DifficultySelector } from './DifficultySelector.jsx';
 
-import { fetchImagePaths, fetchJigsawPuzzle } from './api.js';
+import { fetchImagePaths, fetchGameData } from './api.js';
 
 function chooseAndRemoveRandomEl(a) {
     const randIdx = Math.floor(Math.random()*a.length);
@@ -20,7 +20,7 @@ function chooseAndRemoveRandomEl(a) {
 }
 
 export default
-function MemoryGameApp({jigsawPuzzleUrl,
+function MemoryGameApp({gameUrl,
 			title,
 			logoUrl,
 			copyrightNotice,
@@ -34,9 +34,9 @@ function MemoryGameApp({jigsawPuzzleUrl,
     // Load puzzle data (difficulty levels, name and images) from API
     useEffect(() => {
 	const get = async ()=> {
-	    const jigsawPuzzle = await fetchJigsawPuzzle(jigsawPuzzleUrl);
-	    setDifficultyLevels(jigsawPuzzle.difficulty_levels);
-	    const images_ = await fetchImagePaths(jigsawPuzzle.image_set_url+'?thumbnail_alias=memory_game');
+	    const game = await fetchGameData(gameUrl);
+	    setDifficultyLevels(game.difficulty_levels);
+	    const images_ = await fetchImagePaths(game.image_set_url+'?thumbnail_alias=memory_game');
 
 	    setImages(images_);
 	}
@@ -83,8 +83,7 @@ function MemoryGameApp({jigsawPuzzleUrl,
 				  onClick={startGame}/>
 	    }
 	    { screen === 'game' && 
-	      <MemoryGame jigsawPuzzleUrl={jigsawPuzzleUrl}
-			  randomImages={randomImages}
+	      <MemoryGame randomImages={randomImages}
 			  pieces={pieces}
 			  onWin={(flips) => alert("Win in " + flips + " flips")}
 	      />
