@@ -1,5 +1,5 @@
 gunicorn
-django-cms<=4
+django-cms>3.11.8,<=4
 django-treebeard
 djangocms-admin-style
 djangocms-text-ckeditor
