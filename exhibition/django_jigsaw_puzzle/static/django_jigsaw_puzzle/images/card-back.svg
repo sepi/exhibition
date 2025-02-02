@@ -3,15 +3,14 @@
 
 <svg
    width="63mm"
-   height="88mm"
-   viewBox="0 0 63 88"
+   height="63mm"
+   viewBox="0 0 63 63"
    version="1.1"
    id="svg5"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    sodipodi:docname="card-back.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -26,338 +25,23 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.8761364"
-     inkscape:cx="-69.824348"
-     inkscape:cy="105.00303"
-     inkscape:window-width="2560"
-     inkscape:window-height="1374"
+     inkscape:cx="73.821925"
+     inkscape:cy="59.697152"
+     inkscape:window-width="2141"
+     inkscape:window-height="1014"
      inkscape:window-x="0"
      inkscape:window-y="30"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
-     id="defs2">
-    <pattern
-       inkscape:collect="always"
-       xlink:href="#Polkadots-large"
-       id="pattern7752"
-       patternTransform="scale(2.1889384)" />
-    <pattern
-       inkscape:collect="always"
-       patternUnits="userSpaceOnUse"
-       width="10"
-       height="10"
-       patternTransform="translate(0,0) scale(10,10)"
-       id="Polkadots-large"
-       inkscape:stockid="Polka dots, large"
-       inkscape:isstock="true">
-      <circle
-         style="fill:black;stroke:none"
-         cx="2.567"
-         cy="0.810"
-         r="0.45"
-         id="circle6795" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="3.048"
-         cy="2.33"
-         r="0.45"
-         id="circle6797" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="4.418"
-         cy="2.415"
-         r="0.45"
-         id="circle6799" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.844"
-         cy="3.029"
-         r="0.45"
-         id="circle6801" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="6.08"
-         cy="1.363"
-         r="0.45"
-         id="circle6803" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="5.819"
-         cy="4.413"
-         r="0.45"
-         id="circle6805" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="4.305"
-         cy="4.048"
-         r="0.45"
-         id="circle6807" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="5.541"
-         cy="3.045"
-         r="0.45"
-         id="circle6809" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="4.785"
-         cy="5.527"
-         r="0.45"
-         id="circle6811" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="2.667"
-         cy="5.184"
-         r="0.45"
-         id="circle6813" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.965"
-         cy="1.448"
-         r="0.45"
-         id="circle6815" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.047"
-         cy="5.049"
-         r="0.45"
-         id="circle6817" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="4.340"
-         cy="0.895"
-         r="0.45"
-         id="circle6819" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.125"
-         cy="0.340"
-         r="0.45"
-         id="circle6821" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.125"
-         cy="10.340"
-         r="0.45"
-         id="circle6823" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="9.550"
-         cy="1.049"
-         r="0.45"
-         id="circle6825" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.006"
-         cy="2.689"
-         r="0.45"
-         id="circle6827" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="8.909"
-         cy="2.689"
-         r="0.45"
-         id="circle6829" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="9.315"
-         cy="4.407"
-         r="0.45"
-         id="circle6831" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.820"
-         cy="3.870"
-         r="0.45"
-         id="circle6833" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="8.270"
-         cy="5.948"
-         r="0.45"
-         id="circle6835" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="7.973"
-         cy="7.428"
-         r="0.45"
-         id="circle6837" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="9.342"
-         cy="8.072"
-         r="0.45"
-         id="circle6839" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="8.206"
-         cy="9.315"
-         r="0.45"
-         id="circle6841" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="9.682"
-         cy="9.475"
-         r="0.45"
-         id="circle6843" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="-0.318"
-         cy="9.475"
-         r="0.45"
-         id="circle6845" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="9.688"
-         cy="6.186"
-         r="0.45"
-         id="circle6847" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="-0.312"
-         cy="6.186"
-         r="0.45"
-         id="circle6849" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="3.379"
-         cy="6.296"
-         r="0.45"
-         id="circle6851" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="2.871"
-         cy="8.204"
-         r="0.45"
-         id="circle6853" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="4.59"
-         cy="8.719"
-         r="0.45"
-         id="circle6855" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="3.181"
-         cy="9.671"
-         r="0.45"
-         id="circle6857" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="3.181"
-         cy="-0.329"
-         r="0.45"
-         id="circle6859" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="5.734"
-         cy="7.315"
-         r="0.45"
-         id="circle6861" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="6.707"
-         cy="6.513"
-         r="0.45"
-         id="circle6863" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="5.730"
-         cy="9.670"
-         r="0.45"
-         id="circle6865" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="5.730"
-         cy="-0.330"
-         r="0.45"
-         id="circle6867" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="6.535"
-         cy="8.373"
-         r="0.45"
-         id="circle6869" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="4.37"
-         cy="7.154"
-         r="0.45"
-         id="circle6871" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="0.622"
-         cy="7.25"
-         r="0.45"
-         id="circle6873" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="0.831"
-         cy="5.679"
-         r="0.45"
-         id="circle6875" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.257"
-         cy="8.519"
-         r="0.45"
-         id="circle6877" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.989"
-         cy="6.877"
-         r="0.45"
-         id="circle6879" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="0.374"
-         cy="3.181"
-         r="0.45"
-         id="circle6881" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="10.374"
-         cy="3.181"
-         r="0.45"
-         id="circle6883" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.166"
-         cy="1.664"
-         r="0.45"
-         id="circle6885" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.151"
-         cy="0.093"
-         r="0.45"
-         id="circle6887" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.151"
-         cy="10.093"
-         r="0.45"
-         id="circle6889" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="1.302"
-         cy="4.451"
-         r="0.45"
-         id="circle6891" />
-      <circle
-         style="fill:black;stroke:none"
-         cx="3.047"
-         cy="3.763"
-         r="0.45"
-         id="circle6893" />
-    </pattern>
-  </defs>
+     id="defs2" />
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g10010">
+       id="g10010"
+       transform="scale(1,0.71590909)">
       <rect
          style="opacity:1;fill:#fff814;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.37583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:6.95055;stroke-opacity:1"
          id="rect10738"
@@ -366,33 +50,34 @@
          x="0"
          y="0" />
       <rect
-         style="opacity:1;fill:url(#pattern7752);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.37583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:6.95055;stroke-opacity:1"
+         style="opacity:1;fill:#ffaaaa;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.37583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:6.95055;stroke-opacity:1"
          id="rect1827"
          width="63"
          height="88"
          x="0"
-         y="0" />
+         y="0"
+         ry="0" />
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:22.1234px;line-height:0.75;font-family:sans-serif;text-align:center;letter-spacing:4.14337px;text-anchor:middle;fill:#2e9b84;fill-opacity:1;stroke:none;stroke-width:0.264582"
-       x="35.040817"
-       y="34.443554"
+       style="font-style:normal;font-weight:normal;font-size:22.1234px;line-height:0.75;font-family:sans-serif;text-align:center;letter-spacing:4.14337px;text-anchor:middle;fill:#8cc2b8;fill-opacity:1;stroke:none;stroke-width:0.264582"
+       x="34.387806"
+       y="22.563068"
        id="text5253"><tspan
          id="tspan5251"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.1234px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#2e9b84;fill-opacity:1;stroke-width:0.264582"
-         x="35.040817"
-         y="34.443554"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.1234px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#8cc2b8;fill-opacity:1;stroke-width:0.264582"
+         x="34.387806"
+         y="22.563068"
          dx="0"
          sodipodi:role="line">ME</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.1234px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#2e9b84;fill-opacity:1;stroke-width:0.264582"
-         x="35.040817"
-         y="51.651863"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.1234px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#8cc2b8;fill-opacity:1;stroke-width:0.264582"
+         x="34.387806"
+         y="39.771378"
          id="tspan5255"
          sodipodi:role="line">MO</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.1234px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#2e9b84;fill-opacity:1;stroke-width:0.264582"
-         x="37.112503"
-         y="68.860168"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.1234px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#8cc2b8;fill-opacity:1;stroke-width:0.264582"
+         x="36.459492"
+         y="56.979687"
          id="tspan5257"
          sodipodi:role="line">RY</tspan></text>
   </g>

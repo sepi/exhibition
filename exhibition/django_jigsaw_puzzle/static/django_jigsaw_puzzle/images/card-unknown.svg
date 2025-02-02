@@ -3,8 +3,8 @@
 
 <svg
    width="63mm"
-   height="88mm"
-   viewBox="0 0 63 88"
+   height="63mm"
+   viewBox="0 0 63 63"
    version="1.1"
    id="svg5"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
@@ -26,10 +26,10 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.8761364"
-     inkscape:cx="-74.62144"
-     inkscape:cy="105.00303"
-     inkscape:window-width="2560"
-     inkscape:window-height="1374"
+     inkscape:cx="118.86129"
+     inkscape:cy="166.29921"
+     inkscape:window-width="1920"
+     inkscape:window-height="1014"
      inkscape:window-x="0"
      inkscape:window-y="30"
      inkscape:window-maximized="1"
@@ -40,7 +40,7 @@
        inkscape:collect="always"
        xlink:href="#Polkadots-large"
        id="pattern7752"
-       patternTransform="scale(2.1889384)" />
+       patternTransform="scale(2.1889384,3.0575647)" />
     <pattern
        inkscape:collect="always"
        patternUnits="userSpaceOnUse"
@@ -357,7 +357,8 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g10010">
+       id="g10010"
+       transform="scale(1,0.71590909)">
       <rect
          style="opacity:1;fill:#c9fffb;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.37583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:6.95055;stroke-opacity:1"
          id="rect10738"
@@ -377,11 +378,11 @@
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:63.0299px;line-height:0.75;font-family:sans-serif;text-align:center;letter-spacing:5.14086px;text-anchor:middle;fill:#2e9b84;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="33.011044"
-       y="66.375603"
+       y="54.204758"
        id="text5253"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:63.0299px;font-family:Beteckna;-inkscape-font-specification:'Beteckna, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#2e9b84;fill-opacity:1;stroke-width:0.264583"
-         x="35.58147"
-         y="66.375603"
+         x="35.581474"
+         y="54.204758"
          id="tspan5257"
          sodipodi:role="line">?</tspan></text>
   </g>
