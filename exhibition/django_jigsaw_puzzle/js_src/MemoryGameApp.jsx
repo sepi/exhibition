@@ -37,16 +37,13 @@ function MemoryGameApp({gameUrl,
 	    const game = await fetchGameData(gameUrl);
 	    setDifficultyLevels(game.difficulty_levels);
 	    const images_ = await fetchImagePaths(game.image_set_url+'?thumbnail_alias=memory_game');
-
 	    setImages(images_);
 	}
+
 	get();
     }, []);
 
-    // Once images were fetched, assign images to cards
-    useEffect(() => {
-	if (!pieces[0] || !images) return;
-	
+    function genRandImages() {
 	const [rows, cols] = pieces;
 	let randImgs = Array(rows).fill(0).map(x => Array(cols).fill(0));
 	// Work only with the images needed
@@ -59,6 +56,13 @@ function MemoryGameApp({gameUrl,
 	);
 	
 	setRandomImages(randImgs);
+    }
+    
+    // Once images were fetched, assign images to cards
+    useEffect(() => {
+	if (!pieces[0] || !images) return;
+	
+	genRandImages();
     }, [images, pieces]);
 
     const selectDifficulty = () => setScreen('select_difficulty');
@@ -66,12 +70,25 @@ function MemoryGameApp({gameUrl,
 	setPieces([level.rows, level.columns]);
 	setScreen('game');
     };
+
+    const navigateToSelectScreen = () => {
+	setScreen('select_difficulty');
+	// setShowSucces(false);
+	// window.pzleInitialied = false;
+	//FIXME: should re-shuffle images
+	genRandImages();
+    };
+    
+    let back = null;
+    if (screen === 'game') {
+	back = navigateToSelectScreen;
+    }
     
     return (
 	<div className="App">
 	    <Appbar title={title}
 		    logoUrl={logoUrl}
-		    onBack={() => true}
+		    onBack={back}
 		    onShowInfo={() => true}
 		    setShowHint={() => true}
 		    navbarBackgroundColor={navbarBackgroundColor} />
