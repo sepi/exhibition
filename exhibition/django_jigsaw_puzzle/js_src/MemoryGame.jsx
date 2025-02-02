@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-export function MemoryGame({randomImages, pieces, onWin}) {
+export function MemoryGame({randomImages, pieces, onWin,
+			    cardHiddenImageUrl, cardBackImageUrl}) {
     const [rows, cols] = pieces;
 
     const [flipFirst, setFlipFirst] = useState();
@@ -102,7 +103,7 @@ export function MemoryGame({randomImages, pieces, onWin}) {
 		 style={{gridTemplateColumns: `repeat(${cols}, auto)`}}>
 		{ [...Array(rows).keys()].map((row) =>
 		    [...Array(cols).keys()].map((col) => {
-			let front_image_src = "/static/django_jigsaw_puzzle/images/card-unknown.svg";
+			let front_image_src = cardHiddenImageUrl || "/static/django_jigsaw_puzzle/images/card-unknown.svg";
 			if (randomImages.length !== 0 && showRevealedImages) {
 			    front_image_src = randomImages[row][col];
 			}
@@ -115,7 +116,7 @@ export function MemoryGame({randomImages, pieces, onWin}) {
 				    <img id={"back-"+row+"-"+col}
 					 key={"back-"+row+"-"+col}
 					 className="card-back"
-					 src="/static/django_jigsaw_puzzle/images/card-back.svg"
+					 src={cardBackImageUrl || "/static/django_jigsaw_puzzle/images/card-back.svg"}
 			    		 onClick={flipReveal}
 					 draggable={false}
 				    />

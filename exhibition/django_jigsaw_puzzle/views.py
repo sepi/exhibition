@@ -56,6 +56,8 @@ def memory_game_context(game):
         'game_url': reverse('memory_game_detail', args=[game.id]),
         'title': game.name,
         'logo_url': "/media/filer_public/85/1e/851e2b33-e94b-44d1-b353-141f23e3c0d4/lcm.svg",
+        'card_hidden_image_url': game.card_hidden_image.url if game.card_hidden_image else '',
+        'card_back_image_url': game.card_back_image.url if game.card_back_image else '',
         'copyright_notice': game.copyright_notice,
         'navbar_color': game.color,
         'mode': 'MEMORY_GAME',

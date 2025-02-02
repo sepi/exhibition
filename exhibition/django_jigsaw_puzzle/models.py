@@ -54,13 +54,21 @@ class JigsawPuzzle(ImageGame):
     randomize_images = models.BooleanField(default=True)
 
 
+
 class JigsawPuzzlePluginModel(CMSPlugin):
     game = models.ForeignKey(JigsawPuzzle,
                              on_delete=models.PROTECT)
 
 
 class MemoryGame(ImageGame):
-    pass
+    card_hidden_image = FilerImageField(on_delete=models.PROTECT,
+                                        related_name='card_hidden_image',
+                                        blank=True,
+                                        null=True)
+    card_back_image = FilerImageField(on_delete=models.PROTECT,
+                                      related_name='card_back_image',
+                                      blank=True,
+                                      null=True)
 
 
 class MemoryGamePluginModel(CMSPlugin):

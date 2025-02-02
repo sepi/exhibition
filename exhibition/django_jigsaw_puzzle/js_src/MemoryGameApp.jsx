@@ -27,7 +27,9 @@ function MemoryGameApp({gameUrl,
 			title,
 			logoUrl,
 			copyrightNotice,
-			navbarBackgroundColor}) {
+			navbarBackgroundColor,
+			cardBackImageUrl,
+			cardHiddenImageUrl}) {
     const [ screen, setScreen ] = useState('select_difficulty');
     const [ images, setImages ] = useState();
     const [ randomImages, setRandomImages ] = useState([]);
@@ -126,6 +128,8 @@ function MemoryGameApp({gameUrl,
 	      <MemoryGame randomImages={randomImages}
 			  pieces={pieces}
 			  onWin={onWin}
+			  cardHiddenImageUrl={cardHiddenImageUrl}
+			  cardBackImageUrl={cardBackImageUrl}
 	      />
 	    }
 	</div>

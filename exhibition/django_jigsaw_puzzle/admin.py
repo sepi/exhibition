@@ -72,7 +72,8 @@ class JigsawPuzzleAdmin(GameAdminMixin, admin.ModelAdmin):
 class MemoryGameAdmin(GameAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('info_text', 'name', 'copyright_notice', 'color',
+            'fields': ('info_text', 'name', 'copyright_notice',
+                       'color', 'card_back_image', 'card_hidden_image',
                        'image_set'),
         }),
     )
