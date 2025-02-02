@@ -67,7 +67,7 @@ export function PuzzlePage({puzzleImageUrl,
 		 <Snackbar open={showSuccess} onClose={navigateToSelectScreen}>
 		   <Alert severity="success"
 			  variant="filled">
-		       {`Success, you completed the puzzle in ${runningSinceStr}. Go back to try another one`}
+		       {`Success, you completed the puzzle in ${runningSinceStr}. Tap back to try another one.`}
 		   </Alert>
 		 </Snackbar>
 		 <Puzzle imageUrl={puzzleImageUrl}

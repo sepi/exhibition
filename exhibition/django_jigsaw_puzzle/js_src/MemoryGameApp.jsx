@@ -1,6 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
 import { Appbar } from './Appbar.jsx';
 import { WelcomeScreen } from './WelcomeScreen.jsx';
 import { MemoryGame } from './MemoryGame.jsx';
@@ -30,6 +33,17 @@ function MemoryGameApp({gameUrl,
     const [ randomImages, setRandomImages ] = useState([]);
     const [ difficultyLevels, setDifficultyLevels ] = useState([]);
     const [ pieces, setPieces ] = useState([undefined, undefined]);
+    const [ showSuccess, setShowSuccess ] = useState(false);
+    const [ flips, setFlips ] = useState();
+
+    const onWin = (flips) => {
+	setFlips(flips);
+	setShowSuccess(true);
+    }
+
+    const hideSuccess = () => {
+	setShowSuccess(false);
+    };
 
     // Load puzzle data (difficulty levels, name and images) from API
     useEffect(() => {
@@ -92,6 +106,12 @@ function MemoryGameApp({gameUrl,
 		    onShowInfo={() => true}
 		    setShowHint={() => true}
 		    navbarBackgroundColor={navbarBackgroundColor} />
+	    <Snackbar open={showSuccess} onClose={hideSuccess}>
+		<Alert severity="success"
+		       variant="filled">
+		    {`Success, you completed the game in ${flips} turns! Tap back to try another one.`}
+		</Alert>
+	    </Snackbar>
 	    { screen === 'select_difficulty' &&
 	      <DifficultySelector difficultyLevels={difficultyLevels}
 				  onClick={startGame}/>
@@ -99,7 +119,7 @@ function MemoryGameApp({gameUrl,
 	    { screen === 'game' && 
 	      <MemoryGame randomImages={randomImages}
 			  pieces={pieces}
-			  onWin={(flips) => alert("Win in " + flips + " flips")}
+			  onWin={onWin}
 	      />
 	    }
 	</div>
