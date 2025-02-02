@@ -24,11 +24,16 @@ export function DifficultySelector({difficultyLevels, onClick}) {
 		Select the difficulty
 	    </Typography>
 	    <Stack spacing={2}>
-		{difficultyLevels.map(level => 
+		{ difficultyLevels.map(level =>
+		    ((level.rows * level.columns) % 2 == 0) ?
+			<Button variant="outlined"
+				key={level.name}
+				onClick={() => onClick(level)}>{`${level.name} (${level.rows} x ${level.columns} = ${level.rows * level.columns} pieces)`}</Button>
+		    :
 		    <Button variant="outlined"
-                            key={level.name}
-			    onClick={() => onClick(level)}>{`${level.name} (${level.rows} x ${level.columns} = ${level.rows * level.columns} pieces)`}</Button>
-		)}
+			    color="error"
+                            key={level.name}>{`${level.rows} x ${level.columns} = ${level.rows * level.columns} is not pair. Please change level.`}</Button>
+		) }
 	    </Stack>
 	</Box>
     );
