@@ -62,6 +62,12 @@ function MemoryGameApp({gameUrl,
 	let randImgs = Array(rows).fill(0).map(x => Array(cols).fill(0));
 	// Work only with the images needed
 	const images_trimmed = images.slice(0, rows*cols/2);
+
+	// Undo the effect of previous invocations of chooseAndRemoveRandomEl
+	for (let img of images) {
+	    img['removed'] = false;
+	}
+	
 	[...Array(rows).keys()].map((row) =>
 	    [...Array(cols).keys()].map((col) => {
 		const img = chooseAndRemoveRandomEl(images_trimmed)['memory_game'];
