@@ -3,7 +3,7 @@ from django import forms
 from django.utils.html import mark_safe
 from django.urls import reverse
 
-from .models import ImageSet, ImageSetImage, DifficultyLevel, GridDifficultyLevel, JigsawPuzzle, MemoryGame
+from .models import ImageSet, ImageSetImage, DifficultyLevel, GridDifficultyLevel, JigsawPuzzle, MemoryGame, PaintGame
 
 
 class ImageSetImageInline(admin.TabularInline):
@@ -53,7 +53,7 @@ class GameAdminMixin():
         else:
             return "No link available yet"
 
-    info_text.short_description = "Direct link to puzzle"
+    info_text.short_description = "Direct link to game"
 
 @admin.register(JigsawPuzzle)
 class JigsawPuzzleAdmin(GameAdminMixin, admin.ModelAdmin):
@@ -80,3 +80,19 @@ class MemoryGameAdmin(GameAdminMixin, admin.ModelAdmin):
 
     def get_game_link(self, obj):
         return reverse('memory_game_detail', args=[obj.id])
+
+
+@admin.register(PaintGame)
+class PaintGameAdmin(GameAdminMixin, admin.ModelAdmin):
+    inlines = []
+
+    fieldsets = (
+        (None, {
+            'fields': ('info_text', 'name', 'copyright_notice',
+                       'color'),
+        }),
+    )
+
+    def get_game_link(self, obj):
+        return reverse('paint_game_detail', args=[obj.id])
+

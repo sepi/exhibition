@@ -37,9 +37,6 @@ class Game(models.Model):
     name = models.CharField(max_length=512)
     copyright_notice = models.CharField(max_length=2048)
     color = models.CharField(max_length=7, default="#fff")
-    # grid_difficulty_level = models.ForeignKey(GridDifficultyLevel,
-    #                                           on_delete=models.PROTECT,
-    #                                           null=True)
 
     def __str__(self):
         return self.name
@@ -73,4 +70,13 @@ class MemoryGame(ImageGame):
 
 class MemoryGamePluginModel(CMSPlugin):
     game = models.ForeignKey(MemoryGame,
+                             on_delete=models.PROTECT)
+
+
+class PaintGame(Game):
+    pass
+
+
+class PaintGamePluginModel(CMSPlugin):
+    game = models.ForeignKey(PaintGame,
                              on_delete=models.PROTECT)

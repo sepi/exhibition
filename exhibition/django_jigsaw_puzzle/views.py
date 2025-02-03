@@ -108,3 +108,8 @@ def image_set_detail(request, id):
             resp_json[i.id][ta] = tn.url
 
     return JsonResponse(resp_json)
+
+def paint_game_context(game):
+    return {
+        'mode': 'PAINT_GAME',
+    }
