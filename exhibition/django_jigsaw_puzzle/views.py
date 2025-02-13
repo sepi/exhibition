@@ -3,7 +3,7 @@ from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic.base import TemplateView
-
+from django.views.decorators.cache import never_cache
 
 from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
@@ -37,7 +37,7 @@ def jigsaw_puzzle_context(game):
 def jigsaw_puzzle_detail(request, id):
     game = get_object_or_404(JigsawPuzzle, pk=id)
     gdl = GridDifficultyLevel.objects.filter(game=game)
-    if request.content_type == 'application/json':
+    if request.headers.get('Accept') == 'application/json':
         return JsonResponse({
             'id': game.id,
             'name': game.name,
@@ -64,10 +64,11 @@ def memory_game_context(game):
     }
 
 
+@never_cache
 def memory_game_detail(request, id):
     game = get_object_or_404(MemoryGame, pk=id)
     gdl = GridDifficultyLevel.objects.filter(game=game)
-    if request.content_type == 'application/json':
+    if request.headers.get('Accept') == 'application/json':
         return JsonResponse({
             'id': game.id,
             'name': game.name,
