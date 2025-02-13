@@ -29,7 +29,9 @@ function MemoryGameApp({gameUrl,
 			copyrightNotice,
 			navbarBackgroundColor,
 			cardBackImageUrl,
-			cardHiddenImageUrl}) {
+			cardHiddenImageUrl,
+			aspectRatio,
+			cardFrontBackgroundColor}) {
     const [ screen, setScreen ] = useState('select_difficulty');
     const [ images, setImages ] = useState();
     const [ randomImages, setRandomImages ] = useState([]);
@@ -111,8 +113,8 @@ function MemoryGameApp({gameUrl,
 	    <Appbar title={title}
 		    logoUrl={logoUrl}
 		    onBack={back}
-		    onShowInfo={() => true}
-		    setShowHint={() => true}
+		    onShowInfo={false}
+		    setShowHint={false}
 		    navbarBackgroundColor={navbarBackgroundColor} />
 	    <Snackbar open={showSuccess} onClose={hideSuccess}>
 		<Alert severity="success"
@@ -130,6 +132,8 @@ function MemoryGameApp({gameUrl,
 			  onWin={onWin}
 			  cardHiddenImageUrl={cardHiddenImageUrl}
 			  cardBackImageUrl={cardBackImageUrl}
+			  aspectRatio={aspectRatio}
+			  cardFrontBackgroundColor={cardFrontBackgroundColor}
 	      />
 	    }
 	</div>

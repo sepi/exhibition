@@ -2,7 +2,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 
 export function MemoryGame({randomImages, pieces, onWin,
-			    cardHiddenImageUrl, cardBackImageUrl}) {
+			    cardHiddenImageUrl, cardBackImageUrl,
+			    aspectRatio, cardFrontBackgroundColor}) {
     const [rows, cols] = pieces;
 
     const [flipFirst, setFlipFirst] = useState();
@@ -109,6 +110,7 @@ export function MemoryGame({randomImages, pieces, onWin,
 			}
 			return (
 			    <div className="card"
+				 style={{aspectRatio: aspectRatio}}
 				 key={"card-"+row+"-"+col}>
 				<div className="card-inner"
 				     id={"inner-"+row+"-"+col}
@@ -123,6 +125,7 @@ export function MemoryGame({randomImages, pieces, onWin,
 				    <img id={"front-"+row+"-"+col}
 					 key={"front-"+row+"-"+col}
 					 className="card-front"
+					 style={{backgroundColor: cardFrontBackgroundColor}}
 					 src={front_image_src}
 					 draggable={false}
 				    />

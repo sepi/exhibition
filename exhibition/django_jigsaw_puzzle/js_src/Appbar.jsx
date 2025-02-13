@@ -27,6 +27,7 @@ export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint, navbarB
 		</Typography>
 
 		<div>
+		{ onShowInfo &&
 		<IconButton
 		    size="large"
 		    edge="start"
@@ -36,7 +37,8 @@ export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint, navbarB
 		    onClick={onShowInfo} >
 		    <InfoIcon/>
 		</IconButton>
-		{ onBack &&
+		}
+		{ setShowHint &&
 		  <IconButton
 		      size="large"
 		      edge="start"

@@ -41,7 +41,7 @@ class GameAdminMixin():
 
     # set type="color" to the color field so the color picker is used
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name == 'color':
+        if db_field.name.endswith('color'):
             kwargs['widget'] = forms.TextInput(attrs={'type': 'color'})
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
@@ -73,7 +73,8 @@ class MemoryGameAdmin(GameAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('info_text', 'name', 'copyright_notice',
-                       'color', 'card_back_image', 'card_hidden_image',
+                       'color', 'card_back_image', 'card_front_background_color',
+                       'card_hidden_image', 'card_aspect_ratio',
                        'image_set'),
         }),
     )
