@@ -1,7 +1,11 @@
 const fetchOptions = {
+    method: 'GET',
     headers: {
-	'Content-Type': 'application/json'
-    }
+	'Accept': 'application/json',
+	'X-Requested-With': 'XMLHttpRequest', // Indicating it's an AJAX request
+	'cache': 'no-cache',
+	'pragma': 'no-cache'
+    },
 };
 
 export const fetchImagePaths = async (imageUrl) => {
