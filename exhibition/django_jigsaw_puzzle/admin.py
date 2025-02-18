@@ -74,7 +74,7 @@ class MemoryGameAdmin(GameAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': ('info_text', 'name', 'copyright_notice',
                        'color', 'card_back_image', 'card_front_background_color',
-                       'card_hidden_image', 'card_aspect_ratio',
+                       'card_hidden_image', 'card_aspect_ratio', 'card_width',
                        'image_set'),
         }),
     )

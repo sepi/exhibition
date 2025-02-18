@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 export function MemoryGame({randomImages, pieces, onWin,
 			    cardHiddenImageUrl, cardBackImageUrl,
-			    aspectRatio, cardFrontBackgroundColor}) {
+			    aspectRatio, cardFrontBackgroundColor, cardWidth}) {
     const [rows, cols] = pieces;
 
     const [flipFirst, setFlipFirst] = useState();
@@ -110,7 +110,8 @@ export function MemoryGame({randomImages, pieces, onWin,
 			}
 			return (
 			    <div className="card"
-				 style={{aspectRatio: aspectRatio}}
+				 style={{width: cardWidth,
+					 aspectRatio: aspectRatio}}
 				 key={"card-"+row+"-"+col}>
 				<div className="card-inner"
 				     id={"inner-"+row+"-"+col}

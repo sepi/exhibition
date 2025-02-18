@@ -60,6 +60,7 @@ def memory_game_context(game):
         'card_back_image_url': game.card_back_image.url if game.card_back_image else '',
         'card_aspect_ratio': game.card_aspect_ratio,
         'card_front_background_color': game.card_front_background_color,
+        'card_width': game.card_width,
         'copyright_notice': game.copyright_notice,
         'navbar_color': game.color,
         'mode': 'MEMORY_GAME',

@@ -31,7 +31,8 @@ function MemoryGameApp({gameUrl,
 			cardBackImageUrl,
 			cardHiddenImageUrl,
 			aspectRatio,
-			cardFrontBackgroundColor}) {
+			cardFrontBackgroundColor,
+			cardWidth}) {
     const [ screen, setScreen ] = useState('select_difficulty');
     const [ images, setImages ] = useState();
     const [ randomImages, setRandomImages ] = useState([]);
@@ -134,6 +135,7 @@ function MemoryGameApp({gameUrl,
 			  cardBackImageUrl={cardBackImageUrl}
 			  aspectRatio={aspectRatio}
 			  cardFrontBackgroundColor={cardFrontBackgroundColor}
+			  cardWidth={cardWidth}
 	      />
 	    }
 	</div>

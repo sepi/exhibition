@@ -76,6 +76,9 @@ class MemoryGame(ImageGame):
     card_front_background_color = models.CharField(max_length=7,
                                                    default="#222",
                                                    verbose_name=_("The color of the front of the card that is not covered by the image."))
+    card_width = models.CharField(max_length=64,
+                                  default="160px",
+                                  verbose_name=_("Card width in CSS units."))
 
 
 class MemoryGamePluginModel(CMSPlugin):
