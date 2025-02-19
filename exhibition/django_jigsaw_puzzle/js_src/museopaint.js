@@ -14,9 +14,7 @@ function hsl2rgb(h,s,l)
 // Adjust the hue by a certain degree
 function adjustHue(r, g, b, degrees) { // 
     let [h, s, l] = rgb2hsl(r, g, b);
-    console.log(h, s, l);
     h = (h + degrees) % 360; // Adjust hue and keep it in range [0, 360]
-    console.log(h, s, l);
     return hsl2rgb(h, s, l);
 }
 
@@ -77,38 +75,55 @@ function generateCircleVertices(numSegments) {
 }
 
 
-function initGl(canvas, dotResolution, dotThreshold, dotRadius, dotOpacity, dotColor) {
+function initGl(canvas, dotResolution, dotThreshold, dotRadius, dotFlow, dotColor) {
     // The drawing
-    const gl = canvas.getContext("webgl", {
-	alpha: false,
+    const gl = canvas.getContext("webgl2", {
+	alpha: true, // nothing behind the canvas to shine through
 	premultipliedAlpha: false, // important for precision!!
 	preserveDrawingBuffer: true, // So the buffer is not deleted on every blit
+	depth: true,
+	stencil: true,
+	antialias: true,
     });
 
     // Shaders
     const vs = `
+precision highp float;
 attribute vec2 pos;
-attribute float alpha;
+// attribute float alpha;
 
 uniform vec2 resolution;
 uniform vec2 dotCenter;
 uniform float dotRadius;
 
-varying float vAlpha; // To be passed to frag shader
+// varying float vAlpha; // To be passed to frag shader
 
 void main() {
   vec2 normalizedPos = ((pos * dotRadius + dotCenter) / resolution) * 2.0 - 1.0;
   normalizedPos.y *= -1.0;
   gl_Position = vec4(normalizedPos, 0, 1);
-  vAlpha = alpha;
+  //vAlpha = (dotRadius - min(distance(normalizedDotCenter, pos) * resolution.x, dotRadius)) / dotRadius * 100.0; // alpha;
 }`;
 
     const fs = `
-precision mediump float;
+precision highp float;
 uniform vec4 color;
-varying float vAlpha; // Interpolated alpha from vertex shader
+uniform vec2 resolution;
+uniform vec2 dotCenter;
+uniform float dotRadius;
+
+// varying float vAlpha; // Interpolated alpha from vertex shader
 void main() {
-  gl_FragColor = vec4(color.rgb, color.a * vAlpha);
+  // gl_FragColor = vec4(color.rgb * color.a * vAlpha, color.a * vAlpha);
+  vec2 fragCoordXy = gl_FragCoord.xy;
+fragCoordXy.y = (-1.0 * (fragCoordXy.y - resolution.y/2.0)) + resolution.y/2.0;
+  float transp = max(
+                     1.0 - distance(fragCoordXy, dotCenter) / dotRadius
+                     , 0.0);
+  float f = sin((transp - 0.5)*(3.1416/2.0));
+  // float f = transp;
+  float alpha = color.a * f;
+  gl_FragColor = vec4(color.rgb, alpha);
 }`;
 
     // Create and compile shaders
@@ -142,31 +157,39 @@ void main() {
 
     // Pass color
     const colorLoc = gl.getUniformLocation(p, "color");
-    gl.uniform4f(colorLoc, dotColor[0], dotColor[1], dotColor[2], dotOpacity);
+    gl.uniform4f(colorLoc, dotColor[0], dotColor[1], dotColor[2], dotFlow);
 
     // Set up the position attribute
     const posLoc = gl.getAttribLocation(p, "pos");
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 3 * 4, 0);
     gl.enableVertexAttribArray(posLoc);
 
-    const alphaLoc = gl.getAttribLocation(p, "alpha");
-    gl.vertexAttribPointer(alphaLoc, 1, gl.FLOAT, false, 3 * 4, 2 * 4);
-    gl.enableVertexAttribArray(alphaLoc);
+    // const alphaLoc = gl.getAttribLocation(p, "alpha");
+    // gl.vertexAttribPointer(alphaLoc, 1, gl.FLOAT, false, 3 * 4, 2 * 4);
+    // gl.enableVertexAttribArray(alphaLoc);
+
+
+    // gl.enable(gl.POLYGON_OFFSET_FILL);
+    // gl.polygonOffset(1.0, 1.0);
+    // gl.enable(gl.POLYGON_SMOOTH);
+
     
     // Enable blending for alpha blending
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // Standard 
 
-    // gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA, gl.ONE_MINUS_DST_ALPHA, gl.ONE);
+    // gl.blendFunc(gl.ONE, gl.ZERO);
+    
+    // gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA,
+    // 			 gl.ONE_MINUS_DST_ALPHA, gl.ONE);
     // gl.blendEquation(gl.FUNC_ADD);
 
     // gl.blendFunc(gl.SRC_COLOR, gl.ONE_MINUS_SRC_COLOR);
-    // gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
-    // gl.blendEquation(gl.FUNC_ADD);
+    // gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ZERO)
 
     // Set up WebGL viewport and clear color
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(1.0, 1.0, 1.0, 1);
+    gl.clearColor(1.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     return [gl, p, verts.length];
@@ -174,7 +197,7 @@ void main() {
 
 function initEventListeners(canvas, gl, p, vertsLen,
 			    mouseDown, posLast, drawnLast, traceDist,
-			    dotThreshold, dotRadius, dotColor, dotOpacity) {
+			    dotThreshold, dotRadius, dotColor, dotFlow) {
     canvas.addEventListener('mousedown', (ev) => {
 	mouseDown = true;
 	posLast = [ev.clientX, ev.clientY];
@@ -185,7 +208,7 @@ function initEventListeners(canvas, gl, p, vertsLen,
 	if (!drawnLast[0]) {
 	    const pos = [ev.clientX, ev.clientY];
 	    for (let i = 0; i < 1; ++i) {
-		drawDot(gl, p, pos, vertsLen, dotColor, dotRadius, dotOpacity);
+		drawDot(gl, p, pos, vertsLen, dotColor, dotRadius, dotFlow);
 	    }
 	}
 
@@ -205,7 +228,7 @@ function initEventListeners(canvas, gl, p, vertsLen,
 		drawDotsOnLine(gl, p,
 			       drawnLast, pos, vertsLen,
 			       dotThreshold,
-			       dotColor, dotRadius, dotOpacity);
+			       dotColor, dotRadius, dotFlow);
 		traceDist = 0;
 		drawnLast = pos;
 	    }
@@ -218,18 +241,16 @@ function initEventListeners(canvas, gl, p, vertsLen,
 	const alt = ev.getModifierState("Alt");
 	if (alt && shift) {
 	    let [r, g, b] = dotColor;
-	    console.log(r, g, b);
 	    dotColor = adjustHue(r, g, b, ev.deltaY/10.0);
-	    console.log(dotColor);
 	} else if (shift) {
-	    dotOpacity += -ev.deltaY/100000.0
-	    if (dotOpacity < 0) {
-		dotOpacity = 0;
+	    dotFlow += -ev.deltaY/100000.0
+	    if (dotFlow < 0) {
+		dotFlow = 0;
 	    }
-	    if (dotOpacity >= 1) {
-		dotOpacity = 1;
+	    if (dotFlow >= 1) {
+		dotFlow = 1;
 	    }
-	    console.log("dotOpacity", dotOpacity);
+	    console.log("dotFlow", dotFlow);
 	} else {
 	    dotRadius += -ev.deltaY/100;
 	    dotRadius = Math.round(dotRadius);
@@ -270,14 +291,14 @@ export default function museopaint() {
     rootEl.appendChild(canvas);
 
     // Config
-    const dotThreshold = 3;
-    let dotRadius = 20;
-    let dotOpacity = 0.6;
-    let dotColor = [1, 0, 0];
-    const dotResolution = 64;
+    const dotThreshold = 2;
+    let dotRadius = 40;
+    let dotFlow = 0.9;
+    let dotColor = [0.0, 1.0, 0.0];
+    const dotResolution = 128;
 
     const [gl, p, vertsLen] = initGl(canvas,
-				     dotResolution, dotThreshold, dotRadius, dotOpacity, dotColor);
+				     dotResolution, dotThreshold, dotRadius, dotFlow, dotColor);
 
     // Click handling
     let mouseDown = false;
@@ -287,5 +308,5 @@ export default function museopaint() {
 
     initEventListeners(canvas, gl, p, vertsLen,
 		       mouseDown, posLast, drawnLast, traceDist,
-		       dotThreshold, dotRadius, dotColor, dotOpacity)
+		       dotThreshold, dotRadius, dotColor, dotFlow)
 }
