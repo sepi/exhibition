@@ -525,6 +525,7 @@ export default function museopaint() {
   <button id="sizeSmall" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)"></button>
   <button id="sizeMedium" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></button>
   <button id="sizeLarge" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></button>
+  <button id="clear" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
 </div>
 `;
     rootEl.innerHTML = gizmosHtml;
@@ -533,6 +534,7 @@ export default function museopaint() {
     const buttonSizeSmall = document.getElementById('sizeSmall');
     const buttonSizeMedium = document.getElementById('sizeMedium');
     const buttonSizeLarge = document.getElementById('sizeLarge');
+    const buttonClear = document.getElementById('clear');
     const canvas = document.createElement('canvas');
     // canvas.style = "position: absolute; top: 0, left: 0; z-index: 0;"
 
@@ -572,7 +574,6 @@ export default function museopaint() {
     });
 
 
-
     const [gl,
 	   quadShader, quadVao,
 	   strokeFramebuffer, strokeShader,
@@ -589,6 +590,18 @@ export default function museopaint() {
 	strokeCoords: [],
 	touchEventId: null,
     };
+
+
+    buttonClear.addEventListener('click', (ev) => {
+	gl.bindFramebuffer(gl.FRAMEBUFFER, strokeFramebuffer.fbo);
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+
+	gl.bindFramebuffer(gl.FRAMEBUFFER, paintingFramebuffer.fbo);
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+    });
+
 
     initEventListeners(canvas, gl,
 		       strokeShader,
