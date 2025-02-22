@@ -124,3 +124,33 @@ code {
 	transform: scale(1) rotateY(180deg);
     }
 }
+
+/* Museopaint */
+.gizmos {
+    position: absolute;
+    top: 0, left: 0;
+    width:200px; height: 100%;
+    background: rgba(255, 255, 255, 0);
+    pointer-events: none; z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.gizmos > input, .gizmos > button {
+    background: none;
+    color: inherit;
+    background-repeat: no-repeat;
+    pointer-events: auto;
+    border:none;
+    margin: 4px;
+}
+
+.colorPicker {
+    width: 36px;
+    padding: 0px;
+}
+
+.sizeButton {
+    width: 36px;
+    height: 36px;
+}

@@ -260,12 +260,9 @@ function createProgram(gl, vs, fs) {
 function initGl(canvas, drawTool) {
     // The drawing
     const gl = canvas.getContext("webgl2", {
-	alpha: true, // nothing behind the canvas to shine through
-	premultipliedAlpha: true, // important for precision!!
+	alpha: false, // nothing behind the canvas to shine through
+	premultipliedAlpha: false, // important for precision!!
 	preserveDrawingBuffer: false,
-	depth: true,
-	stencil: true,
-	antialias: true,
     });
 
     // Shaders
@@ -361,6 +358,7 @@ void main() {
     // Sample the texture at the given UV coordinate
     vec4 tNonPremul = texture(uTexture, vTexCoord);
     // vec4 t = vec4(tNonPremul.xyz * tNonPremul.w, tNonPremul.w);
+    //vec4 t = vec4(tNonPremul.xyz * tNonPremul.w, 1.0);
     if (gammaCorrect) {
         fragColor = linearToSRGB(tNonPremul);
     } else {
@@ -392,31 +390,44 @@ function initEventListeners(canvas, gl,
 			    paintingFramebuffer,
 			    quadShader, quadVao,
 			    drawState, drawTool) {
-    canvas.addEventListener('mousedown', (ev) => {
+    function drawStart(ev) {
+	ev.preventDefault();
+
+	let x, y;
+	if (ev.type === 'touchstart') {
+	    console.log('touchstart');
+	    const ts = ev.changedTouches;
+	    if (ts.length > 0) {
+		const touch = ts.item(0);
+		drawState.touchEventId = touch.identifier;
+		[x, y] = [touch.cientX, touch.clientY];
+	    }
+	} else {
+	    [x, y] = [ev.clientX, ev.clientY];
+	}
+
 	drawState.mouseDown = true;
 	drawState.posLast = [ev.clientX, ev.clientY];
-    });
+    }
+    canvas.addEventListener('mousedown', drawStart);
+    canvas.addEventListener('touchstart', drawStart);
 
-    canvas.addEventListener('mouseup', (ev) => {
-	// Single clicks
-	if (!drawState.drawnLast[0]) {
-	    const pos = [ev.clientX, ev.clientY];
-	    for (let i = 0; i < 1; ++i) {
-		//drawDot(gl, strokeShader, pos, vertsLen, dotColor, dotRadius, dotFlow);
-	    }
+
+    function toolMove(ev) {
+	ev.preventDefault();
+
+	let x, y;
+	if (ev.type === 'touchmove' && drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
+	    console.log("touchmove");
+	    const touch = ev.changedTouches.item(drawState.touchEventId);
+	    [x, y] = [touch.clientX, touch.clientY];
+	} else {
+	    [x, y] = [ev.clientX, ev.clientY];
 	}
-	finalizeStroke(gl, strokeFramebuffer, paintingFramebuffer, quadShader, quadVao);
 
-	drawState.strokeCoords = [];
-	drawState.mouseDown = false;
-	drawState.drawnLast = [null, null];
-    });
-
-    canvas.addEventListener('mousemove', (ev) => {
 	if (drawState.mouseDown) {
-	    const pos = [ev.clientX, ev.clientY];
-	    const [x, y] = pos;
-	    const d = dist(pos, drawState.posLast);
+	    const pos = [x, y];
+ 	    const d = dist(pos, drawState.posLast);
 
 	    drawState.traceDist += d;
 
@@ -429,33 +440,66 @@ function initEventListeners(canvas, gl,
 
 	    drawState.posLast = pos;
 	}
-    });
+    }
+    canvas.addEventListener('mousemove', toolMove);
+    canvas.addEventListener('touchmove', toolMove);
 
-    canvas.addEventListener('wheel', (ev) => {
-	const shift = ev.getModifierState("Shift");
-	const alt = ev.getModifierState("Alt");
-	if (alt && shift) {
-	    let [r, g, b] = drawTool.color;
-	    drawTool.color = adjustHue(r, g, b, ev.deltaY/10.0);
-	    console.log("drawTool.color", drawTool.color);
-	} else if (shift) {
-	    drawTool.flow += -ev.deltaY/10000.0
-	    if (drawTool.flow < 0) {
-		drawTool.flow = 0;
+
+    function drawEnd(ev) {
+	ev.preventDefault();
+
+	// This touchend is not for the touch tracked
+	if (ev.type === 'touchend' ) {
+	    console.log("touchend");
+	    if (drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
+		drawState.touchEventId = null;
+	    } else {
+		return;
 	    }
-	    if (drawTool.flow >= 1) {
-		drawTool.flow = 1;
-	    }
-	    console.log("drawTool.flow", drawTool.flow);
-	} else {
-	    drawTool.radius += -ev.deltaY/100;
-	    drawTool.radius = Math.round(drawTool.radius);
-	    if (drawTool.radius < 1) {
-		drawTool.radius = 1;
-	    }
-	    console.log("drawTool.radius", drawTool.radius);
 	}
-    });
+
+	// Single clicks
+	if (!drawState.drawnLast[0]) {
+	    const pos = [ev.clientX, ev.clientY];
+	    for (let i = 0; i < 1; ++i) {
+		//drawDot(gl, strokeShader, pos, vertsLen, dotColor, dotRadius, dotFlow);
+	    }
+	}
+	finalizeStroke(gl, strokeFramebuffer, paintingFramebuffer, quadShader, quadVao);
+
+	drawState.strokeCoords = [];
+	drawState.mouseDown = false;
+	drawState.drawnLast = [null, null];
+    }
+    canvas.addEventListener('mouseup', drawEnd);
+    canvas.addEventListener('touchend', drawEnd);
+    canvas.addEventListener('touchcancel', drawEnd);
+
+    // canvas.addEventListener('wheel', (ev) => {
+    // 	const shift = ev.getModifierState("Shift");
+    // 	const alt = ev.getModifierState("Alt");
+    // 	if (alt && shift) {
+    // 	    let [r, g, b] = drawTool.color;
+    // 	    drawTool.color = adjustHue(r, g, b, ev.deltaY/10.0);
+    // 	    console.log("drawTool.color", drawTool.color);
+    // 	} else if (shift) {
+    // 	    drawTool.flow += -ev.deltaY/10000.0
+    // 	    if (drawTool.flow < 0) {
+    // 		drawTool.flow = 0;
+    // 	    }
+    // 	    if (drawTool.flow >= 1) {
+    // 		drawTool.flow = 1;
+    // 	    }
+    // 	    console.log("drawTool.flow", drawTool.flow);
+    // 	} else {
+    // 	    drawTool.radius += -ev.deltaY/100;
+    // 	    drawTool.radius = Math.round(drawTool.radius);
+    // 	    if (drawTool.radius < 1) {
+    // 		drawTool.radius = 1;
+    // 	    }
+    // 	    console.log("drawTool.radius", drawTool.radius);
+    // 	}
+    // });
 
     canvas.addEventListener('mouseenter', (ev) => {
 	if (drawState.mouseDown) {
@@ -464,21 +508,31 @@ function initEventListeners(canvas, gl,
     });
 }
 
+function hex2rgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return [parseInt(result[1], 16) / 256, parseInt(result[2], 16) / 256, parseInt(result[3], 16) / 256];
+}
+
 export default function museopaint() {
     // DOM
-    const rootEl = document.getElementById("game");
+    const rootEl = document.getElementById('game');
     rootEl.style.width = "100vw";
     rootEl.style.height = "100vh";
 
     const gizmosHtml = `
-<div style="position: absolute; top: 0, left: 0; width:200px; height: 100%; background: rgba(255, 255, 255, 0); pointer-events: none; z-index: 1;">
-  <span>Hello</span>
-  <input type="color" id="colorPicker" style="pointer-events: auto;">
+<div style="" class="gizmos">
+  <input type="color" id="colorPicker" class="colorPicker" value="#00aaaa">
+  <button id="sizeSmall" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)"></button>
+  <button id="sizeMedium" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></button>
+  <button id="sizeLarge" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></button>
 </div>
 `;
-    // rootEl.innerHtml = gizmosHtml;
-    // console.log(rootEl.innerHtml);
-    
+    rootEl.innerHTML = gizmosHtml;
+
+    const colorPicker = document.getElementById('colorPicker');
+    const buttonSizeSmall = document.getElementById('sizeSmall');
+    const buttonSizeMedium = document.getElementById('sizeMedium');
+    const buttonSizeLarge = document.getElementById('sizeLarge');
     const canvas = document.createElement('canvas');
     // canvas.style = "position: absolute; top: 0, left: 0; z-index: 0;"
 
@@ -488,14 +542,36 @@ export default function museopaint() {
 
     // Config
     let drawTool = {
-	color: [0.0, 1.0, 0.0],
+	color: undefined,
 	flow: 0.8,
 	radius: 5,
-	spacing: 2,
+	spacing: 1,
 	numSegments: 16,
 	vertsLen: null,
 	vao: null,
     }
+
+    colorPicker.addEventListener('input', (ev) => {
+	drawTool.color = hex2rgb(ev.target.value);
+    });
+    window.addEventListener('load', (ev) => {
+	drawTool.color = hex2rgb(colorPicker.value);
+    });
+    
+
+    buttonSizeSmall.addEventListener('click', (ev) => {
+	drawTool.radius = 2;
+    });
+
+    buttonSizeMedium.addEventListener('click', (ev) => {
+	drawTool.radius = 6;
+    });
+
+    buttonSizeLarge.addEventListener('click', (ev) => {
+	drawTool.radius = 20;
+    });
+
+
 
     const [gl,
 	   quadShader, quadVao,
@@ -511,6 +587,7 @@ export default function museopaint() {
 	drawnLast: [null, null],
 	traceDist: 0,
 	strokeCoords: [],
+	touchEventId: null,
     };
 
     initEventListeners(canvas, gl,
