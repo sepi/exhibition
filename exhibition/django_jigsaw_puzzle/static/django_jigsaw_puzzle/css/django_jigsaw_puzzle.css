@@ -128,29 +128,53 @@ code {
 /* Museopaint */
 .gizmos {
     position: absolute;
-    top: 0, left: 0;
-    width:200px; height: 100%;
     background: rgba(255, 255, 255, 0);
     pointer-events: none; z-index: 1;
+    margin: 4px;
     display: flex;
+    gap: 3px;
+}
+
+.gizmos-left {
+    top: 0;
+    left: 0;
     flex-direction: column;
+}
+
+.gizmos-bottom {
+    bottom: 0;
+    left: 0;
+
+    flex-direction: row;
 }
 
 .gizmos > input, .gizmos > button {
     background: none;
     color: inherit;
     background-repeat: no-repeat;
+    background-position: center;
     pointer-events: auto;
-    border:none;
-    margin: 4px;
+    border: none;
+    /* margin: 2px 6px; */
+
+    margin: 0;
+    padding: 0;
+    width: 42px;
+    height: 42px;
+
+    border-radius: 3px;
 }
 
-.colorPicker {
-    width: 36px;
-    padding: 0px;
+.color-picker {
+    /* width: 36px; */
+    /* padding: 0px; */
 }
 
-.sizeButton {
-    width: 36px;
-    height: 36px;
+.size-button {
+    /* width: 42px; */
+    /* height: 42px; */
+}
+
+.color-button {
+    border: 1px solid gray !important;
 }

@@ -39,7 +39,6 @@ function initEventListeners(canvas, gl,
 
 	drawState.mouseDown = true;
 	drawState.strokeCoords.push([x, y]);
-	// drawState.posLast = [x, y];
     }
     canvas.addEventListener('mousedown', drawStart);
     canvas.addEventListener('touchstart', drawStart);
@@ -59,18 +58,7 @@ function initEventListeners(canvas, gl,
 
 	if (drawState.mouseDown) {
 	    const pos = [x, y];
- 	    // const d = dist(pos, drawState.posLast);
-
-	    // drawState.traceDist += d;
-
-	    // if (drawState.traceDist >= drawTool.spacing) {
-		drawState.strokeCoords.push(pos);
-
-		// drawState.traceDist = 0;
-		// drawState.drawnLast = pos;
-	    // }
-
-	    // drawState.posLast = pos;
+	    drawState.strokeCoords.push(pos);
 	}
     }
     canvas.addEventListener('mousemove', toolMove);
@@ -91,7 +79,7 @@ function initEventListeners(canvas, gl,
 	}
 
 	// Single clicks
-	// if (!drawState.drawnLast[0]) {
+	// if (drawState.strokeCoords.length===0) {
 	//     const pos = [ev.clientX, ev.clientY];
 	//     for (let i = 0; i < 1; ++i) {
 	//         drawDot(gl, strokeShader, pos, vertsLen, dotColor, dotRadius, dotFlow);
@@ -101,7 +89,6 @@ function initEventListeners(canvas, gl,
 
 	drawState.strokeCoords = [];
 	drawState.mouseDown = false;
-	// drawState.drawnLast = [null, null];
     }
     canvas.addEventListener('mouseup', drawEnd);
     canvas.addEventListener('touchend', drawEnd);
@@ -115,6 +102,22 @@ function initEventListeners(canvas, gl,
     });
 }
 
+function addColorButton(parent, color, setColor) {
+    const button = document.createElement('button');
+    button.id = `button${color}`;
+    button.style = `background-color: ${color};`;
+    button.className = 'color-button';
+
+    button.addEventListener('click', (ev) => {
+	ev.preventDefault();
+	setColor(hex2rgb(color));
+    });
+
+    parent.appendChild(button);
+
+    return button;
+}
+
 export default function museopaint() {
     // DOM
     const rootEl = document.getElementById('game');
@@ -122,27 +125,35 @@ export default function museopaint() {
     rootEl.style.height = "100vh";
 
     const gizmosHtml = `
-<div style="" class="gizmos">
-  <input type="color" id="colorPicker" class="colorPicker" value="#00aaaa">
-  <button id="sizeSmall" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)"></button>
-  <button id="sizeMedium" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></button>
-  <button id="sizeLarge" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></button>
-  <button id="clear" class="sizeButton" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
+<div class="gizmos-left gizmos">
+  <input type="color" id="colorPicker" class="color-picker" value="#00aaaa">
+
+  <button id="buttonClear" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
+  <button id="buttonSizeSmall" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)"></button>
+  <button id="buttonSizeMedium" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></button>
+  <button id="buttonSizeLarge" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></button>
+</div>
+
+<div id="colorGizmos" class="gizmos-bottom gizmos">
 </div>
 `;
     rootEl.innerHTML = gizmosHtml;
 
-    const colorPicker = document.getElementById('colorPicker');
-    const buttonSizeSmall = document.getElementById('sizeSmall');
-    const buttonSizeMedium = document.getElementById('sizeMedium');
-    const buttonSizeLarge = document.getElementById('sizeLarge');
-    const buttonClear = document.getElementById('clear');
     const canvas = document.createElement('canvas');
-    // canvas.style = "position: absolute; top: 0, left: 0; z-index: 0;"
+
+    const colorPicker = document.getElementById('colorPicker');
+
+    const buttonSizeSmall = document.getElementById('buttonSizeSmall');
+    const buttonSizeMedium = document.getElementById('buttonSizeMedium');
+    const buttonSizeLarge = document.getElementById('buttonSizeLarge');
+
+
+    const buttonClear = document.getElementById('buttonClear');
 
     canvas.width = rootEl.clientWidth;
     canvas.height = rootEl.clientHeight;
     rootEl.appendChild(canvas);
+
 
     // Config
     let drawTool = {
@@ -154,6 +165,16 @@ export default function museopaint() {
 	vertsLen: null,
 	vao: null,
     }
+
+    const colorGizmos = document.getElementById('colorGizmos');
+    const colorButtons = {};
+    function setColor(color) {
+	drawTool.color = color;
+    }
+    for (let color of ["#FFFFFF", "#000000", "#FF0000", "#00FF00", "#0000FF"]) {
+	colorButtons[color] = addColorButton(colorGizmos, color, setColor);
+    }
+
 
     colorPicker.addEventListener('input', (ev) => {
 	drawTool.color = hex2rgb(ev.target.value);
@@ -186,8 +207,6 @@ export default function museopaint() {
     // Click handling
     let drawState = {
 	mouseDown: false,
-	// posLast: [null, null],
-	// drawnLast: [null, null],
 	traceDist: 0,
 	strokeCoords: [],
 	touchEventId: null,
@@ -243,6 +262,5 @@ export default function museopaint() {
 		       drawState, drawTool);
 
     // Init render loop
-    // render();
     requestAnimationFrame(() => render(true));
 }
