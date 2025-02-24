@@ -131,21 +131,23 @@ code {
     background: rgba(255, 255, 255, 0);
     pointer-events: none; z-index: 1;
     margin: 4px;
-    display: flex;
+    display: grid;
     gap: 3px;
 }
 
 .gizmos-left {
     top: 0;
     left: 0;
-    flex-direction: column;
+    /* flex-direction: column; */
+    /* grid-template-columns: 1fr; */
 }
 
 .gizmos-bottom {
     bottom: 0;
     left: 0;
 
-    flex-direction: row;
+    /* flex-direction: row; */
+    /* grid-template-rows: 1fr; */
 }
 
 .gizmos > input, .gizmos > button {

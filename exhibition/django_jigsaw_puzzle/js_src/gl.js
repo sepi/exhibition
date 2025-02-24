@@ -191,6 +191,13 @@ uniform vec2 resolution;
 uniform vec2 dotCenter;
 uniform float dotRadius;
 
+vec4 toLinear(vec4 srgbColor) {
+  vec3 rgb = srgbColor.rgb;
+  vec3 linearRGB = mix(rgb / 12.92, pow((rgb + 0.055) / 1.055, vec3(2.4)), step(0.04045, rgb));
+  return vec4(srgbColor.rgb, srgbColor.a);
+}
+
+
 void main() {
   vec2 fragCoordXy = gl_FragCoord.xy;
   fragCoordXy.y = (-1.0 * (fragCoordXy.y - resolution.y/2.0)) + resolution.y/2.0;
@@ -207,9 +214,10 @@ void main() {
       float c = -k;
       opacity = clamp(distNorm * k + c, 0.0, 1.0);
   }
-  float alpha = color.a * opacity;
-  // if (alpha < 0.04) discard;
-  gl_FragColor = vec4(color.rgb * alpha, alpha);
+  vec4 colorLinear = toLinear(color);
+  //vec4 colorLinear = color;
+  float alpha = colorLinear.a * opacity;
+  gl_FragColor = vec4(colorLinear.rgb * alpha, alpha);
 }`;
     const strokeShader = createProgram(gl, strokeVs, strokeFs);
 

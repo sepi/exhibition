@@ -1,6 +1,33 @@
 import { renderStroke, renderFramebuffer, initGl } from './gl.js' 
 import { dist } from './common.js';
 
+function rgb2hsl(r,g,b) {
+  let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
+  let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+  return [60*(h<0?h+6:h), f ? c/f : 0, (v+v-c)/2];
+}
+
+function hsl2rgb(h,s,l) {
+   let a=s*Math.min(l,1-l);
+   let f= (n,k=(n+h/30)%12) => l - a*Math.max(Math.min(k-3,9-k,1),-1);
+   return [f(0),f(8),f(4)];
+}
+
+// Adjust the hue by a certain degree
+function adjustHue(color, degrees) {
+    const [r, g, b] = color;
+    let [h, s, l] = rgb2hsl(r, g, b);
+    h = (h + degrees) % 360; // Adjust hue and keep it in range [0, 360]
+    return hsl2rgb(h, s, l);
+}
+
+function adjustLightness(color, dl) {
+    const [r, g, b] = color;
+    let [h, s, l] = rgb2hsl(r, g, b);
+    l += dl;
+    return hsl2rgb(h, s, Math.max(Math.min(l, 1.0), 0.0));
+}
+
 function cubicSplineInterpolate(points, maxDist) {
     // Helper to calculate distance between two points
     // const distance = (p1, p2) => Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
@@ -150,18 +177,22 @@ function initEventListeners(canvas, gl,
 
 function addColorButton(parent, color, setColor) {
     const button = document.createElement('button');
-    button.id = `button${color}`;
-    button.style = `background-color: ${color};`;
+    button.id = `button${color[0]}${color[1]}${color[2]}`;
+    button.style = `background-color: rgb(${color[0]*255}, ${color[1]*255}, ${color[2]*255});`;
     button.className = 'color-button';
 
     button.addEventListener('click', (ev) => {
 	ev.preventDefault();
-	setColor(hex2rgb(color));
+	setColor(color);
     });
 
     parent.appendChild(button);
 
     return button;
+}
+
+function gridLayout(el, rows, cols) {
+    el.style = `grid-template-rows: repeat(${rows}, 1fr); grid-template-columns: repeat(${cols}, auto);`;
 }
 
 export default function museopaint() {
@@ -172,22 +203,18 @@ export default function museopaint() {
 
     const gizmosHtml = `
 <div class="gizmos-left gizmos">
-  <input type="color" id="colorPicker" class="color-picker" value="#00aaaa">
-
   <button id="buttonClear" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
   <button id="buttonSizeSmall" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)"></button>
   <button id="buttonSizeMedium" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></button>
   <button id="buttonSizeLarge" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></button>
 </div>
 
-<div id="colorGizmos" class="gizmos-bottom gizmos">
+<div id="gizmosBottom" class="gizmos-bottom gizmos">
 </div>
 `;
     rootEl.innerHTML = gizmosHtml;
 
     const canvas = document.createElement('canvas');
-
-    const colorPicker = document.getElementById('colorPicker');
 
     const buttonSizeSmall = document.getElementById('buttonSizeSmall');
     const buttonSizeMedium = document.getElementById('buttonSizeMedium');
@@ -212,21 +239,28 @@ export default function museopaint() {
 	vao: null,
     }
 
-    const colorGizmos = document.getElementById('colorGizmos');
+    const gizmosBottom = document.getElementById('gizmosBottom');
     const colorButtons = {};
     function setColor(color) {
 	drawTool.color = color;
     }
-    for (let color of ["#FFFFFF", "#000000", "#FF0000", "#00FF00", "#0000FF"]) {
-	colorButtons[color] = addColorButton(colorGizmos, color, setColor);
+
+    const hueCount = 16;
+    const lightnessCount = 3;
+    for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
+	let color = [1, 0, 0];
+	color = adjustLightness(color, -0.2*lightnessIdx);
+	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
+	    colorButtons[color] = addColorButton(gizmosBottom, color, setColor);
+	    color =  adjustHue(color, 265/hueCount);
+	}
     }
+    gridLayout(document.querySelector('.gizmos-left'), 16, 1);
+    gridLayout(gizmosBottom, 1, 3*hueCount);
 
-
-    colorPicker.addEventListener('input', (ev) => {
-	drawTool.color = hex2rgb(ev.target.value);
-    });
+    
     window.addEventListener('load', (ev) => {
-	drawTool.color = hex2rgb(colorPicker.value);
+	drawTool.color = [1.0, 0.0, 0.0];
     });
     
 
