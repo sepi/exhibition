@@ -1,64 +1,5 @@
 import { dist } from './common.js';
 
-function cubicSplineInterpolate(points, maxDist) {
-    // Helper to calculate distance between two points
-    // const distance = (p1, p2) => Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
-
-    // Catmull-Rom spline interpolation
-    const interpolate = (p0, p1, p2, p3, t) => {
-        const t2 = t * t;
-        const t3 = t2 * t;
-
-        return [
-            0.5 * ((2 * p1[0]) +
-                   (-p0[0] + p2[0]) * t +
-                   (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
-                   (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
-            0.5 * ((2 * p1[1]) +
-                   (-p0[1] + p2[1]) * t +
-                   (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
-                   (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
-        ];
-    };
-
-    // Result array for interpolated points
-    const result = [];
-    if (points.length === 0) {
-	return result;
-    }
-
-    // Loop through all segments
-    for (let i = 0; i < points.length - 1; i++) {
-        // Get 4 control points: p0, p1, p2, p3
-        const p0 = points[i - 1 < 0 ? 0 : i - 1];
-        const p1 = points[i];
-        const p2 = points[i + 1 >= points.length ? points.length - 1 : i + 1];
-        const p3 = points[i + 2 >= points.length ? points.length - 1 : i + 2];
-
-        // Add the current point to the result
-        if (result.length === 0) result.push(p1);
-
-        // Interpolate between p1 and p2
-        let t = 0;
-        let prev = p1;
-
-        for (let t = 0.0; t < 1.0; t += 0.01) {
-            const pt = interpolate(p0, p1, p2, p3, t);
-
-            // Check distance to previous point
-            if (t === 0.0 || dist(prev, pt) >= maxDist) {
-                result.push(pt);
-                prev = pt;
-            }
-        }
-    }
-
-    // Add the last point
-    result.push(points[points.length - 1]);
-
-    return result;
-}
-
 // Vertex data for a circle
 function generateCircleVertices(numSegments) {
     const verts = [];
@@ -72,7 +13,7 @@ function generateCircleVertices(numSegments) {
     return verts;
 }
 
-export function renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, drawState) {
+export function renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, strokeCoords) {
     const [r, g, b] = drawTool.color;
 
     const colorLoc = gl.getUniformLocation(strokeShader, "color");
@@ -95,9 +36,7 @@ export function renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, draw
 
     gl.bindVertexArray(drawTool.vao);
 
-    const interpolatedCoords = cubicSplineInterpolate(drawState.strokeCoords, drawTool.spacing);
-
-    for (const [x, y] of interpolatedCoords) {
+    for (const [x, y] of strokeCoords) {
 	gl.uniform2f(dotCenterLoc, x, y);
 	gl.drawArrays(gl.TRIANGLE_FAN, 0, drawTool.numSegments+2 );
     }

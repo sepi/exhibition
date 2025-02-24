@@ -1,14 +1,71 @@
 import { renderStroke, renderFramebuffer, initGl } from './gl.js' 
 import { dist } from './common.js';
 
+function cubicSplineInterpolate(points, maxDist) {
+    // Helper to calculate distance between two points
+    // const distance = (p1, p2) => Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+
+    // Catmull-Rom spline interpolation
+    const interpolate = (p0, p1, p2, p3, t) => {
+        const t2 = t * t;
+        const t3 = t2 * t;
+
+        return [
+            0.5 * ((2 * p1[0]) +
+                   (-p0[0] + p2[0]) * t +
+                   (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
+                   (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+            0.5 * ((2 * p1[1]) +
+                   (-p0[1] + p2[1]) * t +
+                   (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
+                   (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+        ];
+    };
+
+    // Result array for interpolated points
+    const result = [];
+    if (points.length === 0) {
+	return result;
+    }
+
+    // Loop through all segments
+    for (let i = 0; i < points.length - 1; i++) {
+        // Get 4 control points: p0, p1, p2, p3
+        const p0 = points[i - 1 < 0 ? 0 : i - 1];
+        const p1 = points[i];
+        const p2 = points[i + 1 >= points.length ? points.length - 1 : i + 1];
+        const p3 = points[i + 2 >= points.length ? points.length - 1 : i + 2];
+
+        // Add the current point to the result
+        if (result.length === 0) result.push(p1);
+
+        // Interpolate between p1 and p2
+        let t = 0;
+        let prev = p1;
+
+        for (let t = 0.0; t < 1.0; t += 0.01) {
+            const pt = interpolate(p0, p1, p2, p3, t);
+
+            // Check distance to previous point
+            if (t === 0.0 || dist(prev, pt) >= maxDist) {
+                result.push(pt);
+                prev = pt;
+            }
+        }
+    }
+
+    // Add the last point
+    result.push(points[points.length - 1]);
+
+    return result;
+}
+
 function hex2rgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return [parseInt(result[1], 16) / 256, parseInt(result[2], 16) / 256, parseInt(result[3], 16) / 256];
 }
 
 function finalizeStroke(gl, strokeFramebuffer, paintingFramebuffer, quadShader, quadVao) {
-    console.log("Finalize stroke");
-
     // Blend stroke to painting
     renderFramebuffer(gl, strokeFramebuffer.texture, paintingFramebuffer.fbo,
 		      quadShader, quadVao, false);
@@ -26,7 +83,6 @@ function initEventListeners(canvas, gl,
 
 	let x, y;
 	if (ev.type === 'touchstart') {
-	    console.log('touchstart');
 	    const ts = ev.changedTouches;
 	    if (ts.length > 0) {
 		const touch = ts.item(0);
@@ -46,10 +102,8 @@ function initEventListeners(canvas, gl,
     
     function toolMove(ev) {
 	ev.preventDefault();
-
 	let x, y;
 	if (ev.type === 'touchmove' && drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
-	    console.log("touchmove");
 	    const touch = ev.changedTouches.item(drawState.touchEventId);
 	    [x, y] = [touch.clientX, touch.clientY];
 	} else {
@@ -70,21 +124,13 @@ function initEventListeners(canvas, gl,
 
 	// This touchend is not for the touch tracked
 	if (ev.type === 'touchend' ) {
-	    console.log("touchend");
 	    if (drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
 		drawState.touchEventId = null;
 	    } else {
 		return;
 	    }
 	}
-
-	// Single clicks
-	// if (drawState.strokeCoords.length===0) {
-	//     const pos = [ev.clientX, ev.clientY];
-	//     for (let i = 0; i < 1; ++i) {
-	//         drawDot(gl, strokeShader, pos, vertsLen, dotColor, dotRadius, dotFlow);
-	//     }
-	// }
+	
 	finalizeStroke(gl, strokeFramebuffer, paintingFramebuffer, quadShader, quadVao);
 
 	drawState.strokeCoords = [];
@@ -230,11 +276,18 @@ export default function museopaint() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
 	if (drawState.mouseDown) {
-	    console.log("Render mouse down");
             // Render accumulated stroke to intermediary
             // framebuffer. This buffer is re-rendered on every frame
             // although it could be done incrementally.
-            renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, drawState);
+	    let coords = [];
+	    if (drawState.strokeCoords.length === 1) { // single click or tap
+		for (let i = 0; i < 5; ++i) {
+		    coords.push(drawState.strokeCoords[0]);
+		}
+	    } else {
+		coords = cubicSplineInterpolate(drawState.strokeCoords, drawTool.spacing);
+	    }
+            renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, coords);
 	}
 
         // Draw painting on default framebuffer
