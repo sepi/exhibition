@@ -1,4 +1,4 @@
-import { renderStroke, renderFramebuffer, initGl } from './gl.js' 
+import { renderStroke, renderFramebuffer, recreateFramebuffer, clearToDrawToolColor, initGl } from './gl.js' 
 import { dist } from './common.js';
 
 function rgb2hsl(r,g,b) {
@@ -28,10 +28,12 @@ function adjustLightness(color, dl) {
     return hsl2rgb(h, s, Math.max(Math.min(l, 1.0), 0.0));
 }
 
-function cubicSplineInterpolate(points, maxDist) {
-    // Helper to calculate distance between two points
-    // const distance = (p1, p2) => Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+function hex2rgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return [parseInt(result[1], 16) / 256, parseInt(result[2], 16) / 256, parseInt(result[3], 16) / 256];
+}
 
+function cubicSplineInterpolate(points, maxDist) {
     // Catmull-Rom spline interpolation
     const interpolate = (p0, p1, p2, p3, t) => {
         const t2 = t * t;
@@ -87,22 +89,16 @@ function cubicSplineInterpolate(points, maxDist) {
     return result;
 }
 
-function hex2rgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return [parseInt(result[1], 16) / 256, parseInt(result[2], 16) / 256, parseInt(result[3], 16) / 256];
-}
-
-function finalizeStroke(gl, strokeFramebuffer, paintingFramebuffer, quadShader, quadVao) {
+function finalizeStroke(gl, canvas, drawState, quadShader, quadVao) {
     // Blend stroke to painting
-    renderFramebuffer(gl, strokeFramebuffer.texture, paintingFramebuffer.fbo,
+    renderFramebuffer(gl, canvas.width, canvas.height,
+		      drawState.strokeFramebuffer.texture, drawState.paintingFramebuffer.fbo,
 		      quadShader, quadVao, false);
 }
 
 
 function initEventListeners(canvas, gl,
 			    strokeShader,
-			    strokeFramebuffer,
-			    paintingFramebuffer,
 			    quadShader, quadVao,
 			    drawState, drawTool) {
     function drawStart(ev) {
@@ -114,10 +110,10 @@ function initEventListeners(canvas, gl,
 	    if (ts.length > 0) {
 		const touch = ts.item(0);
 		drawState.touchEventId = touch.identifier;
-		[x, y] = [touch.cientX, touch.clientY];
+		[x, y] = [touch.offsetX, touch.offsetY];
 	    }
 	} else {
-	    [x, y] = [ev.clientX, ev.clientY];
+	    [x, y] = [ev.offsetX, ev.offsetY];
 	}
 
 	drawState.mouseDown = true;
@@ -132,9 +128,9 @@ function initEventListeners(canvas, gl,
 	let x, y;
 	if (ev.type === 'touchmove' && drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
 	    const touch = ev.changedTouches.item(drawState.touchEventId);
-	    [x, y] = [touch.clientX, touch.clientY];
+	    [x, y] = [touch.offsetX, touch.offsetY];
 	} else {
-	    [x, y] = [ev.clientX, ev.clientY];
+	    [x, y] = [ev.offsetX, ev.offsetY];
 	}
 
 	if (drawState.mouseDown) {
@@ -158,7 +154,7 @@ function initEventListeners(canvas, gl,
 	    }
 	}
 	
-	finalizeStroke(gl, strokeFramebuffer, paintingFramebuffer, quadShader, quadVao);
+	finalizeStroke(gl, canvas, drawState, quadShader, quadVao);
 
 	drawState.strokeCoords = [];
 	drawState.mouseDown = false;
@@ -170,19 +166,24 @@ function initEventListeners(canvas, gl,
 
     canvas.addEventListener('mouseenter', (ev) => {
 	if (drawState.mouseDown) {
-	    // drawState.drawnLast = [ev.clientX, ev.clientY];
+	    // drawState.drawnLast = [ev.offsetX, ev.offsetY];
 	}
     });
 }
 
-function addColorButton(parent, color, setColor) {
-    const button = document.createElement('button');
+function addColorButton(parent, color, setColor, checked = False) {
+    const button = document.createElement('input');
+    button.name = 'color';
+    button.type = 'radio';
     button.id = `button${color[0]}${color[1]}${color[2]}`;
     button.style = `background-color: rgb(${color[0]*255}, ${color[1]*255}, ${color[2]*255});`;
     button.className = 'color-button';
+    if (checked) {
+	button.checked = 'checked';
+    }
 
     button.addEventListener('click', (ev) => {
-	ev.preventDefault();
+	// ev.preventDefault();
 	setColor(color);
     });
 
@@ -195,18 +196,25 @@ function gridLayout(el, rows, cols) {
     el.style = `grid-template-rows: repeat(${rows}, 1fr); grid-template-columns: repeat(${cols}, auto);`;
 }
 
-export default function museopaint() {
+function resizeCanvas(canvas, width, height, canvasBorderWidth) {
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.margin = `${canvasBorderWidth}px`;
+}
+
+export default function museopaint(rootEl) {
     // DOM
-    const rootEl = document.getElementById('game');
     rootEl.style.width = "100vw";
     rootEl.style.height = "100vh";
+    rootEl.style.backgroundColor = "#eee";
 
     const gizmosHtml = `
 <div class="gizmos-left gizmos">
-  <button id="buttonClear" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
-  <button id="buttonSizeSmall" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)"></button>
-  <button id="buttonSizeMedium" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></button>
-  <button id="buttonSizeLarge" class="size-button" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></button>
+  <button id="buttonClear" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
+  <input type="radio" name="size" class="size-button" data-radius="4" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)" checked></input>
+  <input type="radio" name="size" class="size-button" data-radius="8" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></input>
+  <input type="radio" name="size" class="size-button" data-radius="16" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></input>
+  <input type="radio" name="size" class="size-button" data-radius="32" style="background-image: url(/static/django_jigsaw_puzzle/images/button-xlarge.svg)"></input>
 </div>
 
 <div id="gizmosBottom" class="gizmos-bottom gizmos">
@@ -216,23 +224,35 @@ export default function museopaint() {
 
     const canvas = document.createElement('canvas');
 
-    const buttonSizeSmall = document.getElementById('buttonSizeSmall');
-    const buttonSizeMedium = document.getElementById('buttonSizeMedium');
-    const buttonSizeLarge = document.getElementById('buttonSizeLarge');
+    const initialColor = [0, 0, 0];
+    const initialRadii = [4, 8, 22, 34];
 
+    let i = 0;
+    for (let button of document.querySelectorAll('.size-button')) {
+	const r = button.dataset.radius;
+	button.addEventListener('click', (ev) => {
+	    drawTool.radius = r;
+	});
+	++i;
+    }
 
     const buttonClear = document.getElementById('buttonClear');
 
-    canvas.width = rootEl.clientWidth;
-    canvas.height = rootEl.clientHeight;
+    const canvasBorderWidth = 58;
+    
     rootEl.appendChild(canvas);
 
 
+    const drawWidth = rootEl.clientWidth - 2 * canvasBorderWidth;
+    const drawHeight = rootEl.clientHeight - 2 * canvasBorderWidth; 
+    resizeCanvas(canvas, drawWidth, drawHeight, canvasBorderWidth);
+
+    
     // Config
     let drawTool = {
-	color: undefined,
+	color: initialColor,
+	radius: initialRadii[0],
 	flow: 0.8,
-	radius: 5,
 	spacing: 1,
 	numSegments: 16,
 	vertsLen: null,
@@ -245,37 +265,20 @@ export default function museopaint() {
 	drawTool.color = color;
     }
 
+    colorButtons['black'] = addColorButton(gizmosBottom, [0, 0, 0], setColor, true);
+    colorButtons['white'] = addColorButton(gizmosBottom, [1, 1, 1], setColor, false);
     const hueCount = 16;
     const lightnessCount = 3;
     for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
 	let color = [1, 0, 0];
-	color = adjustLightness(color, -0.2*lightnessIdx);
+	color = adjustLightness(color, -0.15*lightnessIdx);
 	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
-	    colorButtons[color] = addColorButton(gizmosBottom, color, setColor);
+	    colorButtons[color] = addColorButton(gizmosBottom, color, setColor, false);
 	    color =  adjustHue(color, 265/hueCount);
 	}
     }
     gridLayout(document.querySelector('.gizmos-left'), 16, 1);
-    gridLayout(gizmosBottom, 1, 3*hueCount);
-
-    
-    window.addEventListener('load', (ev) => {
-	drawTool.color = [1.0, 0.0, 0.0];
-    });
-    
-
-    buttonSizeSmall.addEventListener('click', (ev) => {
-	drawTool.radius = 2;
-    });
-
-    buttonSizeMedium.addEventListener('click', (ev) => {
-	drawTool.radius = 6;
-    });
-
-    buttonSizeLarge.addEventListener('click', (ev) => {
-	drawTool.radius = 20;
-    });
-
+    gridLayout(gizmosBottom, 1, 3*16 +2);
 
     const [gl,
 	   quadShader, quadVao,
@@ -283,27 +286,39 @@ export default function museopaint() {
 	   paintingFramebuffer,
 	   drawToolVao, vertsLen] = initGl(canvas, drawTool);
 
-    
     // Click handling
     let drawState = {
 	mouseDown: false,
 	traceDist: 0,
 	strokeCoords: [],
 	touchEventId: null,
+	paintingFramebuffer: paintingFramebuffer,
+	strokeFramebuffer: strokeFramebuffer,
     };
 
 
-    buttonClear.addEventListener('click', (ev) => {
-	gl.bindFramebuffer(gl.FRAMEBUFFER, strokeFramebuffer.fbo);
-	gl.clearColor(1.0, 1.0, 1.0, 1.0);
-	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	gl.bindFramebuffer(gl.FRAMEBUFFER, paintingFramebuffer.fbo);
-	gl.clearColor(1.0, 1.0, 1.0, 1.0);
-	gl.clear(gl.COLOR_BUFFER_BIT);
+    // deal with resizing by changing canvas size and re-creating framebuffers
+    window.addEventListener('resize', (ev) => {
+	const drawWidth = rootEl.clientWidth - 2 * canvasBorderWidth;
+	const drawHeight = rootEl.clientHeight - 2 * canvasBorderWidth; 
+	resizeCanvas(canvas, drawWidth, drawHeight, canvasBorderWidth);
+	drawState.strokeFramebuffer = recreateFramebuffer(gl, drawState.strokeFramebuffer, drawWidth, drawHeight);
+	drawState.paintingFramebuffer = recreateFramebuffer(gl, drawState.paintingFramebuffer, drawWidth, drawHeight);
+	clearToDrawToolColor(gl, drawState, drawTool);
+    });
+
+
+    buttonClear.addEventListener('click', (ev) => {
+	const clear = confirm("Really clear to selected color? You will lose your work!");
+	if (clear) {
+	    clearToDrawToolColor(gl, drawState, drawTool);
+	}
     });
 
     function render(reqAnimationFrame) {
+	gl.viewport(0, 0, canvas.width, canvas.height);
+	
 	// Clear BG
 	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -321,18 +336,19 @@ export default function museopaint() {
 	    } else {
 		coords = cubicSplineInterpolate(drawState.strokeCoords, drawTool.spacing);
 	    }
-            renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, coords);
+            renderStroke(gl, canvas.width, canvas.height,
+			 drawState.strokeFramebuffer, strokeShader, drawTool, coords);
 	}
 
         // Draw painting on default framebuffer
-        renderFramebuffer(gl,
-			  paintingFramebuffer.texture, null,
+        renderFramebuffer(gl, canvas.width, canvas.height,
+			  drawState.paintingFramebuffer.texture, null,
 			  quadShader, quadVao, true);
 
 	if (drawState.mouseDown) {
             // Overlay stroke framebuffer onto default framebuffer so people see what's happening
-            renderFramebuffer(gl,
-			      strokeFramebuffer.texture, null,
+            renderFramebuffer(gl, canvas.width, canvas.height,
+			      drawState.strokeFramebuffer.texture, null,
 			      quadShader, quadVao, true);
 	}
 
@@ -343,8 +359,6 @@ export default function museopaint() {
 
     initEventListeners(canvas, gl,
 		       strokeShader,
-		       strokeFramebuffer,
-		       paintingFramebuffer,
 		       quadShader, quadVao,
 		       drawState, drawTool);
 

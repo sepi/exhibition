@@ -22,7 +22,7 @@ if (mode !== 'PAINT_GAME') {
     );
 } else if (mode === 'PAINT_GAME') {
     document.addEventListener('DOMContentLoaded', () => {
-	museopaint();
+	museopaint(rootEl);
     });
 } else {
     alert("Unknown game type. Please report bug to the programmer!");

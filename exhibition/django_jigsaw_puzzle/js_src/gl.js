@@ -13,14 +13,18 @@ function generateCircleVertices(numSegments) {
     return verts;
 }
 
-export function renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, strokeCoords) {
+export function renderStroke(gl, width, height,
+			     strokeFramebuffer, strokeShader,
+			     drawTool, strokeCoords) {
     const [r, g, b] = drawTool.color;
 
+    const resLoc = gl.getUniformLocation(strokeShader, "resolution");
     const colorLoc = gl.getUniformLocation(strokeShader, "color");
     const dotRadiusLoc = gl.getUniformLocation(strokeShader, "dotRadius");
     const dotCenterLoc = gl.getUniformLocation(strokeShader, "dotCenter");
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, strokeFramebuffer.fbo);
+    gl.viewport(0, 0, width, height);
 
     gl.useProgram(strokeShader);
 
@@ -31,6 +35,8 @@ export function renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, stro
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    // Pass resolution to shader
+    gl.uniform2f(resLoc, width, height);
     gl.uniform4f(colorLoc, r, g, b, drawTool.flow);
     gl.uniform1f(dotRadiusLoc, drawTool.radius);
 
@@ -43,12 +49,12 @@ export function renderStroke(gl, strokeFramebuffer, strokeShader, drawTool, stro
 }
 
 // Render a texture from a FB to another FB
-export function renderFramebuffer(gl,
+export function renderFramebuffer(gl, width, height,
 				  srcTexture, dstFramebufferFbo,
 				  quadShader, quadVao,
 				  gammaCorrect) {
-    // Render default framebuffer (canvas)
     gl.bindFramebuffer(gl.FRAMEBUFFER, dstFramebufferFbo);
+    gl.viewport(0, 0, width, height);
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); // Standard 
@@ -65,13 +71,22 @@ export function renderFramebuffer(gl,
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
+export function clearToDrawToolColor(gl, drawState, drawTool) {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.strokeFramebuffer.fbo);
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.paintingFramebuffer.fbo);
+    gl.clearColor(drawTool.color[0], drawTool.color[1], drawTool.color[2], 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
 
 function generateDrawTool(gl, shader, numSegments) {
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
 
     const vertices = generateCircleVertices(numSegments)
-    console.log(vertices);
+
     // Create a VBO (Vertex Buffer Object)
     const vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
@@ -145,6 +160,15 @@ function createFramebuffer(gl, w, h) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
     return { fbo, texture };
+}
+
+export function recreateFramebuffer(gl, fb, w, h) {
+    const newFb = createFramebuffer(gl, w, h);
+
+    // TODO: copy old texture to new
+
+    gl.deleteFramebuffer(fb.fbo);
+    return newFb;
 }
 
 function createProgram(gl, vs, fs) {
@@ -277,7 +301,7 @@ void main() {
     }
 }`;
     const quadShader = createProgram(gl, quadVs, quadFs);
-    // Set up WebGL viewport and clear color
+    // // Set up WebGL viewport and clear color
     gl.viewport(0, 0, canvas.width, canvas.height);
 
     const [ drawToolVao, vertsLen ] = generateDrawTool(gl, strokeShader, drawTool.numSegments);
