@@ -96,4 +96,3 @@ class PaintGameAdmin(GameAdminMixin, admin.ModelAdmin):
 
     def get_game_link(self, obj):
         return reverse('paint_game_detail', args=[obj.id])
-

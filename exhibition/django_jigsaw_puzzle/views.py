@@ -9,7 +9,7 @@ from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
 
 
-from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, GridDifficultyLevel
+from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame, GridDifficultyLevel
 
 
 def jigsaw_puzzle_list(request):
@@ -117,3 +117,14 @@ def paint_game_context(game):
     return {
         'mode': 'PAINT_GAME',
     }
+
+def paint_game_detail(request, id):
+    game = get_object_or_404(PaintGame, pk=id)
+    if request.headers.get('Accept') == 'application/json':
+        return JsonResponse({
+            'id': game.id,
+            'name': game.name,
+        })
+    else: # For browsers
+        return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
+                      paint_game_context(game))

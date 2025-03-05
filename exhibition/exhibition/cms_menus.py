@@ -46,6 +46,11 @@ class GamesToolbar(CMSToolbar):
         )
 
         menu.add_sideframe_item(
+            name=_('Paint games'),
+            url=admin_reverse('django_jigsaw_puzzle_paintgame_changelist')
+        )
+
+        menu.add_sideframe_item(
             name=_('Difficulty levels'),
             url=admin_reverse('django_jigsaw_puzzle_difficultylevel_changelist')
         )
