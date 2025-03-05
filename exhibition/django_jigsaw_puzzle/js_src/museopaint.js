@@ -284,7 +284,16 @@ export default function museopaint(rootEl) {
     colorButtons['gray2'] = addColorButton(gizmosBottom, [0.5, 0.5, 0.5], setColor, false);
     colorButtons['gray3'] = addColorButton(gizmosBottom, [0.75, 0.75, 0.75], setColor, false);
     colorButtons['white'] = addColorButton(gizmosBottom, [1, 1, 1], setColor, false);
-    const hueCount = 14;
+
+    function div255(x) { return [x[0]/255.0, x[1]/255.0, x[2]/255.0]; }
+    colorButtons['skin0'] = addColorButton(gizmosBottom, div255([77, 42, 15]), setColor, false);
+    colorButtons['skin1'] = addColorButton(gizmosBottom, div255([141, 85, 36]), setColor, false);
+    // colorButtons['skin2'] = addColorButton(gizmosBottom, div255([198,134,66]), setColor, false);
+    colorButtons['skin3'] = addColorButton(gizmosBottom, div255([224,172,105]), setColor, false);
+    // colorButtons['skin4'] = addColorButton(gizmosBottom, div255([241,194,125]), setColor, false);
+    colorButtons['skin5'] = addColorButton(gizmosBottom, div255([255,219,172]), setColor, false);
+
+    const hueCount = 13;
     const lightnessCount = 3;
     for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
 	let color = [1, 0, 0];
