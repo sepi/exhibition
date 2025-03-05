@@ -28,6 +28,13 @@ function adjustLightness(color, dl) {
     return hsl2rgb(h, s, Math.max(Math.min(l, 1.0), 0.0));
 }
 
+function adjustSaturation(color, ds) {
+    const [r, g, b] = color;
+    let [h, s, l] = rgb2hsl(r, g, b);
+    s += ds;
+    return hsl2rgb(h, s, Math.max(Math.min(l, 1.0), 0.0));
+}
+
 function hex2rgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return [parseInt(result[1], 16) / 256, parseInt(result[2], 16) / 256, parseInt(result[3], 16) / 256];
@@ -121,7 +128,11 @@ function initEventListeners(canvas, gl,
     }
     canvas.addEventListener('mousedown', drawStart);
     canvas.addEventListener('touchstart', drawStart);
-
+    canvas.addEventListener('mouseenter', (ev) => {
+	if (drawState.mouseDowns) {
+	    drawStart();
+	}
+    });
     
     function toolMove(ev) {
 	ev.preventDefault();
@@ -142,8 +153,10 @@ function initEventListeners(canvas, gl,
     canvas.addEventListener('touchmove', toolMove);
 
 
-    function drawEnd(ev) {
+    function drawEnd(ev, leave=false) {
 	ev.preventDefault();
+
+	console.log("drawend");
 
 	// This touchend is not for the touch tracked
 	if (ev.type === 'touchend' ) {
@@ -157,17 +170,18 @@ function initEventListeners(canvas, gl,
 	finalizeStroke(gl, canvas, drawState, quadShader, quadVao);
 
 	drawState.strokeCoords = [];
-	drawState.mouseDown = false;
+	if (!leave) {
+	    drawState.mouseDown = false;
+	}
     }
     canvas.addEventListener('mouseup', drawEnd);
+    window.addEventListener('mouseup', (ev) => {
+	drawState.mouseDown = false;
+    });
     canvas.addEventListener('touchend', drawEnd);
     canvas.addEventListener('touchcancel', drawEnd);
-
-
-    canvas.addEventListener('mouseenter', (ev) => {
-	if (drawState.mouseDown) {
-	    // drawState.drawnLast = [ev.offsetX, ev.offsetY];
-	}
+    canvas.addEventListener('mouseleave', (ev) => {
+	drawEnd(ev, true);
     });
 }
 
@@ -212,9 +226,9 @@ export default function museopaint(rootEl) {
 <div class="gizmos-left gizmos">
   <button id="buttonClear" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
   <input type="radio" name="size" class="size-button" data-radius="4" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)" checked></input>
-  <input type="radio" name="size" class="size-button" data-radius="8" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></input>
-  <input type="radio" name="size" class="size-button" data-radius="16" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></input>
-  <input type="radio" name="size" class="size-button" data-radius="32" style="background-image: url(/static/django_jigsaw_puzzle/images/button-xlarge.svg)"></input>
+  <input type="radio" name="size" class="size-button" data-radius="12" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></input>
+  <input type="radio" name="size" class="size-button" data-radius="22" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></input>
+  <input type="radio" name="size" class="size-button" data-radius="42" style="background-image: url(/static/django_jigsaw_puzzle/images/button-xlarge.svg)"></input>
 </div>
 
 <div id="gizmosBottom" class="gizmos-bottom gizmos">
@@ -266,12 +280,16 @@ export default function museopaint(rootEl) {
     }
 
     colorButtons['black'] = addColorButton(gizmosBottom, [0, 0, 0], setColor, true);
+    colorButtons['gray1'] = addColorButton(gizmosBottom, [0.25, 0.25, 0.25], setColor, false);
+    colorButtons['gray2'] = addColorButton(gizmosBottom, [0.5, 0.5, 0.5], setColor, false);
+    colorButtons['gray3'] = addColorButton(gizmosBottom, [0.75, 0.75, 0.75], setColor, false);
     colorButtons['white'] = addColorButton(gizmosBottom, [1, 1, 1], setColor, false);
-    const hueCount = 16;
+    const hueCount = 14;
     const lightnessCount = 3;
     for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
 	let color = [1, 0, 0];
 	color = adjustLightness(color, -0.15*lightnessIdx);
+	// color = adjustSaturation(color, -0.25*lightnessIdx);
 	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
 	    colorButtons[color] = addColorButton(gizmosBottom, color, setColor, false);
 	    color =  adjustHue(color, 265/hueCount);
