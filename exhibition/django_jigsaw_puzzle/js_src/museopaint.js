@@ -1,5 +1,5 @@
 import { renderStroke, renderFramebuffer, recreateFramebuffer, clearToDrawToolColor, initGl } from './gl.js' 
-import { dist } from './common.js';
+import { dist, getCSRFToken } from './common.js';
 
 function rgb2hsl(r,g,b) {
   let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
@@ -224,7 +224,7 @@ export default function museopaint(rootEl) {
 
     const gizmosHtml = `
 <div class="gizmos-left gizmos">
-  <button id="buttonSave" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
+  <button id="buttonSave" style="background-image: url(/static/django_jigsaw_puzzle/images/button-save.svg)"></button>
   <button id="buttonClear" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
   <input type="radio" name="size" class="size-button" data-radius="4" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)" checked></input>
   <input type="radio" name="size" class="size-button" data-radius="12" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></input>
@@ -252,6 +252,7 @@ export default function museopaint(rootEl) {
     }
 
     const buttonClear = document.getElementById('buttonClear');
+    const buttonSave = document.getElementById('buttonSave');
 
     const canvasBorderWidth = 58;
     
@@ -323,6 +324,7 @@ export default function museopaint(rootEl) {
 	touchEventId: null,
 	paintingFramebuffer: paintingFramebuffer,
 	strokeFramebuffer: strokeFramebuffer,
+	saveCanvas: false,
     };
 
 
@@ -343,6 +345,10 @@ export default function museopaint(rootEl) {
 	if (clear) {
 	    clearToDrawToolColor(gl, drawState, drawTool);
 	}
+    });
+
+    buttonSave.addEventListener('click', (ev) => {
+	drawState.saveCanvas = true;
     });
 
     function render(reqAnimationFrame) {
@@ -373,6 +379,44 @@ export default function museopaint(rootEl) {
         renderFramebuffer(gl, canvas.width, canvas.height,
 			  drawState.paintingFramebuffer.texture, null,
 			  quadShader, quadVao, true);
+
+	if (drawState.saveCanvas) {
+	    canvas.toBlob((blob) => {
+		const csrfToken = getCSRFToken();
+		console.log("Got me a blob", blob, csrfToken);
+
+		const formData = new FormData();
+		const dateTime = (new Date()).toISOString();
+		formData.append('file', blob, `${dateTime}.png`);
+		
+		fetch('/games/image_upload', {
+		    method: 'POST',
+		    headers: {
+			'X-CSRFToken': csrfToken
+		    },
+		    body: formData
+		}).then(response => response.json())
+		  .then(data => {
+		      const l = window.location;
+		      const url = `${l.protocol}//${l.host}${data.original_image}`;
+		      // console.log('Success:', url, data);
+		      const modalTitle = document.querySelector("#modal .modal-title");
+		      modalTitle.innerHTML = "Scan this QR-Code to take home your work!"
+		      const modalBody = document.querySelector("#modal .modal-body");
+		      modalBody.innerHTML = data.qr_code_svg;
+		      // modalBody.innerHTML += `<a href="${url}">Link</a>`;
+		      const modal = new bootstrap.Modal('#modal');
+
+		      modal.show();
+		  })
+		  .catch(error => {
+			console.error('Error:', error);
+		  });
+	    });
+
+	    // we're done here.
+	    drawState.saveCanvas = false;
+	}
 
 	if (drawState.mouseDown) {
             // Overlay stroke framebuffer onto default framebuffer so people see what's happening

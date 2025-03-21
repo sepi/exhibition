@@ -192,7 +192,8 @@ class Common(Configuration):
     CONSTANCE_CONFIG={
         'CATALOG_SITE_NAME': ("catalog", _("The name used in urls behind the / in order to identify which catalog to show.")),
         'NAVBAR_BACKGROUND_COLOR': ("#ffffff", _("The color of the background of the top navigation bar as a string you can use in css, eg. '#000000' for black or 'red'."), 'color_field'),
-        'NAVBAR_BACKGROUND_TYPE': ("light", _("Selects how the navigation button and link colors are set. If the background color is light, select light here, if it's dark, select dark."), 'light_dark')
+        'NAVBAR_BACKGROUND_TYPE': ("light", _("Selects how the navigation button and link colors are set. If the background color is light, select light here, if it's dark, select dark."), 'light_dark'),
+        'JIGSAW_PUZZLE_UPLOAD_DIRECTORY_ID': (0, _("Where paintings are uploaded")),
     }
 
 class Dev(Common):

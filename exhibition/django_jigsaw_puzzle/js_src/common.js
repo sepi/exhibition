@@ -6,3 +6,13 @@ export function dist(a, b) {
     const dy = a[1]-b[1];
     return Math.sqrt(dx*dx + dy*dy);
 }
+
+export function getCSRFToken() {
+    const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+
+    if (csrfInput) {
+        return csrfInput.value;
+    } else {
+        return null;
+    }
+}

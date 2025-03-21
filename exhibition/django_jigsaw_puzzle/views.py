@@ -1,16 +1,22 @@
+import json
+
 from django.shortcuts import render
 from django.http import JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic.base import TemplateView
 from django.views.decorators.cache import never_cache
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
+from filer.admin.clipboardadmin import ajax_upload
+from constance import config
 from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
-
+import qrcode
+import qrcode.image.svg
 
 from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame, GridDifficultyLevel
-
 
 def jigsaw_puzzle_list(request):
     jps = JigsawPuzzle.objects.all()
@@ -128,3 +134,23 @@ def paint_game_detail(request, id):
     else: # For browsers
         return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
                       paint_game_context(game))
+
+
+# FIXME: Would be nice to use CSRF. The clients sends it but it will be out of date at some point, or not?
+@csrf_exempt
+def image_upload(request):
+    folder_id = getattr(config, 'JIGSAW_PUZZLE_UPLOAD_DIRECTORY_ID', None)
+    if folder_id == 0: # Constance can't have None as default
+        folder_id = None
+
+    res =  ajax_upload(request, folder_id=folder_id) # Paint game uploads
+
+    res_data = json.loads(res.content.decode("utf-8"))
+
+    factory = qrcode.image.svg.SvgPathImage
+    full_url = request.build_absolute_uri(res_data['original_image'])
+    img = qrcode.make(full_url, image_factory=factory)
+    res_data['qr_code_svg'] = img.to_string().decode()
+
+    return JsonResponse(res_data)
+
