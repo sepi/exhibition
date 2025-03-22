@@ -72,9 +72,9 @@ export function renderFramebuffer(gl, width, height,
 }
 
 export function clearToDrawToolColor(gl, drawState, drawTool) {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.strokeFramebuffer.fbo);
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.strokeFramebuffer.fbo);
+    // gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    // gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.paintingFramebuffer.fbo);
     gl.clearColor(drawTool.color[0], drawTool.color[1], drawTool.color[2], 1);
