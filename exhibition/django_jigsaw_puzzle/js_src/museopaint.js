@@ -341,8 +341,8 @@ export default function museopaint(rootEl) {
     rootEl.appendChild(canvas);
 
 
-    const drawWidth = rootEl.clientWidth - 2 * canvasBorderWidth;
-    const drawHeight = rootEl.clientHeight - 2 * canvasBorderWidth; 
+    const drawWidth = window.innerWidth - 2 * canvasBorderWidth;
+    const drawHeight = window.innerHeight - 2 * canvasBorderWidth;
     resizeCanvas(canvas, drawWidth, drawHeight, canvasBorderWidth);
 
     
@@ -386,8 +386,8 @@ export default function museopaint(rootEl) {
 
     // deal with resizing by changing canvas size and re-creating framebuffers
     window.addEventListener('resize', (ev) => {
-	const drawWidth = rootEl.clientWidth - 2 * canvasBorderWidth;
-	const drawHeight = rootEl.clientHeight - 2 * canvasBorderWidth; 
+	const drawWidth = window.innerWidth - 2 * canvasBorderWidth;
+	const drawHeight = window.innerHeight - 2 * canvasBorderWidth;
 	resizeCanvas(canvas, drawWidth, drawHeight, canvasBorderWidth);
 	drawState.strokeFramebuffer = recreateFramebuffer(gl, drawState.strokeFramebuffer, drawWidth, drawHeight);
 	drawState.paintingFramebuffer = recreateFramebuffer(gl, drawState.paintingFramebuffer, drawWidth, drawHeight);
