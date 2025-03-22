@@ -103,6 +103,21 @@ function finalizeStroke(gl, canvas, drawState, quadShader, quadVao) {
 		      quadShader, quadVao, false);
 }
 
+function findTouchWithId(touchList, id) {
+    for (let t of touchList) {
+	if (t.identifier === id) {
+	    return t;
+	}
+    }
+    return null;
+}
+    
+function touchOffset(ev, touchId) {
+    var rect = ev.target.getBoundingClientRect();
+    const touch = findTouchWithId(ev.changedTouches, touchId);
+    return [touch.clientX - rect.left,
+	    touch.clientY - rect.top];
+}
 
 function initEventListeners(canvas, gl,
 			    strokeShader,
@@ -114,12 +129,13 @@ function initEventListeners(canvas, gl,
 	let x, y;
 	if (ev.type === 'touchstart') {
 	    const ts = ev.changedTouches;
+	    // FIXME: Actually record multiple touches starting
 	    if (ts.length > 0) {
 		const touch = ts.item(0);
 		drawState.touchEventId = touch.identifier;
-		[x, y] = [touch.offsetX, touch.offsetY];
+		[x, y] = touchOffset(ev, touch.identifier);
 	    }
-	} else {
+	} else { // Click
 	    [x, y] = [ev.offsetX, ev.offsetY];
 	}
 
@@ -133,13 +149,16 @@ function initEventListeners(canvas, gl,
 	    drawStart();
 	}
     });
-    
+
     function toolMove(ev) {
 	ev.preventDefault();
+	
 	let x, y;
-	if (ev.type === 'touchmove' && drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
-	    const touch = ev.changedTouches.item(drawState.touchEventId);
-	    [x, y] = [touch.offsetX, touch.offsetY];
+	if (ev.type === 'touchmove' && drawState.touchEventId !== null) {
+	    const touch = findTouchWithId(ev.changedTouches, drawState.touchEventId);
+	    if (touch) {
+		[x, y] = touchOffset(ev, touch.identifier);
+	    }
 	} else {
 	    [x, y] = [ev.offsetX, ev.offsetY];
 	}
@@ -206,7 +225,38 @@ function addColorButton(parent, color, setColor, checked = False) {
     return button;
 }
 
-function gridLayout(el, rows, cols) {
+function addColorButtons(hueCount, lightnessCount, container, setColor) {
+    const colorButtons = {};
+    colorButtons['gray0'] = addColorButton(container, [0, 0, 0], setColor, true);
+    colorButtons['gray1'] = addColorButton(container, [0.25, 0.25, 0.25], setColor, false);
+    colorButtons['gray2'] = addColorButton(container, [0.5, 0.5, 0.5], setColor, false);
+    colorButtons['gray3'] = addColorButton(container, [0.75, 0.75, 0.75], setColor, false);
+    colorButtons['gray4'] = addColorButton(container, [1, 1, 1], setColor, false);
+
+    function div255(x) { return [x[0]/255.0, x[1]/255.0, x[2]/255.0]; }
+    colorButtons['skin0'] = addColorButton(container, div255([77, 42, 15]), setColor, false);
+    colorButtons['skin1'] = addColorButton(container, div255([141, 85, 36]), setColor, false);
+    colorButtons['skin3'] = addColorButton(container, div255([224,172,105]), setColor, false);
+    colorButtons['skin5'] = addColorButton(container, div255([255,219,172]), setColor, false);
+
+    // const hueCount = 10;
+    // const lightnessCount = 3;
+    for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
+	let color = [1, 0, 0];
+	color = adjustLightness(color, -0.15*lightnessIdx);
+	// color = adjustSaturation(color, -0.25*lightnessIdx);
+	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
+	    colorButtons[color] = addColorButton(container, color, setColor, false);
+	    color =  adjustHue(color, 265/hueCount);
+	}
+    }
+
+    applyGridLayout(container, 1, hueCount*lightnessCount + 5 + 4);
+
+    return colorButtons;
+}
+
+function applyGridLayout(el, rows, cols) {
     el.style = `grid-template-rows: repeat(${rows}, 1fr); grid-template-columns: repeat(${cols}, auto);`;
 }
 
@@ -232,8 +282,7 @@ export default function museopaint(rootEl) {
   <input type="radio" name="size" class="size-button" data-radius="42" style="background-image: url(/static/django_jigsaw_puzzle/images/button-xlarge.svg)"></input>
 </div>
 
-<div id="gizmosBottom" class="gizmos-bottom gizmos">
-</div>
+<div id="gizmosBottom" class="gizmos-bottom gizmos"></div>
 `;
     rootEl.innerHTML = gizmosHtml;
 
@@ -275,40 +324,13 @@ export default function museopaint(rootEl) {
 	vao: null,
     }
 
+    // Color buttons
     const gizmosBottom = document.getElementById('gizmosBottom');
-    const colorButtons = {};
-    function setColor(color) {
-	drawTool.color = color;
-    }
+    const colorButtons = addColorButtons(10, 3, gizmosBottom, (color) => drawTool.color = color);
 
-    colorButtons['gray0'] = addColorButton(gizmosBottom, [0, 0, 0], setColor, true);
-    colorButtons['gray1'] = addColorButton(gizmosBottom, [0.25, 0.25, 0.25], setColor, false);
-    colorButtons['gray2'] = addColorButton(gizmosBottom, [0.5, 0.5, 0.5], setColor, false);
-    colorButtons['gray3'] = addColorButton(gizmosBottom, [0.75, 0.75, 0.75], setColor, false);
-    colorButtons['gray4'] = addColorButton(gizmosBottom, [1, 1, 1], setColor, false);
-
-    function div255(x) { return [x[0]/255.0, x[1]/255.0, x[2]/255.0]; }
-    colorButtons['skin0'] = addColorButton(gizmosBottom, div255([77, 42, 15]), setColor, false);
-    colorButtons['skin1'] = addColorButton(gizmosBottom, div255([141, 85, 36]), setColor, false);
-    colorButtons['skin3'] = addColorButton(gizmosBottom, div255([224,172,105]), setColor, false);
-    colorButtons['skin5'] = addColorButton(gizmosBottom, div255([255,219,172]), setColor, false);
-
-    const hueCount = 10;
-    const lightnessCount = 3;
-    for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
-	let color = [1, 0, 0];
-	color = adjustLightness(color, -0.15*lightnessIdx);
-	// color = adjustSaturation(color, -0.25*lightnessIdx);
-	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
-	    colorButtons[color] = addColorButton(gizmosBottom, color, setColor, false);
-	    color =  adjustHue(color, 265/hueCount);
-	}
-    }
-    gridLayout(gizmosBottom, 1, hueCount*lightnessCount + 5 + 4);
-
+    // Left buttons
     const gizmosLeft = document.querySelector('.gizmos-left');
-    gridLayout(gizmosLeft, gizmosLeft.children.length + 1, 1);
-
+    applyGridLayout(gizmosLeft, gizmosLeft.children.length + 1, 1);
 
     const [gl,
 	   quadShader, quadVao,
@@ -383,7 +405,6 @@ export default function museopaint(rootEl) {
 	if (drawState.saveCanvas) {
 	    canvas.toBlob((blob) => {
 		const csrfToken = getCSRFToken();
-		console.log("Got me a blob", blob, csrfToken);
 
 		const formData = new FormData();
 		const dateTime = (new Date()).toISOString();
@@ -399,7 +420,6 @@ export default function museopaint(rootEl) {
 		  .then(data => {
 		      const l = window.location;
 		      const url = `${l.protocol}//${l.host}${data.original_image}`;
-		      // console.log('Success:', url, data);
 		      const modalTitle = document.querySelector("#modal .modal-title");
 		      modalTitle.innerHTML = "Scan this QR-Code to take home your work!"
 		      const modalBody = document.querySelector("#modal .modal-body");
