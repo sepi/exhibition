@@ -119,6 +119,37 @@ function touchOffset(ev, touchId) {
 	    touch.clientY - rect.top];
 }
 
+function saveCanvasToServer(blob) {
+    const csrfToken = getCSRFToken();
+
+    const formData = new FormData();
+    const dateTime = (new Date()).toISOString();
+    formData.append('file', blob, `${dateTime}.png`);
+    
+    fetch('/games/image_upload', {
+	method: 'POST',
+	headers: {
+	    'X-CSRFToken': csrfToken
+	},
+	body: formData
+    }).then(response => response.json())
+	.then(data => {
+	    const l = window.location;
+	    const url = `${l.protocol}//${l.host}${data.original_image}`;
+	    const modalTitle = document.querySelector("#modal .modal-title");
+	    modalTitle.innerHTML = "Scan this QR-Code to take home your work!"
+	    const modalBody = document.querySelector("#modal .modal-body");
+	    modalBody.innerHTML = data.qr_code_svg;
+	    // modalBody.innerHTML += `<a href="${url}">Link</a>`;
+	    const modal = new bootstrap.Modal('#modal');
+	    
+	    modal.show();
+	})
+	.catch(error => {
+	    console.error('Error:', error);
+	});
+}
+
 function initEventListeners(canvas, gl,
 			    strokeShader,
 			    quadShader, quadVao,
@@ -139,13 +170,13 @@ function initEventListeners(canvas, gl,
 	    [x, y] = [ev.offsetX, ev.offsetY];
 	}
 
-	drawState.mouseDown = true;
+	drawState.painting = true;
 	drawState.strokeCoords.push([x, y]);
     }
     canvas.addEventListener('mousedown', drawStart);
     canvas.addEventListener('touchstart', drawStart);
     canvas.addEventListener('mouseenter', (ev) => {
-	if (drawState.mouseDowns) {
+	if (drawState.paintings) {
 	    drawStart();
 	}
     });
@@ -163,7 +194,7 @@ function initEventListeners(canvas, gl,
 	    [x, y] = [ev.offsetX, ev.offsetY];
 	}
 
-	if (drawState.mouseDown) {
+	if (drawState.painting) {
 	    const pos = [x, y];
 	    drawState.strokeCoords.push(pos);
 	}
@@ -190,12 +221,13 @@ function initEventListeners(canvas, gl,
 
 	drawState.strokeCoords = [];
 	if (!leave) {
-	    drawState.mouseDown = false;
+	    drawState.painting = false;
 	}
     }
     canvas.addEventListener('mouseup', drawEnd);
+    // Also record mouseup events when user releases outside of canvas
     window.addEventListener('mouseup', (ev) => {
-	drawState.mouseDown = false;
+	drawState.painting = false;
     });
     canvas.addEventListener('touchend', drawEnd);
     canvas.addEventListener('touchcancel', drawEnd);
@@ -208,15 +240,16 @@ function addColorButton(parent, color, setColor, checked = False) {
     const button = document.createElement('input');
     button.name = 'color';
     button.type = 'radio';
-    button.id = `button${color[0]}${color[1]}${color[2]}`;
-    button.style = `background-color: rgb(${color[0]*255}, ${color[1]*255}, ${color[2]*255});`;
+    const [r, g, b] = [color[0]*255, color[1]*255, color[2]*255];
+    button.id = `button${r}${g}${b}`;
+    button.style = `background-color: rgb(${r}, ${g}, ${b});`;
     button.className = 'color-button';
     if (checked) {
 	button.checked = 'checked';
     }
 
     button.addEventListener('click', (ev) => {
-	// ev.preventDefault();
+	ev.preventDefault();
 	setColor(color);
     });
 
@@ -340,7 +373,7 @@ export default function museopaint(rootEl) {
 
     // Click handling
     let drawState = {
-	mouseDown: false,
+	painting: false,
 	traceDist: 0,
 	strokeCoords: [],
 	touchEventId: null,
@@ -381,7 +414,7 @@ export default function museopaint(rootEl) {
 	gl.clearColor(1.0, 1.0, 1.0, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	if (drawState.mouseDown) {
+	if (drawState.painting) {
             // Render accumulated stroke to intermediary
             // framebuffer. This buffer is re-rendered on every frame
             // although it could be done incrementally.
@@ -403,42 +436,12 @@ export default function museopaint(rootEl) {
 			  quadShader, quadVao, true);
 
 	if (drawState.saveCanvas) {
-	    canvas.toBlob((blob) => {
-		const csrfToken = getCSRFToken();
-
-		const formData = new FormData();
-		const dateTime = (new Date()).toISOString();
-		formData.append('file', blob, `${dateTime}.png`);
-		
-		fetch('/games/image_upload', {
-		    method: 'POST',
-		    headers: {
-			'X-CSRFToken': csrfToken
-		    },
-		    body: formData
-		}).then(response => response.json())
-		  .then(data => {
-		      const l = window.location;
-		      const url = `${l.protocol}//${l.host}${data.original_image}`;
-		      const modalTitle = document.querySelector("#modal .modal-title");
-		      modalTitle.innerHTML = "Scan this QR-Code to take home your work!"
-		      const modalBody = document.querySelector("#modal .modal-body");
-		      modalBody.innerHTML = data.qr_code_svg;
-		      // modalBody.innerHTML += `<a href="${url}">Link</a>`;
-		      const modal = new bootstrap.Modal('#modal');
-
-		      modal.show();
-		  })
-		  .catch(error => {
-			console.error('Error:', error);
-		  });
-	    });
-
-	    // we're done here.
+	    // This must happen in same event as rendering due to GL double buffering
+	    canvas.toBlob(saveCanvasToServer);
 	    drawState.saveCanvas = false;
 	}
 
-	if (drawState.mouseDown) {
+	if (drawState.painting) {
             // Overlay stroke framebuffer onto default framebuffer so people see what's happening
             renderFramebuffer(gl, canvas.width, canvas.height,
 			      drawState.strokeFramebuffer.texture, null,
