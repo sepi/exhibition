@@ -217,10 +217,11 @@ uniform float dotRadius;
 
 vec4 toLinear(vec4 srgbColor) {
   vec3 rgb = srgbColor.rgb;
-  vec3 linearRGB = mix(rgb / 12.92, pow((rgb + 0.055) / 1.055, vec3(2.4)), step(0.04045, rgb));
-  return vec4(srgbColor.rgb, srgbColor.a);
+  vec3 linearRGB = mix(rgb / 12.92,
+                       pow((rgb + 0.055) / 1.055, vec3(2.4)),
+                       step(0.04045, rgb));
+  return vec4(linearRGB.rgb, srgbColor.a);
 }
-
 
 void main() {
   vec2 fragCoordXy = gl_FragCoord.xy;
@@ -239,7 +240,6 @@ void main() {
       opacity = clamp(distNorm * k + c, 0.0, 1.0);
   }
   vec4 colorLinear = toLinear(color);
-  //vec4 colorLinear = color;
   float alpha = colorLinear.a * opacity;
   gl_FragColor = vec4(colorLinear.rgb * alpha, alpha);
 }`;
