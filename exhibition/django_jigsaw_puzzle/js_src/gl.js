@@ -19,7 +19,7 @@ export function renderStroke(gl, width, height,
     const [r, g, b] = drawTool.color;
 
     const resLoc = gl.getUniformLocation(strokeShader, "resolution");
-    const colorLoc = gl.getUniformLocation(strokeShader, "color");
+    const colorLoc = gl.getUniformLocation(strokeShader, "colorLinear");
     const dotRadiusLoc = gl.getUniformLocation(strokeShader, "dotRadius");
     const dotCenterLoc = gl.getUniformLocation(strokeShader, "dotCenter");
 
@@ -71,28 +71,13 @@ export function renderFramebuffer(gl, width, height,
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-function SRGBtoLinear(srgbColor) {
-    const rgb = [srgbColor[0], srgbColor[1], srgbColor[2]];
-    const linearRGB = [];
-    for (const c of rgb) {
-	if (c < 0.04045) {
-	    linearRGB.push(c / 12.92);
-	} else {
-	    linearRGB.push(Math.pow((c + 0.055) / 1.055, 2.4));
-	}
-    }
-    linearRGB.push(rgb[3]); // Alpha
-    return linearRGB;
-}
-
 export function clearToDrawToolColor(gl, drawState, drawTool) {
     // gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.strokeFramebuffer.fbo);
     // gl.clearColor(1.0, 1.0, 1.0, 1.0);
     // gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.paintingFramebuffer.fbo);
-    const drawToolLinear = SRGBtoLinear(drawTool.color);
-    gl.clearColor(drawToolLinear[0], drawToolLinear[1], drawToolLinear[2], 1);
+    gl.clearColor(drawTool.color[0], drawTool.color[1], drawTool.color[2], 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
@@ -225,18 +210,10 @@ void main() {
 
     const strokeFs = `
 precision highp float;
-uniform vec4 color;
+uniform vec4 colorLinear;
 uniform vec2 resolution;
 uniform vec2 dotCenter;
 uniform float dotRadius;
-
-vec4 toLinear(vec4 srgbColor) {
-  vec3 rgb = srgbColor.rgb;
-  vec3 linearRGB = mix(rgb / 12.92,
-                       pow((rgb + 0.055) / 1.055, vec3(2.4)),
-                       step(0.04045, rgb));
-  return vec4(linearRGB.rgb, srgbColor.a);
-}
 
 void main() {
   vec2 fragCoordXy = gl_FragCoord.xy;
@@ -254,7 +231,6 @@ void main() {
       float c = -k;
       opacity = clamp(distNorm * k + c, 0.0, 1.0);
   }
-  vec4 colorLinear = toLinear(color);
   float alpha = colorLinear.a * opacity;
   gl_FragColor = vec4(colorLinear.rgb * alpha, alpha);
 }`;

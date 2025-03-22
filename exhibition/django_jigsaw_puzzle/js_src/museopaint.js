@@ -1,5 +1,5 @@
 import { renderStroke, renderFramebuffer, recreateFramebuffer, clearToDrawToolColor, initGl } from './gl.js' 
-import { dist, getCSRFToken } from './common.js';
+import { dist, getCSRFToken, linearToSRGB } from './common.js';
 
 function rgb2hsl(r,g,b) {
   let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
@@ -236,11 +236,13 @@ function initEventListeners(canvas, gl,
     });
 }
 
-function addColorButton(parent, color, setColor, checked = False) {
+function addColorButton(parent, colorLinear, setColor, checked = False) {
     const button = document.createElement('input');
     button.name = 'color';
     button.type = 'radio';
-    const [r, g, b] = [color[0]*255, color[1]*255, color[2]*255];
+
+    const colorSRGB = linearToSRGB(colorLinear);
+    const [r, g, b] = [colorSRGB[0]*255, colorSRGB[1]*255, colorSRGB[2]*255];
     button.id = `button${r}${g}${b}`;
     button.style = `background-color: rgb(${r}, ${g}, ${b});`;
     button.className = 'color-button';
@@ -249,7 +251,7 @@ function addColorButton(parent, color, setColor, checked = False) {
     }
 
     button.addEventListener('click', (ev) => {
-	setColor(color);
+	setColor(colorLinear);
     });
 
     parent.appendChild(button);
@@ -266,24 +268,22 @@ function addColorButtons(hueCount, lightnessCount, container, setColor) {
     colorButtons['gray4'] = addColorButton(container, [1, 1, 1], setColor, false);
 
     function div255(x) { return [x[0]/255.0, x[1]/255.0, x[2]/255.0]; }
-    colorButtons['skin0'] = addColorButton(container, div255([77, 42, 15]), setColor, false);
-    colorButtons['skin1'] = addColorButton(container, div255([141, 85, 36]), setColor, false);
+    colorButtons['skin0'] = addColorButton(container, div255([15, 5, 0]), setColor, false);
+    colorButtons['skin0'] = addColorButton(container, div255([45, 10, 0]), setColor, false);
+    colorButtons['skin1'] = addColorButton(container, div255([121, 65, 16]), setColor, false);
     colorButtons['skin3'] = addColorButton(container, div255([224,172,105]), setColor, false);
     colorButtons['skin5'] = addColorButton(container, div255([255,219,172]), setColor, false);
 
-    // const hueCount = 10;
-    // const lightnessCount = 3;
     for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
-	let color = [1, 0, 0];
-	color = adjustLightness(color, -0.15*lightnessIdx);
-	// color = adjustSaturation(color, -0.25*lightnessIdx);
+	let linearColor = [1, 0, 0];
+	linearColor = adjustLightness(linearColor, -0.15*lightnessIdx);
 	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
-	    colorButtons[color] = addColorButton(container, color, setColor, false);
-	    color =  adjustHue(color, 265/hueCount);
+	    colorButtons[linearColor] = addColorButton(container, linearColor, setColor, false);
+	    linearColor =  adjustHue(linearColor, 265/hueCount);
 	}
     }
 
-    applyGridLayout(container, 1, hueCount*lightnessCount + 5 + 4);
+    applyGridLayout(container, 1, hueCount*lightnessCount + 5 + 5);
 
     return colorButtons;
 }
@@ -379,9 +379,8 @@ export default function museopaint(rootEl) {
 	paintingFramebuffer: paintingFramebuffer,
 	strokeFramebuffer: strokeFramebuffer,
 	saveCanvas: false,
+	// clearCanvas: false,
     };
-
-
 
     // deal with resizing by changing canvas size and re-creating framebuffers
     window.addEventListener('resize', (ev) => {
