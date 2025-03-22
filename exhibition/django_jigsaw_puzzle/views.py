@@ -8,6 +8,7 @@ from django.views.generic.base import TemplateView
 from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 
 from filer.admin.clipboardadmin import ajax_upload
 from constance import config
@@ -143,10 +144,19 @@ def image_upload(request):
     if folder_id == 0: # Constance can't have None as default
         folder_id = None
 
-    res =  ajax_upload(request, folder_id=folder_id) # Paint game uploads
+    # We fake the user who is uploading if none is present so we can
+    # actually create files.
+    if not request.user.is_staff:
+        user_id = getattr(config, 'JIGSAW_PUZZLE_UPLOADER_USER_ID', None)
+        request.user = User.objects.filter(id=user_id)[0] 
 
+    res = ajax_upload(request, folder_id=folder_id)
     res_data = json.loads(res.content.decode("utf-8"))
 
+    if 'error' in res_data:
+        raise Exception("Error", res_data)
+
+    # Add a QR-Code pointing to image
     factory = qrcode.image.svg.SvgPathImage
     full_url = request.build_absolute_uri(res_data['original_image'])
     img = qrcode.make(full_url, image_factory=factory)
