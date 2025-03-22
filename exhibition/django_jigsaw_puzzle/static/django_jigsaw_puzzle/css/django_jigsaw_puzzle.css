@@ -129,6 +129,8 @@ code {
 /* Museopaint */
 canvas {
     cursor: crosshair;
+    /* height: 100%; */
+    /* width: 100%; */
 }
 
 .gizmos {
@@ -148,6 +150,8 @@ canvas {
 .gizmos-bottom {
     bottom: 0;
     left: 0;
+    max-width: 100%;
+    overflow: scroll;
 }
 
 .gizmos > input, .gizmos > button {
