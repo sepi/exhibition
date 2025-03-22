@@ -249,7 +249,6 @@ function addColorButton(parent, color, setColor, checked = False) {
     }
 
     button.addEventListener('click', (ev) => {
-	ev.preventDefault();
 	setColor(color);
     });
 
