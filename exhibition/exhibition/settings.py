@@ -194,6 +194,7 @@ class Common(Configuration):
         'NAVBAR_BACKGROUND_COLOR': ("#ffffff", _("The color of the background of the top navigation bar as a string you can use in css, eg. '#000000' for black or 'red'."), 'color_field'),
         'NAVBAR_BACKGROUND_TYPE': ("light", _("Selects how the navigation button and link colors are set. If the background color is light, select light here, if it's dark, select dark."), 'light_dark'),
         'JIGSAW_PUZZLE_UPLOAD_DIRECTORY_ID': (0, _("Where paintings are uploaded")),
+        'JIGSAW_PUZZLE_UPLOADER_USER_ID': (0, _("The ID of the user who is allowed to upload")),
     }
 
 class Dev(Common):

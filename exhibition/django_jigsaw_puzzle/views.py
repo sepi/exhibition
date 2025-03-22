@@ -154,7 +154,7 @@ def image_upload(request):
     res_data = json.loads(res.content.decode("utf-8"))
 
     if 'error' in res_data:
-        raise Exception("Error", res_data)
+        raise Exception("Can't upload. Make sure you have an uploading user in the system and constance JIGSAW_PUZZLE_UPLOADER_USER_ID set", res_data)
 
     # Add a QR-Code pointing to image
     factory = qrcode.image.svg.SvgPathImage
