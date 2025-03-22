@@ -420,7 +420,7 @@ export default function museopaint(rootEl) {
             // although it could be done incrementally.
 	    let coords = [];
 	    if (drawState.strokeCoords.length === 1) { // single click or tap
-		for (let i = 0; i < 5; ++i) {
+		for (let i = 0; i < 10; ++i) {
 		    coords.push(drawState.strokeCoords[0]);
 		}
 	    } else {
