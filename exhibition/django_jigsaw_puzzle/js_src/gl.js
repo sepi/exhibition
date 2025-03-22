@@ -71,13 +71,28 @@ export function renderFramebuffer(gl, width, height,
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
+function SRGBtoLinear(srgbColor) {
+    const rgb = [srgbColor[0], srgbColor[1], srgbColor[2]];
+    const linearRGB = [];
+    for (const c of rgb) {
+	if (c < 0.04045) {
+	    linearRGB.push(c / 12.92);
+	} else {
+	    linearRGB.push(Math.pow((c + 0.055) / 1.055, 2.4));
+	}
+    }
+    linearRGB.push(rgb[3]); // Alpha
+    return linearRGB;
+}
+
 export function clearToDrawToolColor(gl, drawState, drawTool) {
     // gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.strokeFramebuffer.fbo);
     // gl.clearColor(1.0, 1.0, 1.0, 1.0);
     // gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.paintingFramebuffer.fbo);
-    gl.clearColor(drawTool.color[0], drawTool.color[1], drawTool.color[2], 1);
+    const drawToolLinear = SRGBtoLinear(drawTool.color);
+    gl.clearColor(drawToolLinear[0], drawToolLinear[1], drawToolLinear[2], 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
