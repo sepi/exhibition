@@ -10,8 +10,7 @@ from .views import jigsaw_puzzle_context, memory_game_context, paint_game_contex
 
 
 class GamePlugin(CMSPluginBase):
-    render_template = 'django_jigsaw_puzzle/jigsaw_puzzle_plugin.html'
-    cache = True
+    cache = False
     allow_children = False
     require_parent = False
     parent_classes = []
@@ -26,6 +25,7 @@ class GamePlugin(CMSPluginBase):
 @plugin_pool.register_plugin
 class JigsawPuzzlePlugin(GamePlugin):
     model = JigsawPuzzlePluginModel
+    render_template = 'django_jigsaw_puzzle/jigsaw_puzzle_plugin.html'
     name = _('Jigsaw Puzzle')
 
     def get_context(self, game):
@@ -35,6 +35,7 @@ class JigsawPuzzlePlugin(GamePlugin):
 @plugin_pool.register_plugin
 class MemoryGamePlugin(GamePlugin):
     model = MemoryGamePluginModel
+    render_template = 'django_jigsaw_puzzle/memory_game_plugin.html'
     name = _('Memory Game')
 
     def get_context(self, game):
@@ -44,6 +45,7 @@ class MemoryGamePlugin(GamePlugin):
 @plugin_pool.register_plugin
 class PaintGamePlugin(GamePlugin):
     model = PaintGamePluginModel
+    render_template = 'django_jigsaw_puzzle/paint_game_plugin.html'
     name = _('Paint Game')
 
     def get_context(self, game):

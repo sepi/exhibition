@@ -41,6 +41,7 @@ def jigsaw_puzzle_context(game):
     }
 
 
+@never_cache
 def jigsaw_puzzle_detail(request, id):
     game = get_object_or_404(JigsawPuzzle, pk=id)
     gdl = GridDifficultyLevel.objects.filter(game=game)
@@ -88,7 +89,7 @@ def memory_game_detail(request, id):
                                    'columns': do.difficulty_level.columns} for do in gdl]
         })
     else: # For browsers
-        return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
+        return render(request, 'django_jigsaw_puzzle/memory_game.html',
                       memory_game_context(game))
 
 
@@ -125,6 +126,7 @@ def paint_game_context(game):
         'mode': 'PAINT_GAME',
     }
 
+@never_cache
 def paint_game_detail(request, id):
     game = get_object_or_404(PaintGame, pk=id)
     if request.headers.get('Accept') == 'application/json':
@@ -133,7 +135,7 @@ def paint_game_detail(request, id):
             'name': game.name,
         })
     else: # For browsers
-        return render(request, 'django_jigsaw_puzzle/jigsaw_puzzle.html',
+        return render(request, 'django_jigsaw_puzzle/paint_game.html',
                       paint_game_context(game))
 
 

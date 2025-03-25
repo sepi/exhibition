@@ -1,5 +1,27 @@
 {% load static %}
 
+<!-- Modal for showing info or questions -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalLabel"></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<form id="csrf-form" style="display: none;">
+  {% csrf_token %}
+</form>
+
 <div id="game"
      data-game-url="{{ game_url }}"
      data-title="{{ title }}"
@@ -16,6 +38,6 @@
      data-card-width="{{ card_width }}"
      data-mode="{{ mode }}"></div>
 
-<link rel="stylesheet" href="{% static 'django_jigsaw_puzzle/css/jigsaw_puzzle.css' %}">
+<link rel="stylesheet" href="{% static 'django_jigsaw_puzzle/css/paint_game.css' %}">
 <script src="{% static 'django_jigsaw_puzzle/js/bundle.js' %}"></script>
 

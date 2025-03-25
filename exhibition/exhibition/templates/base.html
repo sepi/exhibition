@@ -26,6 +26,7 @@
     </head>
     <body>
         {% cms_toolbar %}
+        {% block navigation %}
         <nav class="navbar navbar-expand-sm navbar-{{ config.NAVBAR_BACKGROUND_TYPE }}"
 	     style="background-color: {{ config.NAVBAR_BACKGROUND_COLOR }}">
             <div class="container-lg">
@@ -42,10 +43,9 @@
                 </div>
             </div>
         </nav>
-        <div class="container-lg px-4">
-            {% block content %}
-            {% endblock content %}
-        </div>
+        {% endblock %}
+        {% block content %}
+        {% endblock content %}
 
         {% render_block "js" %}
     </body>
