@@ -301,14 +301,13 @@ function applyGridLayout(el, rows, cols) {
 function resizeCanvas(canvas, width, height, canvasBorderWidth) {
     canvas.width = width;
     canvas.height = height;
-    canvas.style.margin = `${canvasBorderWidth}px`;
+    canvas.style.border = `solid ${canvasBorderWidth}px #eee`;
 }
 
 export default function museopaint(rootEl) {
     // DOM
     rootEl.style.width = "100vw";
     rootEl.style.height = "100vh";
-    rootEl.style.backgroundColor = "#eee";
 
     const gizmosHtml = `
 <div class="gizmos-left gizmos">
