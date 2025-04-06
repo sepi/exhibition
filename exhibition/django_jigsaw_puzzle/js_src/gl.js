@@ -81,6 +81,16 @@ export function clearToDrawToolColor(gl, drawState, drawTool) {
     gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
+export function clearToColor(gl, drawState, color) {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.strokeFramebuffer.fbo);
+    gl.clearColor(color[0], color[1], color[2], 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, drawState.paintingFramebuffer.fbo);
+    gl.clearColor(color[0], color[1], color[2], 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+
 function generateDrawTool(gl, shader, numSegments) {
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);

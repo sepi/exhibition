@@ -1,5 +1,8 @@
-import { renderStroke, renderFramebuffer, recreateFramebuffer, clearToDrawToolColor, initGl } from './gl.js' 
+import { renderStroke, renderFramebuffer, recreateFramebuffer,
+	 clearToDrawToolColor, clearToColor, initGl } from './gl.js';
 import { dist, getCSRFToken, linearToSRGB } from './common.js';
+
+let clear;
 
 function rgb2hsl(r,g,b) {
   let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
@@ -119,6 +122,33 @@ function touchOffset(ev, touchId) {
 	    touch.clientY - rect.top];
 }
 
+function showModal(title, body, actions) {
+    const modalTitle = document.querySelector("#modal .modal-title");
+    modalTitle.innerHTML = title
+    const modalBody = document.querySelector("#modal .modal-body");
+    modalBody.innerHTML = body;
+
+    const modalFooter = document.querySelector("#modal .modal-footer");
+    modalFooter.innerHTML = '';
+    for (let action of actions) {
+	const [label, fun] = action;
+	let button;
+	button = document.createElement('button');
+	if (fun === 'close') {
+	    // Only close. This always happens
+	} else {
+	    button.addEventListener('click', fun);
+	}
+	button.setAttribute('data-bs-dismiss', 'modal');
+	button.className = 'btn btn-secondary';
+	button.innerHTML = label;
+	modalFooter.appendChild(button);
+    }
+    
+    const modal = new bootstrap.Modal('#modal');
+    modal.show();
+}
+
 function saveCanvasToServer(blob) {
     const csrfToken = getCSRFToken();
 
@@ -136,14 +166,9 @@ function saveCanvasToServer(blob) {
 	.then(data => {
 	    const l = window.location;
 	    const url = `${l.protocol}//${l.host}${data.original_image}`;
-	    const modalTitle = document.querySelector("#modal .modal-title");
-	    modalTitle.innerHTML = "Scan this QR-Code to take home your work!"
-	    const modalBody = document.querySelector("#modal .modal-body");
-	    modalBody.innerHTML = data.qr_code_svg;
-	    // modalBody.innerHTML += `<a href="${url}">Link</a>`;
-	    const modal = new bootstrap.Modal('#modal');
-	    
-	    modal.show();
+	    showModal("Scan this QR-Code to take home your work!",
+		      data.qr_code_svg,
+		      [['CLOSIIII', 'close']]);
 	})
 	.catch(error => {
 	    console.error('Error:', error);
@@ -394,15 +419,16 @@ export default function museopaint(rootEl) {
 	resizeCanvas(canvas, drawWidth, drawHeight, canvasBorderWidth);
 	drawState.strokeFramebuffer = recreateFramebuffer(gl, drawState.strokeFramebuffer, drawWidth, drawHeight);
 	drawState.paintingFramebuffer = recreateFramebuffer(gl, drawState.paintingFramebuffer, drawWidth, drawHeight);
-	clearToDrawToolColor(gl, drawState, drawTool);
     });
 
 
     buttonClear.addEventListener('click', (ev) => {
-	const clear = confirm("Really clear to selected color? You will lose your work!");
-	if (clear) {
-	    clearToDrawToolColor(gl, drawState, drawTool);
-	}
+	clear = () =>  clearToColor(gl, drawState, [255, 255, 255]);
+	showModal("Clear page", "Do you really want to clear and loose your work?",
+		  [
+		      ["Yes", clear],
+		      ["No", "close"],
+		  ])
     });
 
     buttonSave.addEventListener('click', (ev) => {
