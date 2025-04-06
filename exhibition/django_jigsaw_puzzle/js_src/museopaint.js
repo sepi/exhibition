@@ -340,7 +340,7 @@ export default function museopaint(rootEl) {
     const buttonClear = document.getElementById('buttonClear');
     const buttonSave = document.getElementById('buttonSave');
 
-    const canvasBorderWidth = 58;
+    const canvasBorderWidth = 56;
     
     rootEl.appendChild(canvas);
 
