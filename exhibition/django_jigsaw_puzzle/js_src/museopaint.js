@@ -281,8 +281,8 @@ function addColorButtons(hueCount, lightnessCount, container, setColor) {
 
     for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
 	let linearColor = [1, 0, 0];
-	linearColor = adjustLightness(linearColor, -0.15*lightnessIdx);
-	let hueIncrement = 360/hueCount;
+	linearColor = adjustLightness(linearColor, -0.20*lightnessIdx);
+	let hueIncrement = (360-30)/hueCount;
 	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
 	    colorButtons[linearColor] = addColorButton(container, linearColor, setColor, false);
 	    linearColor =  adjustHue(linearColor, hueIncrement);
@@ -363,7 +363,7 @@ export default function museopaint(rootEl) {
 
     // Color buttons
     const gizmosBottom = document.getElementById('gizmosBottom');
-    const colorButtons = addColorButtons(12, 3, gizmosBottom, (color) => drawTool.color = color);
+    const colorButtons = addColorButtons(11, 3, gizmosBottom, (color) => drawTool.color = color);
 
     // Left buttons
     const gizmosLeft = document.querySelector('.gizmos-left');
