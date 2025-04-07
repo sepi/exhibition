@@ -115,11 +115,11 @@ function findTouchWithId(touchList, id) {
     return null;
 }
     
-function touchOffset(ev, touchId) {
+function touchOffset(ev, touchId, borderWidth) {
     var rect = ev.target.getBoundingClientRect();
     const touch = findTouchWithId(ev.changedTouches, touchId);
-    return [touch.clientX - rect.left,
-	    touch.clientY - rect.top];
+    return [touch.clientX - rect.left - borderWidth,
+	    touch.clientY - rect.top - borderWidth];
 }
 
 function showModal(title, body, actions) {
@@ -189,7 +189,7 @@ function initEventListeners(canvas, gl,
 	    if (ts.length > 0) {
 		const touch = ts.item(0);
 		drawState.touchEventId = touch.identifier;
-		[x, y] = touchOffset(ev, touch.identifier);
+		[x, y] = touchOffset(ev, touch.identifier, drawState.canvasBorderWidth);
 	    }
 	} else { // Click
 	    [x, y] = [ev.offsetX, ev.offsetY];
@@ -213,7 +213,7 @@ function initEventListeners(canvas, gl,
 	if (ev.type === 'touchmove' && drawState.touchEventId !== null) {
 	    const touch = findTouchWithId(ev.changedTouches, drawState.touchEventId);
 	    if (touch) {
-		[x, y] = touchOffset(ev, touch.identifier);
+		[x, y] = touchOffset(ev, touch.identifier, drawState.canvasBorderWidth);
 	    }
 	} else {
 	    [x, y] = [ev.offsetX, ev.offsetY];
@@ -235,7 +235,8 @@ function initEventListeners(canvas, gl,
 
 	// This touchend is not for the touch tracked
 	if (ev.type === 'touchend' ) {
-	    if (drawState.touchEventId !== null && ev.changedTouches.item(drawState.touchEventId)) {
+	    const touch = findTouchWithId(ev.changedTouches, drawState.touchEventId);
+	    if (touch) {
 		drawState.touchEventId = null;
 	    } else {
 		return;
@@ -409,6 +410,7 @@ export default function museopaint(rootEl) {
 	paintingFramebuffer: paintingFramebuffer,
 	strokeFramebuffer: strokeFramebuffer,
 	saveCanvas: false,
+	canvasBorderWidth: canvasBorderWidth
 	// clearCanvas: false,
     };
 
