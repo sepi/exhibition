@@ -10,6 +10,31 @@ function rgb2hsl(r,g,b) {
   return [60*(h<0?h+6:h), f ? c/f : 0, (v+v-c)/2];
 }
 
+function hslToRgb(h, s, l){
+    var r, g, b;
+
+    if (s == 0) {
+        r = g = b = l; // achromatic
+    } else {
+        function hue2rgb(p, q, t){
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        }
+
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return [r, g, b];
+}
+
 function hsl2rgb(h,s,l) {
    let a=s*Math.min(l,1-l);
    let f= (n,k=(n+h/30)%12) => l - a*Math.max(Math.min(k-3,9-k,1),-1);
@@ -284,21 +309,44 @@ function addColorButton(parent, colorLinear, setColor, checked = False) {
     return button;
 }
 
-function addColorButtons(hueCount, lightnessCount, container, setColor) {
+function addColorButtons(grayCount, skinCount, hueCount, lightnessCount, container, setColor) {
     const colorButtons = {};
-    colorButtons['gray0'] = addColorButton(container, [0, 0, 0], setColor, true);
-    colorButtons['gray1'] = addColorButton(container, [0.25, 0.25, 0.25], setColor, false);
-    colorButtons['gray2'] = addColorButton(container, [0.5, 0.5, 0.5], setColor, false);
-    colorButtons['gray3'] = addColorButton(container, [0.75, 0.75, 0.75], setColor, false);
-    colorButtons['gray4'] = addColorButton(container, [1, 1, 1], setColor, false);
+    for (let i = 0; i < grayCount; ++i) {
+	addColorButton(container,
+		       [i/(grayCount-1), i/(grayCount-1), i/(grayCount-1)],
+		       setColor,
+		       i === 0);
+    }
 
-    function div255(x) { return [x[0]/255.0, x[1]/255.0, x[2]/255.0]; }
-    colorButtons['skin0'] = addColorButton(container, div255([15, 5, 0]), setColor, false);
-    colorButtons['skin0'] = addColorButton(container, div255([45, 10, 0]), setColor, false);
-    colorButtons['skin1'] = addColorButton(container, div255([121, 65, 16]), setColor, false);
-    colorButtons['skin3'] = addColorButton(container, div255([224,172,105]), setColor, false);
-    colorButtons['skin5'] = addColorButton(container, div255([255,219,172]), setColor, false);
 
+    const darkColor = [15/360.0, 0.50, 0.04];
+    const midColor = [15/360.0, 0.56, 0.40];
+    const lightColor = [25/360.0, 0.73, 0.85];
+    if (skinCount === 2) {
+	addColorButton(container, hslToRgb(...darkColor), setColor, false);
+	addColorButton(container, hslToRgb(...lightColor), setColor, false);
+    } else if (skinCount === 3) {
+	addColorButton(container, hslToRgb(...darkColor), setColor, false);
+	addColorButton(container, hslToRgb(...midColor), setColor, false);
+	addColorButton(container, hslToRgb(...lightColor), setColor, false);
+    } else {
+	const c = Math.floor((skinCount - 3) / 2);
+	for (let i = 0; i < c + 2; i++) {
+            const ratio = i / ((c + 2) - 1);
+            const h = darkColor[0] * (1-ratio) + midColor[0] * ratio;
+            const s = darkColor[1] * (1-ratio) + midColor[1] * ratio;
+            const l = darkColor[2] * (1-ratio) + midColor[2] * ratio;
+	    addColorButton(container, hslToRgb(h, s, l), setColor, false);
+	}
+	for (let i = 1; i < c + 1; i++) {
+            const ratio = i / ((c + 1) - 1);
+            const h = midColor[0] * (1-ratio) + lightColor[0] * ratio;
+            const s = midColor[1] * (1-ratio) + lightColor[1] * ratio;
+            const l = midColor[2] * (1-ratio) + lightColor[2] * ratio;
+	    addColorButton(container, hslToRgb(h, s, l), setColor, false);
+	}
+    }
+    
     function nonLin(x, a) {
 	const b = Math.exp(a * Math.log(x) - 1.0);
 	return Math.pow(x, a) / b;
@@ -388,7 +436,7 @@ export default function museopaint(rootEl) {
 
     // Color buttons
     const gizmosBottom = document.getElementById('gizmosBottom');
-    const colorButtons = addColorButtons(11, 3, gizmosBottom, (color) => drawTool.color = color);
+    const colorButtons = addColorButtons(4, 3, 11, 3, gizmosBottom, (color) => drawTool.color = color);
 
     // Left buttons
     const gizmosLeft = document.querySelector('.gizmos-left');
