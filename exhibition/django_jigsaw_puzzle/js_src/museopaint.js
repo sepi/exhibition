@@ -3,6 +3,8 @@ import { renderStroke, renderFramebuffer, recreateFramebuffer,
 import { dist, getCSRFToken, linearToSRGB } from './common.js';
 
 let clear;
+export let drawTool;
+export let drawState;
 
 function rgb2hsl(r,g,b) {
   let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
@@ -10,6 +12,7 @@ function rgb2hsl(r,g,b) {
   return [60*(h<0?h+6:h), f ? c/f : 0, (v+v-c)/2];
 }
 
+export
 function hslToRgb(h, s, l){
     var r, g, b;
 
@@ -42,6 +45,7 @@ function hsl2rgb(h,s,l) {
 }
 
 // Adjust the hue by a certain degree
+export
 function adjustHue(color, degrees) {
     const [r, g, b] = color;
     let [h, s, l] = rgb2hsl(r, g, b);
@@ -49,6 +53,7 @@ function adjustHue(color, degrees) {
     return hsl2rgb(h, s, l);
 }
 
+export
 function adjustLightness(color, dl) {
     const [r, g, b] = color;
     let [h, s, l] = rgb2hsl(r, g, b);
@@ -68,6 +73,7 @@ function hex2rgb(hex) {
     return [parseInt(result[1], 16) / 256, parseInt(result[2], 16) / 256, parseInt(result[3], 16) / 256];
 }
 
+export
 function cubicSplineInterpolate(points, maxDist) {
     // Catmull-Rom spline interpolation
     const interpolate = (p0, p1, p2, p3, t) => {
@@ -286,145 +292,24 @@ function initEventListeners(canvas, gl,
     });
 }
 
-function addColorButton(parent, colorLinear, setColor, checked = False) {
-    const button = document.createElement('input');
-    button.name = 'color';
-    button.type = 'radio';
-
-    const colorSRGB = linearToSRGB(colorLinear);
-    const [r, g, b] = [colorSRGB[0]*255, colorSRGB[1]*255, colorSRGB[2]*255];
-    button.id = `button${r}${g}${b}`;
-    button.style = `background-color: rgb(${r}, ${g}, ${b});`;
-    button.className = 'color-button';
-    if (checked) {
-	button.checked = 'checked';
-    }
-
-    button.addEventListener('click', (ev) => {
-	setColor(colorLinear);
-    });
-
-    parent.appendChild(button);
-
-    return button;
-}
-
-function addColorButtons(grayCount, skinCount, hueCount, lightnessCount, container, setColor) {
-    const colorButtons = {};
-    for (let i = 0; i < grayCount; ++i) {
-	addColorButton(container,
-		       [i/(grayCount-1), i/(grayCount-1), i/(grayCount-1)],
-		       setColor,
-		       i === 0);
-    }
-
-
-    const darkColor = [15/360.0, 0.50, 0.04];
-    const midColor = [15/360.0, 0.56, 0.40];
-    const lightColor = [25/360.0, 0.73, 0.85];
-    if (skinCount === 2) {
-	addColorButton(container, hslToRgb(...darkColor), setColor, false);
-	addColorButton(container, hslToRgb(...lightColor), setColor, false);
-    } else if (skinCount === 3) {
-	addColorButton(container, hslToRgb(...darkColor), setColor, false);
-	addColorButton(container, hslToRgb(...midColor), setColor, false);
-	addColorButton(container, hslToRgb(...lightColor), setColor, false);
-    } else {
-	const c = Math.floor((skinCount - 3) / 2);
-	for (let i = 0; i < c + 2; i++) {
-            const ratio = i / ((c + 2) - 1);
-            const h = darkColor[0] * (1-ratio) + midColor[0] * ratio;
-            const s = darkColor[1] * (1-ratio) + midColor[1] * ratio;
-            const l = darkColor[2] * (1-ratio) + midColor[2] * ratio;
-	    addColorButton(container, hslToRgb(h, s, l), setColor, false);
-	}
-	for (let i = 1; i < c + 1; i++) {
-            const ratio = i / ((c + 1) - 1);
-            const h = midColor[0] * (1-ratio) + lightColor[0] * ratio;
-            const s = midColor[1] * (1-ratio) + lightColor[1] * ratio;
-            const l = midColor[2] * (1-ratio) + lightColor[2] * ratio;
-	    addColorButton(container, hslToRgb(h, s, l), setColor, false);
-	}
-    }
-    
-    function nonLin(x, a) {
-	const b = Math.exp(a * Math.log(x) - 1.0);
-	return Math.pow(x, a) / b;
-    }
-
-    for (let lightnessIdx = 0; lightnessIdx < lightnessCount; ++lightnessIdx) {
-	let linearColor = [1, 0, 0];
-	linearColor = adjustLightness(linearColor, -0.20*lightnessIdx);
-	let hueIncrement = (360-30)/hueCount;
-	for (let hueIdx = 0; hueIdx < hueCount; ++hueIdx) {
-	    colorButtons[linearColor] = addColorButton(container, linearColor, setColor, false);
-	    linearColor =  adjustHue(linearColor, hueIncrement);
-	}
-    }
-
-    applyGridLayout(container, 1, hueCount*lightnessCount + 5 + 5);
-
-    return colorButtons;
-}
-
-function applyGridLayout(el, rows, cols) {
-    el.style = `grid-template-rows: repeat(${rows}, 1fr); grid-template-columns: repeat(${cols}, auto);`;
-}
-
 function resizeCanvas(canvas, width, height, canvasBorderWidth) {
     canvas.width = width;
     canvas.height = height;
     canvas.style.border = `solid ${canvasBorderWidth}px #eee`;
 }
 
-export default function museopaint(rootEl) {
-    // DOM
-    rootEl.style.width = "100vw";
-    rootEl.style.height = "100vh";
-
-    const gizmosHtml = `
-<div class="gizmos-left gizmos">
-  <button id="buttonSave" style="background-image: url(/static/django_jigsaw_puzzle/images/button-save.svg)"></button>
-  <button id="buttonClear" style="background-image: url(/static/django_jigsaw_puzzle/images/button-clear.svg)"></button>
-  <input type="radio" name="size" class="size-button" data-radius="4" style="background-image: url(/static/django_jigsaw_puzzle/images/button-small.svg)" checked></input>
-  <input type="radio" name="size" class="size-button" data-radius="12" style="background-image: url(/static/django_jigsaw_puzzle/images/button-medium.svg)"></input>
-  <input type="radio" name="size" class="size-button" data-radius="22" style="background-image: url(/static/django_jigsaw_puzzle/images/button-large.svg)"></input>
-  <input type="radio" name="size" class="size-button" data-radius="42" style="background-image: url(/static/django_jigsaw_puzzle/images/button-xlarge.svg)"></input>
-</div>
-
-<div id="gizmosBottom" class="gizmos-bottom gizmos"></div>
-`;
-    rootEl.innerHTML = gizmosHtml;
-
-    const canvas = document.createElement('canvas');
-
+export function init(canvas) {
     const initialColor = [0, 0, 0];
     const initialRadii = [4, 8, 22, 34];
 
-    let i = 0;
-    for (let button of document.querySelectorAll('.size-button')) {
-	const r = button.dataset.radius;
-	button.addEventListener('click', (ev) => {
-	    drawTool.radius = r;
-	});
-	++i;
-    }
-
-    const buttonClear = document.getElementById('buttonClear');
-    const buttonSave = document.getElementById('buttonSave');
-
     const canvasBorderWidth = 56;
-    
-    rootEl.appendChild(canvas);
-
 
     const drawWidth = window.innerWidth - 2 * canvasBorderWidth;
     const drawHeight = window.innerHeight - 2 * canvasBorderWidth;
     resizeCanvas(canvas, drawWidth, drawHeight, canvasBorderWidth);
-
     
     // Config
-    let drawTool = {
+    drawTool = {
 	color: initialColor,
 	radius: initialRadii[0],
 	flow: 0.8,
@@ -434,14 +319,6 @@ export default function museopaint(rootEl) {
 	vao: null,
     }
 
-    // Color buttons
-    const gizmosBottom = document.getElementById('gizmosBottom');
-    const colorButtons = addColorButtons(4, 3, 11, 3, gizmosBottom, (color) => drawTool.color = color);
-
-    // Left buttons
-    const gizmosLeft = document.querySelector('.gizmos-left');
-    applyGridLayout(gizmosLeft, gizmosLeft.children.length + 1, 1);
-
     const [gl,
 	   quadShader, quadVao,
 	   strokeFramebuffer, strokeShader,
@@ -449,7 +326,7 @@ export default function museopaint(rootEl) {
 	   drawToolVao, vertsLen] = initGl(canvas, drawTool);
 
     // Click handling
-    let drawState = {
+    drawState = {
 	painting: false,
 	traceDist: 0,
 	strokeCoords: [],
@@ -469,19 +346,18 @@ export default function museopaint(rootEl) {
 	drawState.paintingFramebuffer = recreateFramebuffer(gl, drawState.paintingFramebuffer, drawWidth, drawHeight);
     });
 
+    // buttonClear.addEventListener('click', (ev) => {
+    // 	clear = () =>  clearToColor(gl, drawState, [255, 255, 255]);
+    // 	showModal("Clear page", "Do you really want to clear and loose your work?",
+    // 		  [
+    // 		      ["Yes", clear],
+    // 		      ["No", "close"],
+    // 		  ])
+    // });
 
-    buttonClear.addEventListener('click', (ev) => {
-	clear = () =>  clearToColor(gl, drawState, [255, 255, 255]);
-	showModal("Clear page", "Do you really want to clear and loose your work?",
-		  [
-		      ["Yes", clear],
-		      ["No", "close"],
-		  ])
-    });
-
-    buttonSave.addEventListener('click', (ev) => {
-	drawState.saveCanvas = true;
-    });
+    // buttonSave.addEventListener('click', (ev) => {
+    // 	drawState.saveCanvas = true;
+    // });
 
     function render(reqAnimationFrame) {
 	gl.viewport(0, 0, canvas.width, canvas.height);
