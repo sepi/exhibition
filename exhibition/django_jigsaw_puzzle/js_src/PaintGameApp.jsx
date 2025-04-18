@@ -10,7 +10,7 @@ import { PaintGame } from './PaintGame.jsx';
 import { DifficultySelector } from './DifficultySelector.jsx';
 
 export default
-function PaintGameApp({}) {
+function PaintGameApp(appProps) {
     const [screen, setScreen] = useState('game');
     
     useEffect(() => {
@@ -19,7 +19,7 @@ function PaintGameApp({}) {
     return (
 	<div className="App">
 	    { screen === 'game' && 
-	      <PaintGame />
+	      <PaintGame {...appProps} />
 	    }
 	</div>
     );

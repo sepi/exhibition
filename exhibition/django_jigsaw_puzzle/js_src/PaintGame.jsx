@@ -155,24 +155,13 @@ function GizmosBottom({setColor,
 }
 
 export
-function PaintGame() {
+function PaintGame({firstTimeout, secondTimeout}) {
     const canvasRef = useRef(null);
 
-    const [ showModal, setShowModal ] = useState(false);
+    const [ showModal, setShowModal ] = useState();
     const [ modalTitle, setModalTitle ] = useState();
     const [ modalRawBody, setModalRawBody ] = useState();
-    
-    // Once on load
-    useEffect(() => {
-	init(canvasRef.current);
-
-	// Allows non-react code to show the react modal
-	uiFunctions.showModal = (title, body) => {
-	    setModalTitle(title);
-	    setModalRawBody(body);
-	    setShowModal(true);
-	}
-    }, []);
+    const [ modalActions, setModalActions ] = useState([]);
 
     const setRadius = (radius) => {
 	drawTool.radius = radius
@@ -187,6 +176,69 @@ function PaintGame() {
 	drawState.clearCanvas = true;
     }
     
+    // Once on load
+    useEffect(() => {
+	init(canvasRef.current);
+
+	// Allows non-react code to show the react modal
+	uiFunctions.showModal = (title, body) => {
+	    setModalTitle(title);
+	    setModalRawBody(body);
+	    setModalActions([{
+		type: 'close',
+		caption: "Close",
+	    }]);
+	    setShowModal(true);
+	}
+
+	uiFunctions.updateLastAction = () => {
+	    const d = new Date();
+	    setLastAction(d);
+	}
+    }, []);
+
+    useEffect(() => {
+	setShowModal(showTimeoutModal);
+    }, [showTimeoutModal]);
+
+    
+    const [ showTimeoutModal, setShowTimeoutModal ] = useState(false);
+    const [ lastAction, setLastAction ] = useState(new Date());
+
+    // Every second
+    useEffect(() => {
+	const interval = setInterval(() => {
+	    const now = new Date();
+	    const delta = now - lastAction;
+	    // console.log(delta/1000);
+
+	    // Second timeout occured, remove modal and clear screen
+	    if (delta/1000 > secondTimeout && showTimeoutModal) {
+		uiFunctions.updateLastAction();
+		setShowTimeoutModal(false);
+		clear();
+	    // First timeout occured, show warning.
+	    } else if (delta/1000 > firstTimeout && !showTimeoutModal) {
+		setShowTimeoutModal(true);
+		setModalTitle("No activity");
+		setModalRawBody("You have not painted for a while. Do you want to continue? If you don't react your painting will be deleted soon.");
+		setModalActions([
+		    {
+			type: 'callback',
+			caption: "Continue painting",
+			callback: () => {
+			    uiFunctions.updateLastAction();
+			    setShowTimeoutModal(false);
+			}
+		    }]);
+	    }
+	}, 1000);
+
+	return () => {
+	    clearInterval(interval);
+	}
+    }, [lastAction, showTimeoutModal]);
+    
     return (
 	<>
 	    <ModalDialog
@@ -194,7 +246,7 @@ function PaintGame() {
 		setShow={setShowModal}
 		title={modalTitle}
 		rawBody={modalRawBody}
-		closeButtonCaption={"Close"}
+		actions={modalActions}
 	    />
 	    <GizmosLeft
 		radii={[4, 12, 22, 42]}

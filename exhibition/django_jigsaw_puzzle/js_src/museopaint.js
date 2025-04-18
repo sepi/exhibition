@@ -228,6 +228,7 @@ function initEventListeners(canvas, gl,
 	if (drawState.painting) {
 	    const pos = [x, y];
 	    drawState.strokeCoords.push(pos);
+	    uiFunctions.updateLastAction();
 	}
     }
     canvas.addEventListener('mousemove', toolMove);
@@ -236,8 +237,6 @@ function initEventListeners(canvas, gl,
 
     function drawEnd(ev, leave=false) {
 	ev.preventDefault();
-
-	console.log("drawend");
 
 	// This touchend is not for the touch tracked
 	if (ev.type === 'touchend' ) {

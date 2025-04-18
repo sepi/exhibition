@@ -17,7 +17,8 @@ root.render(
           <MemoryGameApp { ...rootEl.dataset } />
         }
         { mode === 'PAINT_GAME' &&
-          <PaintGameApp { ...rootEl.dataset } />
+          <PaintGameApp firstTimeout={5}
+			secondTimeout={10} { ...rootEl.dataset } />
         }
     </React.StrictMode>
 );

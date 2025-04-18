@@ -7,8 +7,17 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 
-export function ModalDialog({show, setShow, closeButtonCaption,
+export function ModalDialog({show, setShow, actions,
 			     title, rawBody, body}) {
+    const actionButtons = actions.map(a => {
+	if (a.type === 'close') {
+	    return <Button onClick={() => setShow(false)}>{ a.caption }</Button>;
+	} else if (a.type === 'callback') {
+	    return <Button onClick={a.callback}>{ a.caption }</Button>;
+	} else {
+	    return <Button>{ a.caption }</Button>;
+	}
+    });
     return (
 	<Dialog
 	    open={show}
@@ -28,8 +37,8 @@ export function ModalDialog({show, setShow, closeButtonCaption,
 		      { body }
 		  </DialogContentText> }
 	    </DialogContent>
-	    <DialogActions> 
-		<Button onClick={() => setShow(false)}>{ closeButtonCaption }</Button>
+	    <DialogActions>
+		{ actionButtons }
 	    </DialogActions>
 	</Dialog>
     );
