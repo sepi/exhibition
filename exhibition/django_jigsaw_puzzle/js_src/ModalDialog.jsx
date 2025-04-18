@@ -11,11 +11,11 @@ export function ModalDialog({show, setShow, actions,
 			     title, rawBody, body}) {
     const actionButtons = actions.map(a => {
 	if (a.type === 'close') {
-	    return <Button onClick={() => setShow(false)}>{ a.caption }</Button>;
+	    return <Button key={caption} onClick={() => setShow(false)}>{ a.caption }</Button>;
 	} else if (a.type === 'callback') {
-	    return <Button onClick={a.callback}>{ a.caption }</Button>;
+	    return <Button key={caption} onClick={a.callback}>{ a.caption }</Button>;
 	} else {
-	    return <Button>{ a.caption }</Button>;
+	    return <Button key={caption}>{ a.caption }</Button>;
 	}
     });
     return (
