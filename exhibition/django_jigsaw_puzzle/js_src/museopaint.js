@@ -199,7 +199,7 @@ function saveCanvasToServer(blob) {
 	    const url = `${l.protocol}//${l.host}${data.original_image}`;
 	    showModal("Scan this QR-Code to take home your work!",
 		      data.qr_code_svg,
-		      [['CLOSIIII', 'close']]);
+		      [['Done', 'close']]);
 	})
 	.catch(error => {
 	    console.error('Error:', error);
