@@ -7,6 +7,7 @@ import { useTimeout } from './useTimeout';
 import { renderStroke, renderFramebuffer, initGl } from './gl.js';
 import { hslToRgb, adjustLightness, adjustHue,
 	 init, drawTool, drawState, uiFunctions } from './museopaint';
+import { SRGBtoLinear } from './common';
 
 function GizmosLeft({radii,
 		     saveClick,
@@ -168,7 +169,7 @@ function PaintGame({firstTimeout, secondTimeout}) {
 	drawTool.radius = radius
     }
     const setColor = (c) => {
-	drawTool.color = c;
+	drawTool.color = SRGBtoLinear(c);
     };
     const save = () => {
 	drawState.saveCanvas = true;
