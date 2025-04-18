@@ -1,11 +1,11 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 
-import { SaveDialog } from './SaveDialog';
+import { ModalDialog } from './ModalDialog';
 
 import { renderStroke, renderFramebuffer, initGl } from './gl.js';
 import { hslToRgb, adjustLightness, adjustHue,
-	 init, drawTool, drawState } from './museopaint';
+	 init, drawTool, drawState, uiFunctions } from './museopaint';
 
 function GizmosLeft({radii,
 		     saveClick,
@@ -158,11 +158,20 @@ export
 function PaintGame() {
     const canvasRef = useRef(null);
 
-    const [ showSave, setShowSave ] = useState(false);
+    const [ showModal, setShowModal ] = useState(false);
+    const [ modalTitle, setModalTitle ] = useState();
+    const [ modalRawBody, setModalRawBody ] = useState();
     
     // Once on load
     useEffect(() => {
 	init(canvasRef.current);
+
+	// Allows non-react code to show the react modal
+	uiFunctions.showModal = (title, body) => {
+	    setModalTitle(title);
+	    setModalRawBody(body);
+	    setShowModal(true);
+	}
     }, []);
 
     const setRadius = (radius) => {
@@ -172,19 +181,20 @@ function PaintGame() {
 	drawTool.color = c;
     };
     const save = () => {
-	setShowSave(true);
-	// drawState.saveCanvas = true;
+	drawState.saveCanvas = true;
     }
     const clear = () => {
-	// drawState.cl
+	drawState.clearCanvas = true;
     }
     
     return (
 	<>
-	    <SaveDialog
-		show={showSave}
-		setShow={setShowSave}
-		dialogTitle={"Scan this QR-Code to take home your work!"}
+	    <ModalDialog
+		show={showModal}
+		setShow={setShowModal}
+		title={modalTitle}
+		rawBody={modalRawBody}
+		closeButtonCaption={"Close"}
 	    />
 	    <GizmosLeft
 		radii={[4, 12, 22, 42]}

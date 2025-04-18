@@ -5,6 +5,7 @@ import { dist, getCSRFToken, linearToSRGB } from './common.js';
 let clear;
 export let drawTool;
 export let drawState;
+export let uiFunctions = {}; // Function used to show a react modal
 
 function rgb2hsl(r,g,b) {
   let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
@@ -153,33 +154,6 @@ function touchOffset(ev, touchId) {
 	    touch.clientY - rect.top];
 }
 
-function showModal(title, body, actions) {
-    const modalTitle = document.querySelector("#modal .modal-title");
-    modalTitle.innerHTML = title
-    const modalBody = document.querySelector("#modal .modal-body");
-    modalBody.innerHTML = body;
-
-    const modalFooter = document.querySelector("#modal .modal-footer");
-    modalFooter.innerHTML = '';
-    for (let action of actions) {
-	const [label, fun] = action;
-	let button;
-	button = document.createElement('button');
-	if (fun === 'close') {
-	    // Only close. This always happens
-	} else {
-	    button.addEventListener('click', fun);
-	}
-	button.setAttribute('data-bs-dismiss', 'modal');
-	button.className = 'btn btn-secondary';
-	button.innerHTML = label;
-	modalFooter.appendChild(button);
-    }
-    
-    const modal = new bootstrap.Modal('#modal');
-    modal.show();
-}
-
 function saveCanvasToServer(blob) {
     const csrfToken = getCSRFToken();
 
@@ -197,9 +171,10 @@ function saveCanvasToServer(blob) {
 	.then(data => {
 	    const l = window.location;
 	    const url = `${l.protocol}//${l.host}${data.original_image}`;
-	    showModal("Scan this QR-Code to take home your work!",
-		      data.qr_code_svg,
-		      [['Done', 'close']]);
+	    uiFunctions.showModal(
+		"Scan this QR-Code to take home your work!",
+		data.qr_code_svg
+	    );
 	})
 	.catch(error => {
 	    console.error('Error:', error);
@@ -334,7 +309,7 @@ export function init(canvas) {
 	paintingFramebuffer: paintingFramebuffer,
 	strokeFramebuffer: strokeFramebuffer,
 	saveCanvas: false,
-	// clearCanvas: false,
+	clearCanvas: false,
     };
 
     // deal with resizing by changing canvas size and re-creating framebuffers
@@ -345,19 +320,6 @@ export function init(canvas) {
 	drawState.strokeFramebuffer = recreateFramebuffer(gl, drawState.strokeFramebuffer, drawWidth, drawHeight);
 	drawState.paintingFramebuffer = recreateFramebuffer(gl, drawState.paintingFramebuffer, drawWidth, drawHeight);
     });
-
-    // buttonClear.addEventListener('click', (ev) => {
-    // 	clear = () =>  clearToColor(gl, drawState, [255, 255, 255]);
-    // 	showModal("Clear page", "Do you really want to clear and loose your work?",
-    // 		  [
-    // 		      ["Yes", clear],
-    // 		      ["No", "close"],
-    // 		  ])
-    // });
-
-    // buttonSave.addEventListener('click', (ev) => {
-    // 	drawState.saveCanvas = true;
-    // });
 
     function render(reqAnimationFrame) {
 	gl.viewport(0, 0, canvas.width, canvas.height);
@@ -392,6 +354,11 @@ export function init(canvas) {
 	    // This must happen in same event as rendering due to GL double buffering
 	    canvas.toBlob(saveCanvasToServer);
 	    drawState.saveCanvas = false;
+	}
+
+	if (drawState.clearCanvas) {
+	    clearToColor(gl, drawState, [255, 255, 255])
+	    drawState.clearCanvas = false;
 	}
 
 	if (drawState.painting) {
