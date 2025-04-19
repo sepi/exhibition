@@ -202,6 +202,11 @@ function PaintGame({allowTakeHome,
 	drawState.sessionId = sid;
 	setSessionId(sid);
     }
+    const clearCanvasNoAsk = () => {
+	drawState.clearCanvas = true;
+	setNewSessionId();
+	setShowClearModal(false);
+    }
     const clearCanvas = () => {
 	setModalTitle("Clear your painting?");
 	setModalRawBody("Do you really want to delete all your painting and start again?");
@@ -213,11 +218,7 @@ function PaintGame({allowTakeHome,
 	    {
 		type: 'callback',
 		caption: "Yes, delete!",
-		callback: () => {
-		    drawState.clearCanvas = true;
-		    setNewSessionId();
-		    setShowClearModal(false);
-		},
+		callback: clearCanvasNoAsk,
 	    }]);
 	setShowClearModal(true);
     }
@@ -251,7 +252,7 @@ function PaintGame({allowTakeHome,
 		    resetTimeout();
 		}
 	    }]);
-    }, clearCanvas, idleFirstSeconds, idleSecondSeconds);
+    }, clearCanvasNoAsk, idleFirstSeconds, idleSecondSeconds);
 
     useEffect(() => {
 	uiFunctions.updateLastAction = resetTimeout
