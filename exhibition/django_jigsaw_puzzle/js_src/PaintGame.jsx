@@ -166,10 +166,12 @@ function PaintGame({idleFirstSeconds, idleSecondSeconds}) {
 
     const [ sessionId, setSessionId ] = useState();
 
-    const [ showModal, setShowModal ] = useState();
+    const [ showModal, setShowModal ] = useState(false);
     const [ modalTitle, setModalTitle ] = useState();
     const [ modalRawBody, setModalRawBody ] = useState();
     const [ modalActions, setModalActions ] = useState([]);
+
+    const [ showClearModal, setShowClearModal ] = useState(false);
 
     const setRadius = (radius) => {
 	drawTool.radius = radius
@@ -182,13 +184,27 @@ function PaintGame({idleFirstSeconds, idleSecondSeconds}) {
     }
     const setNewSessionId = () => {
 	const sid = generateSessionId();
-	console.log(`New session id ${sid}`);
 	drawState.sessionId = sid;
 	setSessionId(sid);
     }
     const clearCanvas = () => {
-	drawState.clearCanvas = true;
-	setNewSessionId();
+	setModalTitle("Clear your painting?");
+	setModalRawBody("Do you really want to delete all your painting and start again?");
+	setModalActions([
+	    {
+		type: 'close',
+		caption: "No, continue!"
+	    },
+	    {
+		type: 'callback',
+		caption: "Yes, delete!",
+		callback: () => {
+		    drawState.clearCanvas = true;
+		    setNewSessionId();
+		    setShowClearModal(false);
+		},
+	    }]);
+	setShowClearModal(true);
     }
     
     // Once on load
@@ -225,16 +241,20 @@ function PaintGame({idleFirstSeconds, idleSecondSeconds}) {
     useEffect(() => {
 	uiFunctions.updateLastAction = resetTimeout
     }, [resetTimeout]);
-    
+
+    // Combine timeout and clear modal state to determine if modal is visible.
     useEffect(() => {
-	setShowModal(showTimeoutModal);
-    }, [showTimeoutModal]);
+	setShowModal(showTimeoutModal || showClearModal);
+    }, [showTimeoutModal, showClearModal]);
     
     return (
 	<>
 	    <ModalDialog
 		show={showModal}
-		setShow={setShowModal}
+		setShow={() => {
+		    setShowClearModal(false);
+		    setShowModal(false);
+		}}
 		title={modalTitle}
 		rawBody={modalRawBody}
 		actions={modalActions}
