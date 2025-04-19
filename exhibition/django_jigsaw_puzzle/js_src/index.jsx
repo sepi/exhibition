@@ -6,9 +6,8 @@ import MemoryGameApp from './MemoryGameApp';
 import PaintGameApp from './PaintGameApp';
 
 const rootEl = document.getElementById('game');
-const root = ReactDOM.createRoot(rootEl);
 const mode = rootEl.dataset.mode;
-root.render(
+ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
         { mode === 'JIGSAW_PUZZLE' && 
           <JigsawPuzzleApp { ...rootEl.dataset } />
@@ -17,8 +16,7 @@ root.render(
           <MemoryGameApp { ...rootEl.dataset } />
         }
         { mode === 'PAINT_GAME' &&
-          <PaintGameApp firstTimeout={2*60}
-			secondTimeout={3*60} { ...rootEl.dataset } />
+          <PaintGameApp { ...rootEl.dataset } />
         }
     </React.StrictMode>
 );

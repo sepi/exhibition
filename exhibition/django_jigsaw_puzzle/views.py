@@ -11,13 +11,17 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 
 from filer.admin.clipboardadmin import ajax_upload
+
 from constance import config
 from filer.models.thumbnailoptionmodels import ThumbnailOption
 from easy_thumbnails.files import get_thumbnailer
 import qrcode
 import qrcode.image.svg
 
+from filer.models.filemodels import File
+
 from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame, GridDifficultyLevel
+
 
 def jigsaw_puzzle_list(request):
     jps = JigsawPuzzle.objects.all()
@@ -124,6 +128,8 @@ def image_set_detail(request, id):
 def paint_game_context(game):
     return {
         'mode': 'PAINT_GAME',
+        'idle_first_seconds': 300,
+        'idle_second_seconds': 330,
     }
 
 @never_cache
@@ -152,13 +158,22 @@ def image_upload(request):
         user_id = getattr(config, 'JIGSAW_PUZZLE_UPLOADER_USER_ID', None)
         request.user = User.objects.filter(id=user_id)[0] 
 
+
+    # check if there is already a file with same name. If so, delete if first
+    upload = list(request.FILES.values())[0]
+    filename = upload.name
+    maybe_file = File.objects.filter(folder__id=folder_id, original_filename=filename)
+    if (len(maybe_file) != 0):
+        for f in maybe_file:
+            f.delete()
+
     res = ajax_upload(request, folder_id=folder_id)
     res_data = json.loads(res.content.decode("utf-8"))
 
     if 'error' in res_data:
         raise Exception("Can't upload. Make sure you have an uploading user in the system and constance JIGSAW_PUZZLE_UPLOADER_USER_ID set", res_data)
 
-    # Add a QR-Code pointing to image
+    # Add a QR-Code pointing to image (as svg) to response
     factory = qrcode.image.svg.SvgPathImage
     full_url = request.build_absolute_uri(res_data['original_image'])
     img = qrcode.make(full_url, image_factory=factory)

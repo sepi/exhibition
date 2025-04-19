@@ -156,9 +156,15 @@ function GizmosBottom({setColor,
     );
 }
 
+function generateSessionId() {
+    return self.crypto.randomUUID();
+}
+
 export
-function PaintGame({firstTimeout, secondTimeout}) {
+function PaintGame({idleFirstSeconds, idleSecondSeconds}) {
     const canvasRef = useRef(null);
+
+    const [ sessionId, setSessionId ] = useState();
 
     const [ showModal, setShowModal ] = useState();
     const [ modalTitle, setModalTitle ] = useState();
@@ -174,8 +180,15 @@ function PaintGame({firstTimeout, secondTimeout}) {
     const save = () => {
 	drawState.saveCanvas = true;
     }
+    const setNewSessionId = () => {
+	const sid = generateSessionId();
+	console.log(`New session id ${sid}`);
+	drawState.sessionId = sid;
+	setSessionId(sid);
+    }
     const clearCanvas = () => {
 	drawState.clearCanvas = true;
+	setNewSessionId();
     }
     
     // Once on load
@@ -192,6 +205,8 @@ function PaintGame({firstTimeout, secondTimeout}) {
 	    }]);
 	    setShowModal(true);
 	}
+
+	setNewSessionId();
     }, []);
 
     const [resetTimeout, showTimeoutModal] = useTimeout((resetTimeout) => {
@@ -205,7 +220,7 @@ function PaintGame({firstTimeout, secondTimeout}) {
 		    resetTimeout();
 		}
 	    }]);
-    }, clearCanvas, firstTimeout, secondTimeout);
+    }, clearCanvas, idleFirstSeconds, idleSecondSeconds);
 
     useEffect(() => {
 	uiFunctions.updateLastAction = resetTimeout

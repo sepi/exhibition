@@ -156,10 +156,9 @@ function touchOffset(ev, touchId) {
 
 function saveCanvasToServer(blob) {
     const csrfToken = getCSRFToken();
-
     const formData = new FormData();
-    const dateTime = (new Date()).toISOString();
-    formData.append('file', blob, `${dateTime}.png`);
+    // Use drawState sessionId as unique id for this painting
+    formData.append('file', blob, `${drawState.sessionId}.png`);
     
     fetch('/games/image_upload', {
 	method: 'POST',
@@ -309,6 +308,7 @@ export function init(canvas) {
 	strokeFramebuffer: strokeFramebuffer,
 	saveCanvas: false,
 	clearCanvas: false,
+	sessionId: null,
     };
 
     // deal with resizing by changing canvas size and re-creating framebuffers
