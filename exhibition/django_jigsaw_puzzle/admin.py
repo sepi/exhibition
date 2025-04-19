@@ -89,8 +89,8 @@ class PaintGameAdmin(GameAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('info_text', 'name', 'copyright_notice',
-                       'color'),
+            'fields': ('allow_take_home', 'idle_first_seconds', 'idle_second_seconds',
+                       'color_count_gray', 'color_count_skin', 'color_count_hue', 'color_count_brightness'),
         }),
     )
 

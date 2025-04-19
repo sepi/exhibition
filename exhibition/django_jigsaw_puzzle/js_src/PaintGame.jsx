@@ -9,7 +9,8 @@ import { hslToRgb, adjustLightness, adjustHue,
 	 init, drawTool, drawState, uiFunctions } from './museopaint';
 import { SRGBtoLinear } from './common';
 
-function GizmosLeft({radii,
+function GizmosLeft({allowTakeHome,
+		     radii,
 		     saveClick,
 		     clearClick,
 		     radiusClick}) {
@@ -19,10 +20,12 @@ function GizmosLeft({radii,
 	<div className="gizmos-left gizmos"
 	     style={{gridTemplateRows: `repeat(${rows}, 1fr)`,
 		     gridTemplateColumns: `repeat(${cols}, auto)`}}>
-	    <button id="buttonSave"
-		    style={{backgroundImage: "url(/static/django_jigsaw_puzzle/images/button-save.svg)"}}
-		    onClick={saveClick}>
-	    </button>
+	    { allowTakeHome &&
+	      <button id="buttonSave"
+		      style={{backgroundImage: "url(/static/django_jigsaw_puzzle/images/button-save.svg)"}}
+		      onClick={saveClick}>
+	      </button>
+	    }
 	    <button id="buttonClear"
 		    style={{backgroundImage: "url(/static/django_jigsaw_puzzle/images/button-clear.svg)"}}
 	    	    onClick={clearClick}>
@@ -83,9 +86,10 @@ function GrayColorButtons({count, set}) {
 function SkinColorButtons({count, set}) {
     const colors = [];
 
-    const darkColor = [15/360.0, 0.50, 0.04];
-    const midColor = [15/360.0, 0.56, 0.40];
-    const lightColor = [25/360.0, 0.73, 0.85];
+    const darkColor = [15/360.0, 0.30, 0.2];
+    const midColor = [15/360.0, 0.40, 0.5];
+    const lightColor = [25/360.0, 0.73, 0.90];
+    console.log(count, typeof(count));
     if (count === 2) {
 	colors.push(hslToRgb(...darkColor));
 	colors.push(hslToRgb(...lightColor));
@@ -161,8 +165,19 @@ function generateSessionId() {
 }
 
 export
-function PaintGame({idleFirstSeconds, idleSecondSeconds}) {
+function PaintGame({allowTakeHome,
+		    idleFirstSeconds, idleSecondSeconds,
+		    colorCountGray, colorCountSkin,
+		    colorCountHue, colorCountBrightness }) {
     const canvasRef = useRef(null);
+
+    allowTakeHome = allowTakeHome === "True"; // Python -> JS
+    idleFirstSeconds = parseInt(idleFirstSeconds);
+    idleSecondSeconds = parseInt(idleSecondSeconds);
+    colorCountGray = parseInt(colorCountGray);
+    colorCountSkin = parseInt(colorCountSkin);
+    colorCountHue = parseInt(colorCountHue);
+    colorCountBrightness = parseInt(colorCountBrightness);
 
     const [ sessionId, setSessionId ] = useState();
 
@@ -260,16 +275,17 @@ function PaintGame({idleFirstSeconds, idleSecondSeconds}) {
 		actions={modalActions}
 	    />
 	    <GizmosLeft
+		allowTakeHome={allowTakeHome}
 		radii={[4, 12, 22, 42]}
 		saveClick={save}
 		clearClick={clearCanvas}
 		radiusClick={setRadius} />
 	    <GizmosBottom
 		setColor={setColor}
-		grayCount={4}
-		skinCount={7}
-		hueCount={11}
-		lightnessCount={3}
+		grayCount={colorCountGray}
+		skinCount={colorCountSkin}
+		hueCount={colorCountHue}
+		lightnessCount={colorCountBrightness}
 	    />
 	    <canvas ref={canvasRef} />
 	</>

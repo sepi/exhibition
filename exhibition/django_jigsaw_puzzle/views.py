@@ -128,8 +128,13 @@ def image_set_detail(request, id):
 def paint_game_context(game):
     return {
         'mode': 'PAINT_GAME',
-        'idle_first_seconds': 300,
-        'idle_second_seconds': 330,
+        'allow_take_home': game.allow_take_home,
+        'idle_first_seconds': game.idle_first_seconds,
+        'idle_second_seconds': game.idle_second_seconds,
+        'color_count_gray': game.color_count_gray,
+        'color_count_skin': game.color_count_skin,
+        'color_count_hue': game.color_count_hue,
+        'color_count_brightness': game.color_count_brightness,
     }
 
 @never_cache

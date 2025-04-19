@@ -5,8 +5,13 @@
 </form>
 
 <div id="game"
+     data-allow-take-home="{{ allow_take_home }}"
      data-idle-first-seconds="{{ idle_first_seconds }}"
      data-idle-second-seconds="{{ idle_second_seconds }}"
+     data-color-count-gray="{{ color_count_gray }}"
+     data-color-count-skin="{{ color_count_skin }}"
+     data-color-count-hue="{{ color_count_hue }}"
+     data-color-count-brightness="{{ color_count_brightness }}"
      data-mode="{{ mode }}"></div>
 
 <link rel="stylesheet" href="{% static 'django_jigsaw_puzzle/css/paint_game.css' %}">

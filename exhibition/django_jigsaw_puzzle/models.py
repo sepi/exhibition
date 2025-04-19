@@ -87,7 +87,20 @@ class MemoryGamePluginModel(CMSPlugin):
 
 
 class PaintGame(Game):
-    pass
+    allow_take_home = models.BooleanField(default=True,
+                                          verbose_name=_("Allow the user to take home their painting by scanning a QR-Code. This also saves the painting in the CMS."))
+    idle_first_seconds = models.IntegerField(default=300,
+                                             verbose_name=_("The amount of seconds until an idle warning is shown. If the users ignores it, the game will eventually be reset."))
+    idle_second_seconds = models.IntegerField(default=330,
+                                              verbose_name=_("The amount of seconds until the idle warning disappears automatically and the game is reset."))
+    color_count_gray = models.IntegerField(default=5,
+                                           verbose_name=_("The amount of gray colors including black and white"))
+    color_count_skin = models.IntegerField(default=5,
+                                           verbose_name=_("The amount of skin colors."))
+    color_count_hue = models.IntegerField(default=11,
+                                          verbose_name=_("The amount of different colors like blue, green or yellow."))
+    color_count_brightness = models.IntegerField(default=3,
+                                                 verbose_name=_("The amount of different brightnesses for each color."))
 
 
 class PaintGamePluginModel(CMSPlugin):
