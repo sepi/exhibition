@@ -90,11 +90,11 @@ function JigsawPuzzleApp({gameUrl,
 		    logoUrl={logoUrl}
 		    onBack={back}
 		    onShowInfo={() => setShowInfo(true)}
-		    setShowHint={setShowHint}
+		    setShowHint={screen === 'game' ? setShowHint : null}
 		    navbarBackgroundColor={navbarBackgroundColor} />
 	    <InfoDialog showInfo={showInfo}
 			setShowInfo={setShowInfo}
-			dialogTitle={"About Best of Posters puzzle"}/>
+			dialogTitle={"About Poster Puzzle"}/>
 	    <HintDialog showHint={showHint}
 			setShowHint={setShowHint}
 			puzzleImageUrl={puzzleImageUrl} />
