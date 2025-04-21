@@ -74,12 +74,13 @@ function GizmosBottom({setColor,
 	     style={{gridTemplateRows: `repeat(${rows}, 1fr)`,
 		     gridTemplateColumns: `repeat(${cols}, auto)`}}>
 	    <GrayColorButtons count={grayCount}
-			      set={setColor} />
+			      set={setColor}
+			      selectedIndex={0} />
 	    <SkinColorButtons count={skinCount}
 			      set={setColor} />
 	    <ColorColorButtons hueCount={hueCount}
 			       lightnessCount={lightnessCount}
-			       set={setColor} />
+			       set={setColor}/>
 	</div>
     );
 }

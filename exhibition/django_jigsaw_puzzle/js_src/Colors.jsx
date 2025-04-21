@@ -4,14 +4,18 @@ import { hslToRgb, adjustLightness, adjustHue,
 	 init, drawTool, drawState, uiFunctions } from './museopaint';
 
 export
-function ColorButtons({set, colors}) {
-   return colors.map(c => {
+function ColorButtons({set, colors, selectedIndex}) {
+    let i = 0;
+    return colors.map(c => {
 	const [r, g, b] = c;
+	const selected = i == selectedIndex;
+	++i;
 	return (
 	    <input type="radio"
 		   name="color"
 		   key={`${r}${g}${b}`}
 		   className="color-button"
+		   defaultChecked={selected}
 		   style={{backgroundColor: `rgb(${r*255}, ${g*255}, ${b*255})`}}
 		   onClick={(ev) => set([r, g, b])} />
 	);
@@ -19,14 +23,15 @@ function ColorButtons({set, colors}) {
 }
 
 export
-function GrayColorButtons({count, set}) {
+function GrayColorButtons({count, set, selectedIndex}) {
     const colors = [];
     for (let i = 0; i < count; ++i) {
 	const v = i / (count-1);
 	colors.push([v, v, v]);
     }
     return <ColorButtons set={set}
-			 colors={colors}/>;
+			 colors={colors}
+			 selectedIndex={selectedIndex} />;
 }
 		      
 export
