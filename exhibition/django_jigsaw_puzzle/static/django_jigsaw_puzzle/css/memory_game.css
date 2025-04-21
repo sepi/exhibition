@@ -19,30 +19,31 @@ code {
     width: fit-content;
 }
 
-.card {
+.playing-card {
     perspective: 1000px;
+    border: none !important; /* Removed default bootstrap border applied by .card */
 }
 
-.card img {
+.playing-card img {
     user-select: none; 		/* Disallow selecting by dragging */
     cursor: pointer; 		/* Indicate that user can click */
 
     /* Round corner mask with border */
     border-radius: 10px;
-    border: 2px solid black;
+    border: 2px solid black !important;
     overflow: hidden;
 
     filter: drop-shadow(0 0 1px rgb(100, 100, 100));
 }
 
-.card .card-front {
+.playing-card .card-front {
     /* Make image fit */
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
 }
 
-.card img.card-locked {
+.playing-card img.card-locked {
     border: 5px solid rgb(67, 185, 255);
 }
 

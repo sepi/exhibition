@@ -64,7 +64,6 @@ def jigsaw_puzzle_detail(request, id):
                       jigsaw_puzzle_context(game))
 
 
-@never_cache
 def memory_game_context(game):
     return {
         'game_url': reverse('memory_game_detail', args=[game.id]),

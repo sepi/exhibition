@@ -13,6 +13,7 @@ import { ImageSelectionPage } from './ImageSelectionPage.jsx';
 import { PuzzlePage } from './PuzzlePage.jsx';
 import { InfoDialog } from './InfoDialog.jsx';
 import { HintDialog } from './HintDialog.jsx';
+import { CopyrightNotice } from './CopyrightNotice.jsx';
 import { fetchImagePaths, fetchGameData } from './api.js';
 
 // Global state because puzzle would initialize twice without this "Mutex"
@@ -114,12 +115,7 @@ function JigsawPuzzleApp({gameUrl,
 			  idleFirstSeconds={idleFirstSeconds}
 			  idleSecondSeconds={idleSecondSeconds} 
 	      /> : null }
-	    <div style={{minHeight: 20,
-			 textAlign: 'left',
-			 paddingLeft: 8,
-			 color: 'gray'}}>
-		{ copyrightNotice }
-	    </div>
+	    <CopyrightNotice notice={copyrightNotice} />
 	</div>
     );
 }

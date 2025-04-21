@@ -109,7 +109,7 @@ export function MemoryGame({randomImages, pieces, onWin,
 			    front_image_src = randomImages[row][col];
 			}
 			return (
-			    <div className="card"
+			    <div className="card playing-card"
 				 style={{width: cardWidth,
 					 aspectRatio: aspectRatio}}
 				 key={"card-"+row+"-"+col}>

@@ -8,6 +8,7 @@ import { Appbar } from './Appbar.jsx';
 import { WelcomeScreen } from './WelcomeScreen.jsx';
 import { MemoryGame } from './MemoryGame.jsx';
 import { DifficultySelector } from './DifficultySelector.jsx';
+import { CopyrightNotice } from './CopyrightNotice.jsx';
 
 import { fetchImagePaths, fetchGameData } from './api.js';
 
@@ -138,6 +139,7 @@ function MemoryGameApp({gameUrl,
 			  cardWidth={cardWidth}
 	      />
 	    }
+	    <CopyrightNotice notice={copyrightNotice} />
 	</div>
     );
 }
