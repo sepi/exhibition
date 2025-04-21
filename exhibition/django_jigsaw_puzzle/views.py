@@ -23,6 +23,7 @@ from filer.models.filemodels import File
 from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame, GridDifficultyLevel
 
 
+@never_cache
 def jigsaw_puzzle_list(request):
     jps = JigsawPuzzle.objects.all()
     return JsonResponse([{'name': jp.name,
@@ -63,6 +64,7 @@ def jigsaw_puzzle_detail(request, id):
                       jigsaw_puzzle_context(game))
 
 
+@never_cache
 def memory_game_context(game):
     return {
         'game_url': reverse('memory_game_detail', args=[game.id]),
@@ -106,6 +108,7 @@ def _get_thumbnail(image, alias_name):
         return tnl[alias_name]
 
 
+@never_cache
 def image_set_detail(request, id):
     thumbnail_alias_str = request.GET.get('thumbnail_alias')
     if thumbnail_alias_str:
@@ -136,6 +139,7 @@ def paint_game_context(game):
         'color_count_hue': game.color_count_hue,
         'color_count_brightness': game.color_count_brightness,
     }
+
 
 @never_cache
 def paint_game_detail(request, id):

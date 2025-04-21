@@ -13,7 +13,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { DifficultySelector } from './DifficultySelector.jsx';
 
 export function ImageSelectionPage({ setScreen, setPuzzlePieces,
-				     setPuzzleImageUrl, images,
+				     setImage, images,
 				     showSuccess, difficultyLevels }) {
     const [ showDifficultyModal, setShowDifficultyModal ] = useState(false);
     
@@ -23,8 +23,8 @@ export function ImageSelectionPage({ setScreen, setPuzzlePieces,
 	setScreen('game');
     };
     
-    const askDifficulty = (imageSrc) => {
-	setPuzzleImageUrl(imageSrc);
+    const askDifficulty = (image) => {
+	setImage(image);
 	setShowDifficultyModal(true);
     };
 
@@ -38,14 +38,14 @@ export function ImageSelectionPage({ setScreen, setPuzzlePieces,
 	    <DifficultySelector difficultyLevels={difficultyLevels}
 				onClick={(level) => switchToPuzzle(level.rows, level.columns)}/>
 	    </Modal>
-	    <Container>
+	    <Container style={{marginTop: 16}}>
 		<ImageList cols={4}
 			   // variant="masonry"
 			   gap={12}>
 		    {
 			images ? images.map((image) => 
 			    <ImageListItem key={image['original']}
-					   onClick={(e) => askDifficulty(image['puzzle'])}
+					   onClick={(e) => askDifficulty(image)}
 			    >
 		    		<img src={image['thumbnail']}
 				     alt={`poster with filename ${image}`}/>

@@ -35,7 +35,7 @@ function JigsawPuzzleApp({gameUrl,
 			  navbarBackgroundColor}) {
     const [ screen, setScreen ] = useState("select_image");
     const [ images, setImages ] = useState([]);
-    const [ puzzleImageUrl, setPuzzleImageUrl ] = useState();
+    const [ image, setImage ] = useState();
     const [ puzzlePieces, setPuzzlePieces ] = useState([undefined, undefined]);
     const [ showSuccess, setShowSucces ] = useState(false);
     const [ showInfo, setShowInfo ] = useState(false);
@@ -47,7 +47,7 @@ function JigsawPuzzleApp({gameUrl,
 	const get = async ()=> {
 	    const game = await fetchGameData(gameUrl);
 	    setDifficultyLevels(game.difficulty_levels);
-	    const images_ = await fetchImagePaths(game.image_set_url+'?thumbnail_alias=thumbnail,puzzle');
+	    const images_ = await fetchImagePaths(game.image_set_url+'?thumbnail_alias=thumbnail,puzzle,hint');
 	    const imagesRand = [];
 
 	    if (randImg(randomizeImages)) {
@@ -97,15 +97,15 @@ function JigsawPuzzleApp({gameUrl,
 			dialogTitle={"About Poster Puzzle"}/>
 	    <HintDialog showHint={showHint}
 			setShowHint={setShowHint}
-			puzzleImageUrl={puzzleImageUrl} />
+			imageUrl={image ? image['hint'] : ''} />
 	    { screen === 'select_image' && images ?
 	      <ImageSelectionPage difficultyLevels={difficultyLevels}
 				  setScreen={setScreen}
-				  setPuzzleImageUrl={setPuzzleImageUrl}
+				  setImage={setImage}
 				  setPuzzlePieces={setPuzzlePieces}
 				  images={images}/> : null }
 	    { screen === 'game' ?
-	      <PuzzlePage puzzleImageUrl={puzzleImageUrl}
+	      <PuzzlePage puzzleImageUrl={image ? image['puzzle'] : ''}
 			  puzzlePieces={puzzlePieces}
 			  onComplete={onComplete}
 	      		  showSuccess={showSuccess}

@@ -13,7 +13,8 @@ export function InfoDialog({showInfo, setShowInfo, dialogTitle}) {
 	    open={showInfo}
 	    onClose={() => setShowInfo(false)}
 	    aria-labelledby="alert-dialog-title"
-	    aria-describedby="alert-dialog-description" >
+	    aria-describedby="alert-dialog-description"
+	    scroll="paper">
 	    <DialogTitle id="alert-dialog-title">
 		{dialogTitle}
 	    </DialogTitle>
