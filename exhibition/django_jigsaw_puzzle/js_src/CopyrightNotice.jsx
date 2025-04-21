@@ -5,7 +5,7 @@ function CopyrightNotice({notice}) {
 		     textAlign: 'left',
 		     paddingLeft: 8,
 		     color: 'gray',
-		     position: 'absolute',
+		     position: 'fixed',
 		     bottom: 5}}>
 	    { notice }
 	</div>);
