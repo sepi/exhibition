@@ -18,6 +18,7 @@ django-mptt
 django-constance
 django-configurations
 django-import-export
+django-admin-sortable2
 easy_thumbnails
 html5lib
 Pillow

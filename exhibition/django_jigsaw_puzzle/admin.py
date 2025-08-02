@@ -1,9 +1,13 @@
-from django.contrib import admin
 from django import forms
-from django.utils.html import mark_safe
+from django.contrib import admin
 from django.urls import reverse
+from django.utils.html import mark_safe
 
-from .models import ImageSet, ImageSetImage, DifficultyLevel, GridDifficultyLevel, JigsawPuzzle, MemoryGame, PaintGame
+from adminsortable2.admin import (SortableStackedInline, SortableAdminBase)
+
+from .models import (DifficultyLevel, GridDifficultyLevel, ImageSet,
+                     ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame,
+                     QuizGame, QuizQuestion)
 
 
 class ImageSetImageInline(admin.TabularInline):
@@ -27,13 +31,26 @@ class GridDifficultyLevelInline(admin.TabularInline):
     model = GridDifficultyLevel
     extra = 0
 
-class GameAdminMixin():
+
+class BaseGameAdminMixin():
+    readonly_fields = ('info_text',)
+
+    def info_text(self, obj):
+        if obj.id:
+            link = self.get_game_link(obj)
+            abs_link = self.request.build_absolute_uri(link)
+            return mark_safe(f"<a href=\"{abs_link}\" target=\"_blank\">{abs_link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this game.")
+        else:
+            return "No link available yet"
+
+    info_text.short_description = "Direct link to game"
+
+    
+class GameAdminMixin(BaseGameAdminMixin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         self.request = request
         return qs
-    
-    readonly_fields = ('info_text',)
     
     inlines = [
         GridDifficultyLevelInline
@@ -45,15 +62,7 @@ class GameAdminMixin():
             kwargs['widget'] = forms.TextInput(attrs={'type': 'color'})
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
-    def info_text(self, obj):
-        if obj.id:
-            link = self.get_game_link(obj)
-            abs_link = self.request.build_absolute_uri(link)
-            return mark_safe(f"<a href=\"{abs_link}\" target=\"_blank\">{abs_link}</a><br/>Use this link only if there is no page in the CMS with a plugin for this game.")
-        else:
-            return "No link available yet"
-
-    info_text.short_description = "Direct link to game"
+    
 
 @admin.register(JigsawPuzzle)
 class JigsawPuzzleAdmin(GameAdminMixin, admin.ModelAdmin):
@@ -98,3 +107,24 @@ class PaintGameAdmin(GameAdminMixin, admin.ModelAdmin):
 
     def get_game_link(self, obj):
         return reverse('paint_game_detail', args=[obj.id])
+
+
+class QuizQuestionInline(SortableStackedInline):
+    model = QuizQuestion
+    extra = 0
+
+    fieldsets = (
+        (None, {
+            'fields': (('question', 'correct_answer'),
+                       ('answer_1', 'answer_2'),
+                       ('answer_3', 'answer_4'))
+        }),
+    )
+
+
+@admin.register(QuizGame)
+class QuizGameAdmin(BaseGameAdminMixin, SortableAdminBase, admin.ModelAdmin):
+    inlines = [QuizQuestionInline]
+    def get_game_link(self, obj):
+        return ''
+

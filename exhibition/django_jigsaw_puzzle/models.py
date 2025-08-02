@@ -1,7 +1,15 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from filer.fields.image import FilerImageField
 from django.utils.translation import gettext_lazy as _
 from cms.models import CMSPlugin
+
+class GameGroup(models.Model):
+    """A way to put group several games into one group. Can be used to
+    catergorize games for common display for example.
+
+    """
+    name = models.CharField(max_length=128)
 
 class DifficultyLevel(models.Model):
     name = models.CharField(max_length=128)
@@ -33,6 +41,13 @@ class GridDifficultyLevel(models.Model):
                              on_delete=models.PROTECT)
 
 
+class BaseGame(models.Model):
+    name = models.CharField(max_length=512)
+
+    def __str__(self):
+        return self.name
+
+
 class Game(models.Model):
     name = models.CharField(max_length=512)
     copyright_notice = models.CharField(max_length=2048)
@@ -48,7 +63,26 @@ class ImageGame(Game):
     image_set = models.ForeignKey(ImageSet,
                                   on_delete=models.PROTECT)
 
-    
+
+class GameSession(models.Model):
+    """A way to record data about a gaming session, eg. to calculate a high-score or similar.
+    """
+    django_session_key = models.CharField(max_length=40)    
+    player_name = models.CharField(max_length=512)
+
+
+class GameSessionPartialResult(models.Model):
+    """A partial result that occurs during a game session. It has a
+    boolean or number value to be summarized into a final score or
+    rating. This shall be used to record any kind of total rating for
+    a game session.
+    """
+    session = models.ForeignKey(GameSession, on_delete=models.CASCADE)
+    # question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    result_boolean = models.BooleanField(null=True, blank=True)
+    result_number = models.FloatField(null=True, blank=True)
+
+
 class JigsawPuzzle(ImageGame):
     randomize_images = models.BooleanField(default=True)
 
@@ -106,3 +140,34 @@ class PaintGame(Game):
 class PaintGamePluginModel(CMSPlugin):
     game = models.ForeignKey(PaintGame,
                              on_delete=models.PROTECT)
+
+
+class QuizGame(BaseGame):
+    pass
+
+
+class QuizQuestion(models.Model):
+    game = models.ForeignKey(QuizGame,
+                             on_delete=models.PROTECT)
+    
+    question = models.CharField(max_length=2048)
+    answer_1 = models.CharField(max_length=1024)
+    answer_2 = models.CharField(max_length=1024)
+    answer_3 = models.CharField(max_length=1024)
+    answer_4 = models.CharField(max_length=1024)
+
+    correct_answer = models.IntegerField(validators=[MinValueValidator(1),
+                                                     MaxValueValidator(4)])
+    
+    order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+        db_index=True,
+    )
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"Question {self.id}"

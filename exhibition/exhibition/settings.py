@@ -39,6 +39,7 @@ class Common(Configuration):
         'exhibition',
         'djangocms_exhibition',
         'django_jigsaw_puzzle',
+        'adminsortable2',
     ]
 
     MIDDLEWARE = [
