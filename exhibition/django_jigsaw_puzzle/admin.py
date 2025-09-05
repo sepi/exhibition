@@ -125,6 +125,7 @@ class QuizQuestionInline(SortableStackedInline):
 @admin.register(QuizGame)
 class QuizGameAdmin(BaseGameAdminMixin, SortableAdminBase, admin.ModelAdmin):
     inlines = [QuizQuestionInline]
+
     def get_game_link(self, obj):
-        return ''
+        return reverse('quiz_game_detail', args=[obj.id])
 

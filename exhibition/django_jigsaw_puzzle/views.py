@@ -1,26 +1,21 @@
 import json
 
-from django.shortcuts import render
-from django.http import JsonResponse, Http404
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
-from django.views.generic.base import TemplateView
-from django.views.decorators.cache import never_cache
-from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
-
-from filer.admin.clipboardadmin import ajax_upload
-
-from constance import config
-from filer.models.thumbnailoptionmodels import ThumbnailOption
-from easy_thumbnails.files import get_thumbnailer
 import qrcode
 import qrcode.image.svg
-
+from constance import config
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
+from easy_thumbnails.files import get_thumbnailer
+from filer.admin.clipboardadmin import ajax_upload
 from filer.models.filemodels import File
+from filer.models.thumbnailoptionmodels import ThumbnailOption
 
-from .models import ImageSet, ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame, GridDifficultyLevel
+from .models import (GridDifficultyLevel, ImageSet, ImageSetImage,
+                     JigsawPuzzle, MemoryGame, PaintGame, QuizGame)
 
 
 @never_cache
@@ -151,6 +146,26 @@ def paint_game_detail(request, id):
     else: # For browsers
         return render(request, 'django_jigsaw_puzzle/paint_game.html',
                       paint_game_context(game))
+
+
+def quiz_game_context(game):
+    return {
+        'mode': 'QUIZ_GAME',
+        'title': game.name,
+    }
+
+
+@never_cache
+def quiz_game_detail(request, id):
+    game = get_object_or_404(QuizGame, pk=id)
+    if request.headers.get('Accept') == 'application/json':
+        return JsonResponse({
+            'id': game.id,
+            'name': game.name,
+        })
+    else: # For browsers
+        return render(request, 'django_jigsaw_puzzle/quiz_game.html',
+                      quiz_game_context(game))
 
 
 # FIXME: Would be nice to use CSRF. The clients sends it but it will be out of date at some point, or not?
