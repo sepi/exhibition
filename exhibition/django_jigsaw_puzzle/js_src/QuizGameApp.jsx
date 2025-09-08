@@ -1,30 +1,56 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import { Alert, Button, CircularProgress, Container, Snackbar, Stack } from '@mui/material';
 
 import { Appbar } from './Appbar.jsx';
 import { WelcomeScreen } from './WelcomeScreen.jsx';
 import { MemoryGame } from './MemoryGame.jsx';
 import { DifficultySelector } from './DifficultySelector.jsx';
 import { CopyrightNotice } from './CopyrightNotice.jsx';
+import { QuizGame } from './QuizGame.jsx';
 
 import { fetchImagePaths, fetchGameData } from './api.js';
 
 export default
 function QuizGameApp({title, }) {
-    // Load puzzle data (difficulty levels, name and images) from API
+    const [screen, setScreen] = useState("loading");
+    const [games, setGames] = useState([]);
+    const [game, setGame] = useState();
+
+    const gameUrl = '/games/quiz_game/';
+    
+    // Load game list from API
     useEffect(() => {
 	const get = async ()=> {
-	    // const game = await fetchGameData(gameUrl);
-	    // setDifficultyLevels(game.difficulty_levels);
-	    // const images_ = await fetchImagePaths(game.image_set_url+'?thumbnail_alias=memory_game');
-	    // setImages(images_);
+	    const games = await fetchGameData(gameUrl);
+	    setGames(games);
+	    setScreen("select");
 	}
 
 	get();
     }, []);
+
+    // Load game detail from API when game selected
+    useEffect(() => {
+	const get = async (game_url) => {
+	    const game = await fetchGameData(game_url);
+	    setGame(game);
+	}
+
+	if (game && game.url) {
+	    get(game.url);
+	}
+    }, [game]);
+
+    const navigateToGameScreen = (game) => {
+	setGame(game);
+	setScreen("game");
+    }
+
+    const onComplete = () => {
+	setScreen("completed");
+    }
 
     return (
 	<div className="App">
@@ -40,9 +66,34 @@ function QuizGameApp({title, }) {
 		    {`Success, you completed the game in ${1} turns! Tap back to try another one.`}
 		</Alert>
 	    </Snackbar>
-	    { screen === 'game' && 
-	      <div>yay</div>
-	    }
+
+	    <Container>
+		<Stack>
+		    { screen === 'loading' && 
+		      <CircularProgress/>
+		    }
+		    { screen === 'select' &&
+		      <>
+			  <h1>Select a quiz</h1>
+			  {games.map((g) => {
+			      return (
+				  <div key={g.id}>
+				      <Button variant="outlined"
+					      onClick={() => navigateToGameScreen(g)}>{g.name}</Button>
+				  </div>
+			      );
+			  })}
+		      </>
+		    }
+		    { screen === 'game' &&
+		      <QuizGame game={game}
+				onComplete={onComplete} />
+		    }
+		    { screen === 'completed' &&
+		      <div>Completed</div>
+		    }
+		</Stack>
+	    </Container>
 	</div>
     );
 }

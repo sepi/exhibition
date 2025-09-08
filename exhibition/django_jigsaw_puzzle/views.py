@@ -15,7 +15,10 @@ from filer.models.filemodels import File
 from filer.models.thumbnailoptionmodels import ThumbnailOption
 
 from .models import (GridDifficultyLevel, ImageSet, ImageSetImage,
-                     JigsawPuzzle, MemoryGame, PaintGame, QuizGame)
+                     JigsawPuzzle,
+                     MemoryGame,
+                     PaintGame,
+                     QuizGame, QuizQuestion)
 
 
 @never_cache
@@ -148,6 +151,15 @@ def paint_game_detail(request, id):
                       paint_game_context(game))
 
 
+@never_cache
+def quiz_game_list(request):
+    qgs = QuizGame.objects.all()
+    return JsonResponse([{'name': qg.name,
+                          'id': qg.id,
+                          'url': reverse('quiz_game_detail', args=[qg.id])} 
+                         for qg in qgs], safe=False)
+
+
 def quiz_game_context(game):
     return {
         'mode': 'QUIZ_GAME',
@@ -158,10 +170,20 @@ def quiz_game_context(game):
 @never_cache
 def quiz_game_detail(request, id):
     game = get_object_or_404(QuizGame, pk=id)
+    questions = list(QuizQuestion.objects.filter(game=game.id))
+
     if request.headers.get('Accept') == 'application/json':
         return JsonResponse({
             'id': game.id,
             'name': game.name,
+            'questions': [{
+                "question": q.question,
+                "answer_1": q.answer_1,
+                "answer_2": q.answer_2,
+                "answer_3": q.answer_3,
+                "answer_4": q.answer_4,
+                "correct_answer": q.correct_answer,
+            } for q in questions]
         })
     else: # For browsers
         return render(request, 'django_jigsaw_puzzle/quiz_game.html',

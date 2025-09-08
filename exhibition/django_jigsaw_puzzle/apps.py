@@ -5,4 +5,4 @@ from django.utils.translation import gettext_lazy as _
 class DjangoJigsawPuzzleConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'django_jigsaw_puzzle'
-    verbose_name = _("Jigsaw puzzle")
+    verbose_name = _("Museo.pro games")

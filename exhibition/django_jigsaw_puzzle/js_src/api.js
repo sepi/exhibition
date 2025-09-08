@@ -25,3 +25,9 @@ export async function fetchGameData(url) {
     const respJson = await resp.json();
     return respJson;
 }
+
+export async function fetchGameDetail(url) {
+    const resp = await fetch(url, fetchOptions);
+    const respJson = await resp.json();
+    return respJson;
+}

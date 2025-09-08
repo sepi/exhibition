@@ -1,0 +1,61 @@
+#question-answers h1 {
+    margin-bottom: 50px;
+}
+
+#answer-buttons {
+    margin-bottom: 50px;
+}
+
+#answer-buttons button {
+    margin-right: 5px;
+    background-color: #ebbdcf;
+    color: black;
+    font-size: 1em;
+}
+
+.MuiButton-root {
+    background-color: #ebbdcf;
+    color: black;
+}
+
+#answer-buttons .selected {
+    background-color: white;
+}
+
+#answer-buttons .correct {
+    animation: anim-correct 0.5s 4;
+}
+
+#answer-buttons .incorrect {
+    animation: anim-incorrect 0.5s 4;
+}
+
+@keyframes anim-correct {
+  0% { background-color: inherit; }
+  50% { background-color: #00AA55; }
+  100% { background-color: inherit; }
+}
+
+@keyframes anim-incorrect {
+  0% { background-color: inherit; }
+  50% { background-color: red; }
+  100% { background-color: inherit; }
+}
+
+body {
+    color: white;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('/static/django_jigsaw_puzzle/images/quiz_game_background.png');
+}
+
+.MuiContainer-root {
+    margin-top: 20%;
+    margin-bottom: 20%;
+}
