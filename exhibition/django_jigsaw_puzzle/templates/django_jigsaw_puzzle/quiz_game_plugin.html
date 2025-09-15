@@ -5,8 +5,10 @@
 </form>
 
 <div id="game"
+     data-index-url="{{ index_url }}"
      data-title="{{ title }}"
-     data-mode="{{ mode }}"></div>
+     data-mode="{{ mode }}"
+     data-game-id="{{ game_id }}"></div>
 
 <link rel="stylesheet" href="{% static 'django_jigsaw_puzzle/css/quiz_game.css' %}">
 <script src="{% static 'django_jigsaw_puzzle/js/bundle.js' %}"></script>

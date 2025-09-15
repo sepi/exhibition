@@ -10,47 +10,39 @@ import { DifficultySelector } from './DifficultySelector.jsx';
 import { CopyrightNotice } from './CopyrightNotice.jsx';
 import { QuizGame } from './QuizGame.jsx';
 
-import { fetchImagePaths, fetchGameData } from './api.js';
+import { fetchGameData } from './api.js';
 
 export default
-function QuizGameApp({title, }) {
+function QuizGameApp({indexUrl, title, gameId}) {
     const [screen, setScreen] = useState("loading");
     const [games, setGames] = useState([]);
-    const [game, setGame] = useState();
+    const [gameUrl, setGameUrl] = useState();
 
-    const gameUrl = '/games/quiz_game/';
-    
-    // Load game list from API
-    useEffect(() => {
-	const get = async ()=> {
-	    const games = await fetchGameData(gameUrl);
-	    setGames(games);
-	    setScreen("select");
-	}
-
-	get();
-    }, []);
-
-    // Load game detail from API when game selected
-    useEffect(() => {
-	const get = async (game_url) => {
-	    const game = await fetchGameData(game_url);
-	    setGame(game);
-	}
-
-	if (game && game.url) {
-	    get(game.url);
-	}
-    }, [game]);
-
-    const navigateToGameScreen = (game) => {
-	setGame(game);
+    const navigateToGameScreen = (gameUrl) => {
 	setScreen("game");
+	setGameUrl(gameUrl);
     }
 
     const onComplete = () => {
 	setScreen("completed");
-    }
+    };
+
+    // Load game list from API
+    useEffect(() => {
+        const get = async ()=> {
+            const games = await fetchGameData(indexUrl);
+            setGames(games);
+
+            if (gameId === 'None') { // Game selection
+                setScreen("select");
+            } else { // Specific game
+                const gameUrl = `${indexUrl}${gameId}/`;
+                navigateToGameScreen(gameUrl);
+            }
+        }
+
+        get();
+    }, []);
 
     return (
 	<div className="App">
@@ -79,14 +71,14 @@ function QuizGameApp({title, }) {
 			      return (
 				  <div key={g.id}>
 				      <Button variant="outlined"
-					      onClick={() => navigateToGameScreen(g)}>{g.name}</Button>
+					      onClick={() => navigateToGameScreen(g.url)}>{g.name}</Button>
 				  </div>
 			      );
 			  })}
 		      </>
 		    }
 		    { screen === 'game' &&
-		      <QuizGame game={game}
+		      <QuizGame gameUrl={gameUrl}
 				onComplete={onComplete} />
 		    }
 		    { screen === 'completed' &&

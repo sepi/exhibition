@@ -153,17 +153,28 @@ def paint_game_detail(request, id):
 
 @never_cache
 def quiz_game_list(request):
-    qgs = QuizGame.objects.all()
-    return JsonResponse([{'name': qg.name,
-                          'id': qg.id,
-                          'url': reverse('quiz_game_detail', args=[qg.id])} 
-                         for qg in qgs], safe=False)
+    if request.headers.get('Accept') == 'application/json':
+        qgs = QuizGame.objects.all()
+        return JsonResponse([{'name': qg.name,
+                              'id': qg.id,
+                              'url': reverse('quiz_game_detail', args=[qg.id])}
+                             for qg in qgs], safe=False)
+    else: # For browsers
+        return render(request, 'django_jigsaw_puzzle/quiz_game.html',
+                      {
+                          'mode': 'QUIZ_GAME',
+                          'index_url': '/games/quiz_game/',
+                          'title': 'Quiz game',
+                          'game_id': None
+                      })
 
 
 def quiz_game_context(game):
     return {
         'mode': 'QUIZ_GAME',
+        'index_url': '/games/quiz_game/',
         'title': game.name,
+        'game_id': game.id,
     }
 
 

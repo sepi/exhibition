@@ -6,10 +6,29 @@ import QuizButton from './QuizButton.jsx';
 import { Button, Box, CircularProgress, Container, Grid,
 	 Stack, FormControl, FormControlLabel, RadioGroup } from '@mui/material';
 
+import { fetchGameData } from './api.js';
+
 const navigationTimeout = 3000;
 
 export
-function QuizGame({game, onComplete}) {
+function QuizGame({gameUrl, onComplete}) {
+    const [game, setGame] = useState();
+
+    // Load game detail from API when game selected
+    useEffect(() => {
+	const get = async (gameUrl) => {
+	    const game = await fetchGameData(gameUrl);
+	    setGame(game);
+            // console.log("fetched", game);
+	}
+
+	if (gameUrl) {
+	    get(gameUrl);
+	}
+    }, [gameUrl]);
+
+    // console.log(gameUrl, game);
+
     const [questionIdx, setQuestionIdx] = useState(0);
     const [answerChoice, setAnswerChoice] = useState();
     const [correctness1, setCorrectness1] = useState();
@@ -22,9 +41,9 @@ function QuizGame({game, onComplete}) {
 	setCorrectness2(null);
 	setCorrectness3(null);
 	setCorrectness4(null);
-    }
+    };
 
-    if (game.questions) {
+    if (game && game.questions) {
 	const questionCount = game.questions.length;
 	const isLastQuestion = questionIdx + 1 === questionCount;
 	const questionsLeft = questionIdx + 1 < questionCount;
