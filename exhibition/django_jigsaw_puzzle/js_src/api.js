@@ -31,3 +31,21 @@ export async function fetchGameDetail(url) {
     const respJson = await resp.json();
     return respJson;
 }
+
+export async function startGameSession() {
+    const resp = await fetch('/games/session/start/', {
+        ...fetchOptions,
+        'method': 'POST',
+    });
+    const respJson = await resp.json();
+    return respJson;
+}
+
+export async function sendQuestionAnswer(questionId, answerChoice) {
+    const resp = await fetch(`/games/quiz_question/${questionId}/answer/${answerChoice}/`, {
+        ...fetchOptions,
+        'method': 'POST'
+    });
+    const respJson = await resp.json();
+    return respJson;
+}

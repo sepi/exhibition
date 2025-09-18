@@ -6,7 +6,7 @@ import QuizButton from './QuizButton.jsx';
 import { Button, Box, CircularProgress, Container, Grid,
 	 Stack, FormControl, FormControlLabel, RadioGroup } from '@mui/material';
 
-import { fetchGameData } from './api.js';
+import { fetchGameData, sendQuestionAnswer } from './api.js';
 
 const navigationTimeout = 3000;
 
@@ -19,15 +19,12 @@ function QuizGame({gameUrl, onComplete}) {
 	const get = async (gameUrl) => {
 	    const game = await fetchGameData(gameUrl);
 	    setGame(game);
-            // console.log("fetched", game);
 	}
 
 	if (gameUrl) {
 	    get(gameUrl);
 	}
     }, [gameUrl]);
-
-    // console.log(gameUrl, game);
 
     const [questionIdx, setQuestionIdx] = useState(0);
     const [answerChoice, setAnswerChoice] = useState();
@@ -43,6 +40,10 @@ function QuizGame({gameUrl, onComplete}) {
 	setCorrectness4(null);
     };
 
+    const isAnswerCorrect = (question, choice) => {
+        return choice === question.correct_answer;
+    };
+
     if (game && game.questions) {
 	const questionCount = game.questions.length;
 	const isLastQuestion = questionIdx + 1 === questionCount;
@@ -52,7 +53,8 @@ function QuizGame({gameUrl, onComplete}) {
 
 	const handleChoice = (choice) => {
 	    setAnswerChoice(null);
-	    const v = choice === currentQuestion.correct_answer ? 'correct' : 'incorrect';
+            const isCorrect = isAnswerCorrect(currentQuestion, choice);
+	    const v = isCorrect ? 'correct' : 'incorrect';
 	    switch (choice) {
 	    case 1: setCorrectness1(v); break;
 	    case 2: setCorrectness2(v); break;
@@ -66,6 +68,7 @@ function QuizGame({gameUrl, onComplete}) {
 		handleChoice(answerChoice);
 		setTimeout(() => {
 		    setQuestionIdx(questionIdx + 1);
+                    sendQuestionAnswer(currentQuestion.id, answerChoice);
 		    resetCorrectness();
 		}, navigationTimeout);
 	    }

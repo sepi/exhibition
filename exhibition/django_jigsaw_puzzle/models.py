@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from filer.fields.image import FilerImageField
@@ -67,8 +69,9 @@ class ImageGame(Game):
 class GameSession(models.Model):
     """A way to record data about a gaming session, eg. to calculate a high-score or similar.
     """
-    django_session_key = models.CharField(max_length=40)    
+    session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     player_name = models.CharField(max_length=512)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class GameSessionPartialResult(models.Model):
@@ -77,10 +80,13 @@ class GameSessionPartialResult(models.Model):
     rating. This shall be used to record any kind of total rating for
     a game session.
     """
-    session = models.ForeignKey(GameSession, on_delete=models.CASCADE)
-    # question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE,
+                                     related_name='partial_results')
+    question = models.ForeignKey('QuizQuestion', on_delete=models.CASCADE,
+                                 related_name='partial_results')
     result_boolean = models.BooleanField(null=True, blank=True)
     result_number = models.FloatField(null=True, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
 
 class JigsawPuzzle(ImageGame):

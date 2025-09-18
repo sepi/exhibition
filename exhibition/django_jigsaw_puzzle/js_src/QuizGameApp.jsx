@@ -10,13 +10,14 @@ import { DifficultySelector } from './DifficultySelector.jsx';
 import { CopyrightNotice } from './CopyrightNotice.jsx';
 import { QuizGame } from './QuizGame.jsx';
 
-import { fetchGameData } from './api.js';
+import { fetchGameData, startGameSession } from './api.js';
 
 export default
 function QuizGameApp({indexUrl, title, gameId}) {
     const [screen, setScreen] = useState("loading");
     const [games, setGames] = useState([]);
     const [gameUrl, setGameUrl] = useState();
+    const [gameSessionId, setGameSessionId] = useState();
 
     const navigateToGameScreen = (gameUrl) => {
 	setScreen("game");
@@ -39,6 +40,9 @@ function QuizGameApp({indexUrl, title, gameId}) {
                 const gameUrl = `${indexUrl}${gameId}/`;
                 navigateToGameScreen(gameUrl);
             }
+
+            const gameSession = await startGameSession();
+            setGameSessionId(gameSession.session_id);
         }
 
         get();

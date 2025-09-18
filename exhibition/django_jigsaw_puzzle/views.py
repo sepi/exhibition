@@ -18,7 +18,8 @@ from .models import (GridDifficultyLevel, ImageSet, ImageSetImage,
                      JigsawPuzzle,
                      MemoryGame,
                      PaintGame,
-                     QuizGame, QuizQuestion)
+                     QuizGame, QuizQuestion,
+                     GameSession, GameSessionPartialResult)
 
 
 @never_cache
@@ -188,6 +189,7 @@ def quiz_game_detail(request, id):
             'id': game.id,
             'name': game.name,
             'questions': [{
+                "id": q.id,
                 "question": q.question,
                 "answer_1": q.answer_1,
                 "answer_2": q.answer_2,
@@ -201,6 +203,57 @@ def quiz_game_detail(request, id):
                       quiz_game_context(game))
 
 
+@csrf_exempt
+def game_session_start(request):
+    '''Create a game session and return its id or return existing game session'''
+    if request.method == 'POST':
+        game_session_id = request.session.get('game_session_id')
+        
+        if game_session_id:
+            game_session = get_object_or_404(GameSession, session_id=game_session_id)
+        else:
+            game_session = GameSession.objects.create()
+            request.session['game_session_id'] = str(game_session.session_id)
+    
+        return JsonResponse({
+            'game_session_id': str(game_session.session_id)
+        })
+    
+
+@csrf_exempt
+def game_session_end(request):
+    if request.method == 'POST':
+        game_session_id = request.session.get('game_session_id')
+    
+        if game_session_id:
+            game_session = get_object_or_404(GameSession, session_id=game_session_id)
+            del request.session['game_session_id']
+            game_session.delete()
+            return JsonResponse({'status': 'ended'})
+    
+
+def quiz_question_score(question, answer_choice):
+    if question.correct_answer == answer_choice:
+        return 1
+    else:
+        return 0
+    
+@csrf_exempt
+def quiz_question_answer(request, question_id, answer_choice):
+    if request.method == 'POST':
+        game_session_id = request.session.get('game_session_id')
+        
+        if game_session_id:
+            game_session = get_object_or_404(GameSession, session_id=game_session_id)
+            question = get_object_or_404(QuizQuestion, pk=question_id)
+
+            score = quiz_question_score(question, answer_choice)
+            partial_result = GameSessionPartialResult.objects.create(game_session=game_session,
+	                                                             question=question,
+	                                                             result_number=score)
+            partial_result.save()
+            return JsonResponse({'result_number': score})
+    
 # FIXME: Would be nice to use CSRF. The clients sends it but it will be out of date at some point, or not?
 @csrf_exempt
 def image_upload(request):
