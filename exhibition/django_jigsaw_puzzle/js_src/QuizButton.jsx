@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
 export default
-function QuizButton({label, answerIdx, answerChoice, onChoice, correctness}) {
+function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, ...otherProps}) {
     const [ selected, setSelected ] = useState(false);
 
     useEffect(() => {
@@ -34,6 +34,7 @@ function QuizButton({label, answerIdx, answerChoice, onChoice, correctness}) {
 	<Button onClick={toggleSelected}
 		variant={buttonVariant}
 		size={'large'}
-		className={`${className} ${classNameSel}` }>{label}</Button>
+		className={`${className} ${classNameSel}`}
+                {...otherProps}>{label}</Button>
     );
 }

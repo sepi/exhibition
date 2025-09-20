@@ -32,6 +32,8 @@ function QuizGame({gameUrl, onComplete}) {
     const [correctness2, setCorrectness2] = useState();
     const [correctness3, setCorrectness3] = useState();
     const [correctness4, setCorrectness4] = useState();
+    const [actionButtonEnabled, setActionButtonEnabled] = useState(false);
+    const [quizButtonEnabled, setQuizButtonEnabled] = useState(true);
 
     const resetCorrectness = () => {
 	setCorrectness1(null);
@@ -52,7 +54,6 @@ function QuizGame({gameUrl, onComplete}) {
 	const currentQuestion = game.questions[questionIdx];
 
 	const handleChoice = (choice) => {
-	    setAnswerChoice(null);
             const isCorrect = isAnswerCorrect(currentQuestion, choice);
 	    const v = isCorrect ? 'correct' : 'incorrect';
 	    switch (choice) {
@@ -63,26 +64,36 @@ function QuizGame({gameUrl, onComplete}) {
 	    }
 	}
 	
-	const navigateToNextQuestion = () => {
-	    if (questionsLeft) {
-		handleChoice(answerChoice);
-		setTimeout(() => {
-		    setQuestionIdx(questionIdx + 1);
-                    sendQuestionAnswer(currentQuestion.id, answerChoice);
-		    resetCorrectness();
-		}, navigationTimeout);
-	    }
-	}
-
-	const navigateBack = () => {
+	const navigateToNextQuestionOrFinish = () => {
+            setActionButtonEnabled(false);
+            setQuizButtonEnabled(false);
 	    handleChoice(answerChoice);
-	    // FIXME: Prevent multiple presses
-	    setTimeout(onComplete, navigationTimeout);
+	    setTimeout(() => {
+                const wasLastQuestion = isLastQuestion;
+		setQuestionIdx(questionIdx + 1);
+		resetCorrectness();
+                sendQuestionAnswer(currentQuestion.id, answerChoice);
+                setQuizButtonEnabled(true);
+	        setAnswerChoice(null);
+	        if (wasLastQuestion) {
+                    onComplete();
+	        }
+	    }, navigationTimeout);
 	}
 
 	const setChoice = (choice) => {
 	    setAnswerChoice(choice);
+            setActionButtonEnabled(true);
 	}
+
+        let actionButtonMessage;
+        if (isLastQuestion) {
+            actionButtonMessage = "Finish game";
+        } else if (answerChoice) {
+            actionButtonMessage = "Next question";
+        } else {
+            actionButtonMessage = "Select answer";
+        }
 
 	return (
 	    <>
@@ -93,36 +104,37 @@ function QuizGame({gameUrl, onComplete}) {
 			    <QuizButton answerIdx={1}
 					label={"A: " + currentQuestion.answer_1}
 					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness1} />
+					correctness={correctness1}
+                                        disabled={!quizButtonEnabled} />
 			</Grid>
 			<Grid size={6}>
 			    <QuizButton answerIdx={2}
 					label={"B: " + currentQuestion.answer_2}
 					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness2} />
+					correctness={correctness2}
+                                        disabled={!quizButtonEnabled} />
 			</Grid>
 			<Grid size={6}>
 			    <QuizButton answerIdx={3}
 					label={"C: " + currentQuestion.answer_3}
 					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness3} />
+					correctness={correctness3}
+                                        disabled={!quizButtonEnabled} />
 			</Grid>
 			<Grid size={6}>
 			    <QuizButton answerIdx={4}
 					label={"D: " + currentQuestion.answer_4}
 					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness4} />
+					correctness={correctness4}
+                                        disabled={!quizButtonEnabled} />
 			</Grid>
 		    </Grid>
 		</Box>
-		{ !isLastQuestion && 
-		  <Button variant="outlined"
-			  disabled={!answerChoice}
-			  onClick={navigateToNextQuestion}>Next question</Button>
-		}
-		{ isLastQuestion &&
-		  <Button onClick={navigateBack}>Finish game</Button>
-		}
+		<Button variant="outlined"
+			disabled={!actionButtonEnabled}
+			onClick={navigateToNextQuestionOrFinish}>
+                    { actionButtonMessage }
+                </Button>
 	    </>
 	);
     } else {
