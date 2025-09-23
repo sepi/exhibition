@@ -20,22 +20,35 @@ function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, ...o
 	}
     }
 
-    const buttonVariant = selected ? "contained" : "outlined";
     const classNameSel = selected ? "selected": "unselected";
 
-    var className;
+    let classNameCorr = '';
     if (correctness === 'correct' || correctness === 'incorrect') {
-	className = correctness;
-    } else {
-	className = '';
+        classNameCorr = correctness;
     }
 
+    const className = `quiz-button ${classNameSel} ${classNameCorr}`;
+
     return (
-	<Button onClick={toggleSelected}
-		variant={buttonVariant}
-		size={'large'}
-		className={`${className} ${classNameSel}`}
-                sx={{width: "100%"}}
-                {...otherProps}>{label}</Button>
+	<div onClick={toggleSelected}
+             className={className}
+             style={{
+                 display: 'flex',
+                 alignItems: 'center',
+                 justifyContent: 'center',
+                 cursor: 'pointer',
+                 width: '100%', // Adjust as needed or make dynamic
+                 height: 80,
+             }}
+             {...otherProps}>
+            <span
+                style={{
+                    color: 'white',
+                    pointerEvents: 'none',
+                    }}
+                >
+                {label}
+            </span>
+        </div>
     );
 }

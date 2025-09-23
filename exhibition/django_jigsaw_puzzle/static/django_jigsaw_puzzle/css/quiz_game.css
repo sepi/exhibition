@@ -1,45 +1,36 @@
-/* #question-answers h1 { */
-/*     margin-bottom: 50px; */
-/* } */
-
-/* #answer-buttons { */
-/*     margin-bottom: 50px; */
-/* } */
-
-/* #answer-buttons button { */
-/*     margin-right: 5px; */
+/* .MuiButton-root { */
 /*     background-color: #ebbdcf; */
 /*     color: black; */
-/*     font-size: 1em; */
 /* } */
 
-.MuiButton-root {
-    background-color: #ebbdcf;
-    color: black;
+.quiz-button {
+    background-image: url('/static/django_jigsaw_puzzle/images/button-answer.svg');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
-#answer-buttons .selected {
-    background-color: white;
+.quiz-button.selected {
+    background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg');
 }
 
-#answer-buttons .correct {
-    animation: anim-correct 0.5s 10;
+.quiz-button.correct {
+    animation: anim-correct 0.34s 2;
 }
 
-#answer-buttons .incorrect {
-    animation: anim-incorrect 0.5s 10;
+.quiz-button.incorrect {
+    animation: anim-incorrect 0.34s 2;
 }
 
 @keyframes anim-correct {
-  0% { background-color: inherit; }
-  50% { background-color: #00AA55; }
-  100% { background-color: inherit; }
+  0% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  50% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-correct.svg'); }
+  100% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
 }
 
 @keyframes anim-incorrect {
-  0% { background-color: inherit; }
-  50% { background-color: red; }
-  100% { background-color: inherit; }
+  0% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  50% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-incorrect.svg'); }
+  100% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
 }
 
 body {
@@ -56,8 +47,8 @@ body {
 }
 
 .MuiContainer-root {
-    margin-top: 20%;
-    margin-bottom: 20%;
+    margin-top: 10%;
+    margin-bottom: 10%;
 }
 
 .MuiChartsAxis-root {

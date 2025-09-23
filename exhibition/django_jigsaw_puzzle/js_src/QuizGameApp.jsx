@@ -86,7 +86,8 @@ function QuizGameApp({indexUrl, title, gameId}) {
 		      <h1>Select a quiz</h1>
 		      {games.map((g) => {
 			  return (
-			      <Button variant="outlined"
+			      <Button color="secondary"
+                                      variant="contained"
                                       key={g.id}
                                       sx={{minWidth: "35%"}}
 				      onClick={() => navigateToGameScreen(g.url)}>{g.name}</Button>

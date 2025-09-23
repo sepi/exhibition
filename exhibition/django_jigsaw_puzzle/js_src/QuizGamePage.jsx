@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 
 import QuizButton from './QuizButton.jsx';
 
-import { Button, Box, CircularProgress, Container, Grid,
+import { Button, Box, CircularProgress, Container, Grid, LinearProgress,
 	 Stack, FormControl, FormControlLabel, RadioGroup } from '@mui/material';
+
+import ArrowForward from '@mui/icons-material/ArrowForward';
 
 import { fetchGameData, sendQuestionAnswer } from './api.js';
 
-const navigationTimeout = 500;
+const navigationTimeout = 900;
 
 export
 function QuizGamePage({gameUrl, onComplete}) {
@@ -96,35 +98,38 @@ function QuizGamePage({gameUrl, onComplete}) {
             actionButtonMessage = "Select answer";
         }
 
+        const quizProgress = (questionIdx + 1) / questionCount * 100;
+        const justify = {display:'flex', justifyContent: 'center'};
+        
 	return (
 	    <Stack spacing={4}>
-		<h1>{ currentQuestion.question }</h1>
+		<h4>{ currentQuestion.question }</h4>
 		<Grid id="answer-buttons"
                       container
 
                 >
-		    <Grid item xs={6}>
+		    <Grid item xs={6} sx={justify}>
 			<QuizButton answerIdx={1}
 				    label={"A: " + currentQuestion.answer_1}
 				    answerChoice={answerChoice} onChoice={setChoice}
 				    correctness={correctness1}
                                     disabled={!quizButtonEnabled} />
 		    </Grid>
-		    <Grid item xs={6}>
+		    <Grid item xs={6} sx={justify}>
 			<QuizButton answerIdx={2}
 				    label={"B: " + currentQuestion.answer_2}
 				    answerChoice={answerChoice} onChoice={setChoice}
 				    correctness={correctness2}
                                     disabled={!quizButtonEnabled} />
 		    </Grid>
-		    <Grid item xs={6}>
+		    <Grid item xs={6} sx={justify}>
 			<QuizButton answerIdx={3}
 				    label={"C: " + currentQuestion.answer_3}
 				    answerChoice={answerChoice} onChoice={setChoice}
 				    correctness={correctness3}
                                     disabled={!quizButtonEnabled} />
 		    </Grid>
-		    <Grid item xs={6}>
+		    <Grid item xs={6} sx={justify}>
 			<QuizButton answerIdx={4}
 				    label={"D: " + currentQuestion.answer_4}
 				    answerChoice={answerChoice} onChoice={setChoice}
@@ -133,16 +138,24 @@ function QuizGamePage({gameUrl, onComplete}) {
 		    </Grid>
 		</Grid>
                 <Grid container
-                      justifyContent='flex-end'>
+                      justifyContent='space-between'
+                      alignItems='flex-end'>
+                    <div>{ questionIdx + 1 } / { questionCount }</div>
                     <Grid item xs={3}>
-	                <Button variant="outlined"
+	                <Button variant={'contained'}
+                                color={'secondary'}
+                                size={'large'}
 		                disabled={!actionButtonEnabled}
 		                onClick={navigateToNextQuestionOrFinish}
-                                sx={{width: "100%", backgroundColor: "#fda5a5"}} >
-                            { actionButtonMessage }
+                                sx={{width: "100%"}}
+                                endIcon={<ArrowForward/>}>
+                            { "" }
                         </Button>
                     </Grid>
                 </Grid>
+                <LinearProgress variant="determinate"
+                                value={ quizProgress }
+                                color="secondary" />
 	    </Stack>
 	);
     } else {
