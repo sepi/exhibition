@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-import { CircularProgress, Grid, Box } from '@mui/material';
+import { CircularProgress, Grid, Box, Stack, Button } from '@mui/material';
 import { BarChart, axisClasses } from '@mui/x-charts';
 
 import { fetchGameSessionStatistics } from './api.js';
@@ -62,62 +62,70 @@ function QuizResultPage({gameSessionId, onComplete}) {
         const scoreColor = scoreColorMap[Math.round(statistics.score * scoreColorMap.length-1)];
 
         return (
-            <Grid container spacing={10}>
-                <Grid item>
-                    <Box>
-                    <h1>Thank you for playing!</h1>
-                    <p>You finished the game with a score of</p>
-                    <p style={{align: 'center', fontSize: '3em', color: scoreColor, margin: 10}}>{formatPercent(statistics.score)}</p>
-                        <p>by answering <strong>{statistics.question_correct}</strong> of <strong>{statistics.question_count}</strong> questions correctly.</p>
+            <Stack>
+                <Grid container spacing={10}>
+                    <Grid item>
+                        <Box>
+                            <h1>Thank you for playing!</h1>
+                            <p>You finished the game with a score of</p>
+                            <p style={{align: 'center', fontSize: '3em', color: scoreColor, margin: 10}}>{formatPercent(statistics.score)}</p>
+                            <p>by answering <strong>{statistics.question_correct}</strong> of <strong>{statistics.question_count}</strong> questions correctly.</p>
                         </Box>
-                </Grid>
+                    </Grid>
 
-                <Grid item>
-                    <Box>
-                    <h1>Compare yourself to others!</h1>
-                    <BarChart
-                        xAxis={[
-                            { scaleType: 'band',
-                              data: labels,
-                              valueFormatter: peopleRangeFormatter,
-                            }
-                        ]}
-                        series={[
-                            { id: 'other',
-                              data: histDataOther,
-                              stack: 'a',
-                              valueFormatter: playerFormatter,
-                            },
-                            { id: 'my',
-                              data: histDataOur,
-                              stack:'a',
-                              valueFormatter: playerFormatter,
-                            },
-                        ]}
-                        height={350}
-                        width={550}
-                        sx={{
-                            [`& .${axisClasses.root}`]: {
-                                stroke: 'white', // Axis lines
-                            },
-                            [`& .${axisClasses.tickLabel}`]: {
-                                fill: '!white',   // Tick label text color
-                                fontSize: 14,
-                            },
-                            [`& .${axisClasses.line}`]: {
-                                stroke: 'white', // Axis line color
-                            },
-                            [`& .${axisClasses.tick}`]: {
-                                stroke: 'white', // Tick mark color
-                            },
-                        }}
-                        slots={{
-                            tooltip: null,
-                        }}
-                    />
-                    </Box>
+                    <Grid item>
+                        <Box>
+                            <h1>Compare yourself to others!</h1>
+                            <BarChart
+                                xAxis={[
+                                    { scaleType: 'band',
+                                      data: labels,
+                                      valueFormatter: peopleRangeFormatter,
+                                    }
+                                ]}
+                                series={[
+                                    { id: 'other',
+                                      data: histDataOther,
+                                      stack: 'a',
+                                      valueFormatter: playerFormatter,
+                                    },
+                                    { id: 'my',
+                                      data: histDataOur,
+                                      stack:'a',
+                                      valueFormatter: playerFormatter,
+                                    },
+                                ]}
+                                height={350}
+                                width={550}
+                                sx={{
+                                    [`& .${axisClasses.root}`]: {
+                                        stroke: 'white', // Axis lines
+                                    },
+                                    [`& .${axisClasses.tickLabel}`]: {
+                                        fill: '!white',   // Tick label text color
+                                        fontSize: 14,
+                                    },
+                                    [`& .${axisClasses.line}`]: {
+                                        stroke: 'white', // Axis line color
+                                    },
+                                    [`& .${axisClasses.tick}`]: {
+                                        stroke: 'white', // Tick mark color
+                                    },
+                                }}
+                                slots={{
+                                    tooltip: null,
+                                }}
+                            />
+                        </Box>
+                    </Grid>
                 </Grid>
-            </Grid>
+                <Button variant="contained"
+                        color="secondary"
+                        size="large"
+                        onClick={onComplete}>
+                    Play again!
+                </Button>
+            </Stack>
         );
     } else {
         return <CircularProgress/>;

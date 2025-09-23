@@ -20,10 +20,14 @@ function QuizGameApp({indexUrl, title, gameId}) {
     const [gameUrl, setGameUrl] = useState();
     const [gameSessionId, setGameSessionId] = useState();
 
+    const navigateToSelect = () => {
+	setScreen("select");
+    };
+
     const navigateToGameScreen = (gameUrl) => {
 	setScreen("game");
 	setGameUrl(gameUrl);
-    }
+    };
 
     const onGameComplete = () => {
 	setScreen("results");
@@ -32,7 +36,7 @@ function QuizGameApp({indexUrl, title, gameId}) {
 
     // Load game list from API
     useEffect(() => {
-        const get = async ()=> {
+        const get = async () => {
             const games = await fetchGameData(indexUrl);
             setGames(games);
 
@@ -100,7 +104,8 @@ function QuizGameApp({indexUrl, title, gameId}) {
 			        onComplete={onGameComplete} />
 		}
                 { screen === 'results' &&
-                  <QuizResultPage gameSessionId={gameSessionId} />
+                  <QuizResultPage gameSessionId={gameSessionId}
+                                  onComplete={navigateToSelect} />
                 }
 	    </Container>
 	</div>

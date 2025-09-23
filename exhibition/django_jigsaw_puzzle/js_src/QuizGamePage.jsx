@@ -98,7 +98,7 @@ function QuizGamePage({gameUrl, onComplete}) {
             actionButtonMessage = "Select answer";
         }
 
-        const quizProgress = (questionIdx + 1) / questionCount * 100;
+        const quizProgress = (questionIdx + 0.5) / questionCount * 100;
         const justify = {display:'flex', justifyContent: 'center'};
         
 	return (
