@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
 export default
-function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, ...otherProps}) {
+function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, disabled, ...otherProps}) {
     const [ selected, setSelected ] = useState(false);
 
     useEffect(() => {
@@ -29,8 +29,10 @@ function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, ...o
 
     const className = `quiz-button ${classNameSel} ${classNameCorr}`;
 
+    const clickHandler = disabled ? null : toggleSelected;
+    
     return (
-	<div onClick={toggleSelected}
+	<div onClick={clickHandler}
              className={className}
              style={{
                  display: 'flex',
