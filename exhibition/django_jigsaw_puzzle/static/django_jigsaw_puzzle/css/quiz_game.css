@@ -1,17 +1,17 @@
-#question-answers h1 {
-    margin-bottom: 50px;
-}
+/* #question-answers h1 { */
+/*     margin-bottom: 50px; */
+/* } */
 
-#answer-buttons {
-    margin-bottom: 50px;
-}
+/* #answer-buttons { */
+/*     margin-bottom: 50px; */
+/* } */
 
-#answer-buttons button {
-    margin-right: 5px;
-    background-color: #ebbdcf;
-    color: black;
-    font-size: 1em;
-}
+/* #answer-buttons button { */
+/*     margin-right: 5px; */
+/*     background-color: #ebbdcf; */
+/*     color: black; */
+/*     font-size: 1em; */
+/* } */
 
 .MuiButton-root {
     background-color: #ebbdcf;
@@ -23,11 +23,11 @@
 }
 
 #answer-buttons .correct {
-    animation: anim-correct 0.5s 4;
+    animation: anim-correct 0.5s 10;
 }
 
 #answer-buttons .incorrect {
-    animation: anim-incorrect 0.5s 4;
+    animation: anim-incorrect 0.5s 10;
 }
 
 @keyframes anim-correct {
@@ -58,4 +58,8 @@ body {
 .MuiContainer-root {
     margin-top: 20%;
     margin-bottom: 20%;
+}
+
+.MuiChartsAxis-root {
+    color: white;
 }

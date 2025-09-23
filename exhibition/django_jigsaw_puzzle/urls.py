@@ -5,7 +5,7 @@ from .views import (image_set_detail, image_upload,
                     memory_game_detail,
                     paint_game_detail,
                     quiz_game_list, quiz_game_detail,
-                    game_session_start, game_session_end,
+                    game_session_start, game_session_end, game_session_statistics,
                     quiz_question_answer)
 
 urlpatterns = [
@@ -25,6 +25,7 @@ urlpatterns = [
     path("image_set/<int:id>/", image_set_detail, name='image_set_detail'),
     path("image_upload", image_upload, name='image_upload'),
 
-    path("session/start/", game_session_start, name='game_session_start'),
+    path("session/start/<int:game_id>/", game_session_start, name='game_session_start'),
     path("session/end/", game_session_end, name='game_session_end'),
+    path("session/<str:game_session_id>/statistics/", game_session_statistics, name='game_session_statistics'),
 ]

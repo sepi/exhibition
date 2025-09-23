@@ -9,7 +9,10 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum, Count
+
 from easy_thumbnails.files import get_thumbnailer
+
 from filer.admin.clipboardadmin import ajax_upload
 from filer.models.filemodels import File
 from filer.models.thumbnailoptionmodels import ThumbnailOption
@@ -204,7 +207,7 @@ def quiz_game_detail(request, id):
 
 
 @csrf_exempt
-def game_session_start(request):
+def game_session_start(request, game_id):
     '''Create a game session and return its id or return existing game session'''
     if request.method == 'POST':
         game_session_id = request.session.get('game_session_id')
@@ -212,7 +215,7 @@ def game_session_start(request):
         if game_session_id:
             game_session = get_object_or_404(GameSession, session_id=game_session_id)
         else:
-            game_session = GameSession.objects.create()
+            game_session = GameSession.objects.create(ongoing=True, game_id=game_id)
             request.session['game_session_id'] = str(game_session.session_id)
     
         return JsonResponse({
@@ -228,7 +231,8 @@ def game_session_end(request):
         if game_session_id:
             game_session = get_object_or_404(GameSession, session_id=game_session_id)
             del request.session['game_session_id']
-            game_session.delete()
+            game_session.ongoing = False
+            game_session.save()
             return JsonResponse({'status': 'ended'})
     
 
@@ -254,6 +258,50 @@ def quiz_question_answer(request, question_id, answer_choice):
             partial_result.save()
             return JsonResponse({'result_number': score})
     
+
+@csrf_exempt
+def game_session_statistics(request, game_session_id):
+    game_session = get_object_or_404(GameSession, session_id=game_session_id)
+
+    # Score and count
+    game = game_session.game # An instance of Game superclass, not QuizGame
+    quiz_game = QuizGame.objects.get(pk=game.id)
+    question_count = quiz_game.questions.count()
+    agg = GameSessionPartialResult.objects \
+                                  .filter(game_session_id=game_session_id) \
+                                  .aggregate(answer_sum=Sum('result_number', default=0))
+    question_correct = agg['answer_sum']
+    score = question_correct / question_count
+
+    # Histogram base query
+    qs = GameSession.objects.annotate(
+        answer_correct=Sum("partial_results__result_number"),
+        answer_count=Count("partial_results"),
+        score=Sum("partial_results__result_number") / Count("partial_results")
+    )
+
+    # Generate histogram
+    bin_count = 7
+    hist = []
+    for i in range(0, bin_count):
+        mn = i / bin_count
+        mx = (i + 1) / bin_count
+        result = {
+            'from': mn,
+            'to': mx,
+            'count': qs.filter(score__gt=mn, score__lte=mx).count()
+        }
+        hist.append(result)
+
+    return JsonResponse({
+        'question_count': question_count,
+        'question_correct': question_correct,
+        'score': score,
+        'histogram': hist,
+        'game_session_id': game_session_id
+    })
+
+
 # FIXME: Would be nice to use CSRF. The clients sends it but it will be out of date at some point, or not?
 @csrf_exempt
 def image_upload(request):

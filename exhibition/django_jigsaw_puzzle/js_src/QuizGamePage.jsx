@@ -8,10 +8,10 @@ import { Button, Box, CircularProgress, Container, Grid,
 
 import { fetchGameData, sendQuestionAnswer } from './api.js';
 
-const navigationTimeout = 3000;
+const navigationTimeout = 500;
 
 export
-function QuizGame({gameUrl, onComplete}) {
+function QuizGamePage({gameUrl, onComplete}) {
     const [game, setGame] = useState();
 
     // Load game detail from API when game selected
@@ -68,11 +68,12 @@ function QuizGame({gameUrl, onComplete}) {
             setActionButtonEnabled(false);
             setQuizButtonEnabled(false);
 	    handleChoice(answerChoice);
+            sendQuestionAnswer(currentQuestion.id, answerChoice);
+
 	    setTimeout(() => {
                 const wasLastQuestion = isLastQuestion;
 		setQuestionIdx(questionIdx + 1);
 		resetCorrectness();
-                sendQuestionAnswer(currentQuestion.id, answerChoice);
                 setQuizButtonEnabled(true);
 	        setAnswerChoice(null);
 	        if (wasLastQuestion) {
@@ -96,46 +97,53 @@ function QuizGame({gameUrl, onComplete}) {
         }
 
 	return (
-	    <>
-		<Box id="question-answers">
-		    <h1>{ currentQuestion.question }</h1>
-		    <Grid id="answer-buttons" container spacing={2}>
-			<Grid size={6}>
-			    <QuizButton answerIdx={1}
-					label={"A: " + currentQuestion.answer_1}
-					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness1}
-                                        disabled={!quizButtonEnabled} />
-			</Grid>
-			<Grid size={6}>
-			    <QuizButton answerIdx={2}
-					label={"B: " + currentQuestion.answer_2}
-					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness2}
-                                        disabled={!quizButtonEnabled} />
-			</Grid>
-			<Grid size={6}>
-			    <QuizButton answerIdx={3}
-					label={"C: " + currentQuestion.answer_3}
-					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness3}
-                                        disabled={!quizButtonEnabled} />
-			</Grid>
-			<Grid size={6}>
-			    <QuizButton answerIdx={4}
-					label={"D: " + currentQuestion.answer_4}
-					answerChoice={answerChoice} onChoice={setChoice}
-					correctness={correctness4}
-                                        disabled={!quizButtonEnabled} />
-			</Grid>
+	    <Stack spacing={4}>
+		<h1>{ currentQuestion.question }</h1>
+		<Grid id="answer-buttons"
+                      container
+
+                >
+		    <Grid item xs={6}>
+			<QuizButton answerIdx={1}
+				    label={"A: " + currentQuestion.answer_1}
+				    answerChoice={answerChoice} onChoice={setChoice}
+				    correctness={correctness1}
+                                    disabled={!quizButtonEnabled} />
 		    </Grid>
-		</Box>
-		<Button variant="outlined"
-			disabled={!actionButtonEnabled}
-			onClick={navigateToNextQuestionOrFinish}>
-                    { actionButtonMessage }
-                </Button>
-	    </>
+		    <Grid item xs={6}>
+			<QuizButton answerIdx={2}
+				    label={"B: " + currentQuestion.answer_2}
+				    answerChoice={answerChoice} onChoice={setChoice}
+				    correctness={correctness2}
+                                    disabled={!quizButtonEnabled} />
+		    </Grid>
+		    <Grid item xs={6}>
+			<QuizButton answerIdx={3}
+				    label={"C: " + currentQuestion.answer_3}
+				    answerChoice={answerChoice} onChoice={setChoice}
+				    correctness={correctness3}
+                                    disabled={!quizButtonEnabled} />
+		    </Grid>
+		    <Grid item xs={6}>
+			<QuizButton answerIdx={4}
+				    label={"D: " + currentQuestion.answer_4}
+				    answerChoice={answerChoice} onChoice={setChoice}
+				    correctness={correctness4}
+                                    disabled={!quizButtonEnabled} />
+		    </Grid>
+		</Grid>
+                <Grid container
+                      justifyContent='flex-end'>
+                    <Grid item xs={3}>
+	                <Button variant="outlined"
+		                disabled={!actionButtonEnabled}
+		                onClick={navigateToNextQuestionOrFinish}
+                                sx={{width: "100%", backgroundColor: "#fda5a5"}} >
+                            { actionButtonMessage }
+                        </Button>
+                    </Grid>
+                </Grid>
+	    </Stack>
 	);
     } else {
 	return <CircularProgress/>;

@@ -69,8 +69,13 @@ class ImageGame(Game):
 class GameSession(models.Model):
     """A way to record data about a gaming session, eg. to calculate a high-score or similar.
     """
-    session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    session_id = models.UUIDField(primary_key=True,
+                                  default=uuid.uuid4,
+                                  editable=False)
     player_name = models.CharField(max_length=512)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE,
+                             related_name='game_session')
+    ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -87,6 +92,9 @@ class GameSessionPartialResult(models.Model):
     result_boolean = models.BooleanField(null=True, blank=True)
     result_number = models.FloatField(null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"game_session= {self.game_session.session_id}, result_number={self.result_number}"
 
 
 class JigsawPuzzle(ImageGame):
@@ -153,7 +161,7 @@ class QuizGame(BaseGame):
 
 
 class QuizQuestion(models.Model):
-    game = models.ForeignKey(QuizGame,
+    game = models.ForeignKey(QuizGame, related_name='questions',
                              on_delete=models.PROTECT)
     
     question = models.CharField(max_length=2048)

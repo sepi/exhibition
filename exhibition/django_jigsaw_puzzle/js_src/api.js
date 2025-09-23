@@ -32,10 +32,27 @@ export async function fetchGameDetail(url) {
     return respJson;
 }
 
-export async function startGameSession() {
-    const resp = await fetch('/games/session/start/', {
+export async function startGameSession(gameId) {
+    const resp = await fetch(`/games/session/start/${gameId}/`, {
         ...fetchOptions,
         'method': 'POST',
+    });
+    const respJson = await resp.json();
+    return respJson;
+}
+
+export async function endGameSession() {
+    const resp = await fetch('/games/session/end/', {
+        ...fetchOptions,
+        'method': 'POST',
+    });
+    const respJson = await resp.json();
+    return respJson;
+}
+
+export async function fetchGameSessionStatistics(gameSessionId) {
+    const resp = await fetch(`/games/session/${gameSessionId}/statistics/`, {
+        ...fetchOptions,
     });
     const respJson = await resp.json();
     return respJson;
@@ -49,3 +66,4 @@ export async function sendQuestionAnswer(questionId, answerChoice) {
     const respJson = await resp.json();
     return respJson;
 }
+

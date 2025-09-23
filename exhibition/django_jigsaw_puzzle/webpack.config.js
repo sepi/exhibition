@@ -23,7 +23,13 @@ module.exports = {
                 use: {
                     loader: 'css-loader'
                 }
-            }
+            },
+            {
+                test: /\.m?js$/,
+                resolve: {
+                    fullySpecified: false, // Necessary for imports without .js or .jsx suffix.
+                },
+            },
         ]
     }
 }

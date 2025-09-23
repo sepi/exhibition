@@ -35,6 +35,7 @@ function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, ...o
 		variant={buttonVariant}
 		size={'large'}
 		className={`${className} ${classNameSel}`}
+                sx={{width: "100%"}}
                 {...otherProps}>{label}</Button>
     );
 }

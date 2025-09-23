@@ -8,9 +8,10 @@ import { WelcomeScreen } from './WelcomeScreen.jsx';
 import { MemoryGame } from './MemoryGame.jsx';
 import { DifficultySelector } from './DifficultySelector.jsx';
 import { CopyrightNotice } from './CopyrightNotice.jsx';
-import { QuizGame } from './QuizGame.jsx';
+import { QuizGamePage } from './QuizGamePage.jsx';
+import { QuizResultPage } from './QuizResultPage.jsx';
 
-import { fetchGameData, startGameSession } from './api.js';
+import { fetchGameData, startGameSession, endGameSession } from './api.js';
 
 export default
 function QuizGameApp({indexUrl, title, gameId}) {
@@ -24,8 +25,9 @@ function QuizGameApp({indexUrl, title, gameId}) {
 	setGameUrl(gameUrl);
     }
 
-    const onComplete = () => {
-	setScreen("completed");
+    const onGameComplete = () => {
+	setScreen("results");
+        endGameSession(gameSessionId);
     };
 
     // Load game list from API
@@ -40,13 +42,25 @@ function QuizGameApp({indexUrl, title, gameId}) {
                 const gameUrl = `${indexUrl}${gameId}/`;
                 navigateToGameScreen(gameUrl);
             }
-
-            const gameSession = await startGameSession();
-            setGameSessionId(gameSession.session_id);
         }
 
         get();
     }, []);
+
+    // Start session whenever a new game is selected
+    useEffect(() => {
+        const get = async (gameId) => {
+            const gameSession = await startGameSession(gameId);
+            setGameSessionId(gameSession.game_session_id);
+        }
+
+        if (gameUrl) {
+            const components = gameUrl.split('/');
+            const cLen = components.length;
+            const id = components[cLen-2];
+            get(id);
+        }
+    }, [gameUrl]);
 
     return (
 	<div className="App">
@@ -64,31 +78,29 @@ function QuizGameApp({indexUrl, title, gameId}) {
 	    </Snackbar>
 
 	    <Container>
-		<Stack>
-		    { screen === 'loading' && 
-		      <CircularProgress/>
-		    }
-		    { screen === 'select' &&
-		      <>
-			  <h1>Select a quiz</h1>
-			  {games.map((g) => {
-			      return (
-				  <div key={g.id}>
-				      <Button variant="outlined"
-					      onClick={() => navigateToGameScreen(g.url)}>{g.name}</Button>
-				  </div>
-			      );
-			  })}
-		      </>
-		    }
-		    { screen === 'game' &&
-		      <QuizGame gameUrl={gameUrl}
-				onComplete={onComplete} />
-		    }
-		    { screen === 'completed' &&
-		      <div>Completed</div>
-		    }
-		</Stack>
+		{ screen === 'loading' && 
+		  <CircularProgress/>
+		}
+		{ screen === 'select' &&
+                  <Stack alignItems="center" spacing={2}>
+		      <h1>Select a quiz</h1>
+		      {games.map((g) => {
+			  return (
+			      <Button variant="outlined"
+                                      key={g.id}
+                                      sx={{minWidth: "35%"}}
+				      onClick={() => navigateToGameScreen(g.url)}>{g.name}</Button>
+			  );
+		      })}
+                  </Stack>
+		}
+		{ screen === 'game' &&
+		  <QuizGamePage gameUrl={gameUrl}
+			        onComplete={onGameComplete} />
+		}
+                { screen === 'results' &&
+                  <QuizResultPage gameSessionId={gameSessionId} />
+                }
 	    </Container>
 	</div>
     );
