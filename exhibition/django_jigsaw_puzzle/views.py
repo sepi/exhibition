@@ -195,10 +195,13 @@ def quiz_game_detail(request, id):
                 "id": q.id,
                 "question": q.question,
                 "answer_1": q.answer_1,
+                "correct_1": q.correct_1,
                 "answer_2": q.answer_2,
+                "correct_2": q.correct_2,
                 "answer_3": q.answer_3,
+                "correct_3": q.correct_3,
                 "answer_4": q.answer_4,
-                "correct_answer": q.correct_answer,
+                "correct_4": q.correct_4,
             } for q in questions]
         })
     else: # For browsers
@@ -237,10 +240,12 @@ def game_session_end(request):
     
 
 def quiz_question_score(question, answer_choice):
-    if question.correct_answer == answer_choice:
-        return 1
-    else:
-        return 0
+    match answer_choice:
+        case 1: return question.correct_1
+        case 2: return question.correct_2
+        case 3: return question.correct_3
+        case 4: return question.correct_4
+
     
 @csrf_exempt
 def quiz_question_answer(request, question_id, answer_choice):

@@ -47,6 +47,7 @@ function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, disa
                 style={{
                     color: 'white',
                     pointerEvents: 'none',
+                    userSelect: 'none',
                     }}
                 >
                 {label}

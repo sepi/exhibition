@@ -165,14 +165,19 @@ class QuizQuestion(models.Model):
                              on_delete=models.PROTECT)
     
     question = models.CharField(max_length=2048)
-    answer_1 = models.CharField(max_length=1024)
-    answer_2 = models.CharField(max_length=1024)
-    answer_3 = models.CharField(max_length=1024)
-    answer_4 = models.CharField(max_length=1024)
 
-    correct_answer = models.IntegerField(validators=[MinValueValidator(1),
-                                                     MaxValueValidator(4)])
+    answer_1 = models.CharField(max_length=1024)
+    correct_1 = models.BooleanField(default=False)
     
+    answer_2 = models.CharField(max_length=1024)
+    correct_2 = models.BooleanField(default=False)
+
+    answer_3 = models.CharField(max_length=1024)
+    correct_3 = models.BooleanField(default=False)
+
+    answer_4 = models.CharField(max_length=1024)
+    correct_4 = models.BooleanField(default=False)
+
     order = models.PositiveIntegerField(
         default=0,
         blank=False,

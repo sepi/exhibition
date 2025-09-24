@@ -12,6 +12,15 @@ import { fetchGameData, sendQuestionAnswer } from './api.js';
 
 const navigationTimeout = 900;
 
+function isAnswerCorrect(question, choice) {
+    switch (choice) {
+    case 1: return question.correct_1;
+    case 2: return question.correct_2;
+    case 3: return question.correct_3;
+    case 4: return question.correct_4;
+    }
+};
+
 export
 function QuizGamePage({gameUrl, onComplete}) {
     const [game, setGame] = useState();
@@ -42,10 +51,6 @@ function QuizGamePage({gameUrl, onComplete}) {
 	setCorrectness2(null);
 	setCorrectness3(null);
 	setCorrectness4(null);
-    };
-
-    const isAnswerCorrect = (question, choice) => {
-        return choice === question.correct_answer;
     };
 
     if (game && game.questions) {

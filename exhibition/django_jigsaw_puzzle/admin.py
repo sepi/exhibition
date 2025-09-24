@@ -115,9 +115,11 @@ class QuizQuestionInline(SortableStackedInline):
 
     fieldsets = (
         (None, {
-            'fields': (('question', 'correct_answer'),
-                       ('answer_1', 'answer_2'),
-                       ('answer_3', 'answer_4'))
+            'fields': (('question'),
+                       ('answer_1', 'correct_1'),
+                       ('answer_2', 'correct_2'),
+                       ('answer_3', 'correct_3'),
+                       ('answer_4', 'correct_4'))
         }),
     )
 

@@ -19,8 +19,10 @@ function QuizGameApp({indexUrl, title, gameId}) {
     const [games, setGames] = useState([]);
     const [gameUrl, setGameUrl] = useState();
     const [gameSessionId, setGameSessionId] = useState();
+    const [reloadCount, setReloadCount] = useState(0);
 
     const navigateToSelect = () => {
+        setReloadCount((reloadCount) => reloadCount + 1);
 	setScreen("select");
     };
 
@@ -49,7 +51,7 @@ function QuizGameApp({indexUrl, title, gameId}) {
         }
 
         get();
-    }, []);
+    }, [reloadCount]);
 
     // Start session whenever a new game is selected
     useEffect(() => {
@@ -64,7 +66,7 @@ function QuizGameApp({indexUrl, title, gameId}) {
             const id = components[cLen-2];
             get(id);
         }
-    }, [gameUrl]);
+    }, [gameUrl, reloadCount]);
 
     return (
 	<div className="App">

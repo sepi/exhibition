@@ -1,8 +1,3 @@
-/* .MuiButton-root { */
-/*     background-color: #ebbdcf; */
-/*     color: black; */
-/* } */
-
 .quiz-button {
     background-image: url('/static/django_jigsaw_puzzle/images/button-answer.svg');
     background-size: 100% 100%;
@@ -49,8 +44,4 @@ body {
 .MuiContainer-root {
     margin-top: 10%;
     margin-bottom: 10%;
-}
-
-.MuiChartsAxis-root {
-    color: white;
 }
