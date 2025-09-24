@@ -4,10 +4,7 @@ import { useState, useEffect } from 'react';
 import { Alert, Button, CircularProgress, Container, Snackbar, Stack } from '@mui/material';
 
 import { Appbar } from './Appbar.jsx';
-import { WelcomeScreen } from './WelcomeScreen.jsx';
-import { MemoryGame } from './MemoryGame.jsx';
-import { DifficultySelector } from './DifficultySelector.jsx';
-import { CopyrightNotice } from './CopyrightNotice.jsx';
+import { QuizSelectPage } from './QuizSelectPage.jsx';
 import { QuizGamePage } from './QuizGamePage.jsx';
 import { QuizResultPage } from './QuizResultPage.jsx';
 
@@ -88,18 +85,8 @@ function QuizGameApp({indexUrl, title, gameId}) {
 		  <CircularProgress/>
 		}
 		{ screen === 'select' &&
-                  <Stack alignItems="center" spacing={2}>
-		      <h1>Select a quiz</h1>
-		      {games.map((g) => {
-			  return (
-			      <Button color="secondary"
-                                      variant="contained"
-                                      key={g.id}
-                                      sx={{minWidth: "35%"}}
-				      onClick={() => navigateToGameScreen(g.url)}>{g.name}</Button>
-			  );
-		      })}
-                  </Stack>
+                  <QuizSelectPage games={games}
+                                  onClick={(game) => navigateToGameScreen(game.url)} />
 		}
 		{ screen === 'game' &&
 		  <QuizGamePage gameUrl={gameUrl}

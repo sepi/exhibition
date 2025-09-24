@@ -107,7 +107,7 @@ function QuizGamePage({gameUrl, onComplete}) {
         const justify = {display:'flex', justifyContent: 'center'};
         
 	return (
-	    <Stack spacing={3}>
+	    <Stack spacing={3} sx={{width: "100%"}}>
 		<h4>{ currentQuestion.question }</h4>
 		<Grid id="answer-buttons"
                       container spacing={2}>
