@@ -43,16 +43,8 @@ class GridDifficultyLevel(models.Model):
                              on_delete=models.PROTECT)
 
 
-class BaseGame(models.Model):
-    name = models.CharField(max_length=512)
-
-    def __str__(self):
-        return self.name
-
-
 class Game(models.Model):
     name = models.CharField(max_length=512)
-    copyright_notice = models.CharField(max_length=2048)
     color = models.CharField(max_length=7,
                              default="#fff",
                              verbose_name=_("The color of the top navigation bar."))
@@ -62,6 +54,7 @@ class Game(models.Model):
 
 
 class ImageGame(Game):
+    copyright_notice = models.CharField(max_length=2048)
     image_set = models.ForeignKey(ImageSet,
                                   on_delete=models.PROTECT)
 
@@ -156,7 +149,7 @@ class PaintGamePluginModel(CMSPlugin):
                              on_delete=models.PROTECT)
 
 
-class QuizGame(BaseGame):
+class QuizGame(Game):
     pass
 
 
