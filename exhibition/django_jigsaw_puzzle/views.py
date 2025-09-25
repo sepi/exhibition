@@ -175,10 +175,19 @@ def quiz_game_list(request):
 
 def quiz_game_context(game):
     return {
-        'mode': 'QUIZ_GAME',
-        'index_url': '/games/quiz_game/',
-        'title': game.name,
-        'game_id': game.id,
+        'data_attributes': [
+            ('mode', 'QUIZ_GAME'),
+            ('index-url', '/games/quiz_game/'),
+            ('title', game.name),
+            ('game-id', game.id),
+            ('allow-multiple-answers', game.allow_multiple_answers),
+            ('points-correct', game.points_correct),
+            ('points-incorrect', game.points_incorrect),
+            ('points-minimum', game.points_minimum),
+            ('points-per-question-max', game.points_per_question_max),
+            ('histogram-bin-count', game.histogram_bin_count),
+        ],
+        'stylesheet_path': 'django_jigsaw_puzzle/css/quiz_game.css',
     }
 
 
