@@ -58,10 +58,11 @@ export async function fetchGameSessionStatistics(gameSessionId) {
     return respJson;
 }
 
-export async function sendQuestionAnswer(questionId, answerChoice) {
-    const resp = await fetch(`/games/quiz_question/${questionId}/answer/${answerChoice}/`, {
+export async function sendQuestionAnswers(questionId, answerChoices) {
+    const resp = await fetch(`/games/quiz_question/${questionId}/answer/`, {
         ...fetchOptions,
-        'method': 'POST'
+        method: 'POST',
+        body: JSON.stringify(answerChoices)
     });
     const respJson = await resp.json();
     return respJson;
