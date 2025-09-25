@@ -91,17 +91,23 @@ class GameSession(models.Model):
         return score
 
 
-    def histogram_bin(self, mn, mx, max_score):
+    def histogram_bin(self, mn, mx, first):
         # Histogram base query
         qs = GameSession.objects.annotate(
-            score=models.Sum("partial_results__result_number") / max_score,
+            score=models.Sum("partial_results__result_number"),
             answer_count=models.Count("partial_results"),
         )
-        return qs.filter(score__gte=mn, score__lte=mx).count()
+
+        if first:
+            return qs.filter(score__gte=mn, score__lte=mx).count()
+        else:
+            return qs.filter(score__gt=mn, score__lte=mx).count()
 
 
     def histogram(self, max_score, bins):
         game = self.game.quizgame
+        questions_count = game.questions.count()
+        max_session_score = questions_count * max_score
         hist = []
         for i in range(0, bins):
             mn = i / bins
@@ -109,7 +115,7 @@ class GameSession(models.Model):
             result = {
                 'from': mn,
                 'to': mx,
-                'count': self.histogram_bin(mn, mx, max_score),
+                'count': self.histogram_bin(mn * max_session_score, mx * max_session_score, i == 0),
             }
             hist.append(result)
         return hist
