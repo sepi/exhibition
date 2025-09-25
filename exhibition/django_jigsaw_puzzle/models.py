@@ -193,8 +193,28 @@ class PaintGamePluginModel(CMSPlugin):
 
 
 class QuizGame(Game):
-    pass
+    allow_multiple_answers = models.BooleanField(default=False,
+                                                 verbose_name=_("Allow player to select more than one answer per question."))
+    points_correct = models.IntegerField(default=1,
+                                         verbose_name=_("Amount of points the player gets for a correct answer."))
+    points_incorrect = models.IntegerField(default=-1,
+                                           verbose_name=_("Amount of points the player gets for an incorrect answer."),
+                                           help_text=_("This value needs to be negative to remove points for bad answers."))
+    points_minimum = models.IntegerField(default=0,
+                                         verbose_name=_("Minimum amount of points per question."),
+                                         help_text=_("Use to prevent negative points."))
+    points_per_question_max = models.IntegerField(default=4,
+                                                  verbose_name=_("The maximum amount the player can get per question."),
+                                                  help_text=_("Used to calculate what is a perfect score of 100%. E.g. if you quiz has a maximum of 2 correct answers per question and you give 1 point per correct answer, set it to 2."))
+    histogram_bin_count = models.PositiveIntegerField(default=7,
+                                                      verbose_name=_("Result screen histogram bins count"),
+                                                      help_text=_("Use a low nuber to show less detail in the result screen score distribution."))
 
+
+class QuizGamePluginModel(CMSPlugin):
+    game = models.ForeignKey(QuizGame,
+                             on_delete=models.PROTECT)
+    
 
 class QuizQuestion(models.Model):
     game = models.ForeignKey(QuizGame, related_name='questions',

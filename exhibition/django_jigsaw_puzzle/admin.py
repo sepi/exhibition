@@ -128,6 +128,15 @@ class QuizQuestionInline(SortableStackedInline):
 class QuizGameAdmin(BaseGameAdminMixin, SortableAdminBase, admin.ModelAdmin):
     inlines = [QuizQuestionInline]
 
+    fieldsets = (
+        (None, {
+            'fields': (('info_text'),
+                       ('allow_multiple_answers', 'histogram_bin_count'),
+                       ('points_correct', 'points_incorrect'),
+                       ('points_minimum', 'points_per_question_max'))
+        }),
+    )
+
     def get_game_link(self, obj):
         return reverse('quiz_game_detail', args=[obj.id])
 
