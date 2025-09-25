@@ -9,23 +9,29 @@
 }
 
 .quiz-button.correct {
-    animation: anim-correct 0.34s 2;
+    animation: anim-correct 0.7s 1 normal forwards;
 }
 
 .quiz-button.incorrect {
-    animation: anim-incorrect 0.34s 2;
+    animation: anim-incorrect 0.7s 1 normal forwards;
 }
 
 @keyframes anim-correct {
   0% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
-  50% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-correct.svg'); }
-  100% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  20% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-correct.svg'); }
+  40% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  60% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-correct.svg'); }
+  80% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  100% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-correct.svg'); }
 }
 
 @keyframes anim-incorrect {
   0% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
-  50% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-incorrect.svg'); }
-  100% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  20% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-incorrect.svg'); }
+  40% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  60% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-incorrect.svg'); }
+  80% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-selected.svg'); }
+  100% { background-image: url('/static/django_jigsaw_puzzle/images/button-answer-incorrect.svg'); }
 }
 
 body {
