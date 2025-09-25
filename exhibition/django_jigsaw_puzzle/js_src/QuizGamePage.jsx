@@ -55,6 +55,8 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
     };
 
     if (game && game.questions) {
+        const allowMultipleAnswers = game.allow_multiple_answers;
+
 	const questionCount = game.questions.length;
 	const isLastQuestion = questionIdx + 1 === questionCount;
 	const questionsLeft = questionIdx + 1 < questionCount;
@@ -96,18 +98,26 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
             resetTimeout();
 	    setAnswerChoices(answerChoices => {
                 const n = Array.from(answerChoices);
-                if (newChoice === true &&
-                    !n.includes(answerIdx)) {
-                    n.push(answerIdx);
-                }
-                if (newChoice === false &&
-                    n.includes(answerIdx)) {
-                    const index = n.indexOf(answerIdx);
-                    if (index > -1) {
-                        n.splice(index, 1);
+                if (allowMultipleAnswers) {
+                    if (newChoice === true &&
+                        !n.includes(answerIdx)) {
+                        n.push(answerIdx);
+                    }
+                    if (newChoice === false &&
+                        n.includes(answerIdx)) {
+                        const index = n.indexOf(answerIdx);
+                        if (index > -1) {
+                            n.splice(index, 1);
+                        }
+                    }
+                    return n;
+                } else {
+                    if (newChoice) {
+                        return [answerIdx];
+                    } else {
+                        return [];
                     }
                 }
-                return n;
             });
 
             // FIXME: This should depend on a config. Do we want to
@@ -126,8 +136,6 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
 
         const quizProgress = (questionIdx + 0.5) / questionCount * 100;
         const justify = {display:'flex', justifyContent: 'center'};
-
-        const allowMultipleAnswers = game.allow_multiple_answers;
 
         // Specification for answer button markup
         const buttons = [
