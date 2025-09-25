@@ -144,7 +144,7 @@ class QuizGameAdmin(InfoTextMixin, SortableAdminBase, admin.ModelAdmin):
 
 @admin.register(GameSession)
 class GameSessionAdmin(admin.ModelAdmin):
-    list_display = ("game", "partial_results", "created_at")
+    list_display = ("game", "ongoing", "partial_results", "created_at")
     ordering = ('-created_at',)
     
     def partial_results(self, instance):
