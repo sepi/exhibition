@@ -239,24 +239,32 @@ def game_session_end(request):
             return JsonResponse({'status': 'ended'})
     
 
-def quiz_question_score(question, answer_choice):
-    match answer_choice:
-        case 1: return question.correct_1
-        case 2: return question.correct_2
-        case 3: return question.correct_3
-        case 4: return question.correct_4
+def quiz_question_score(question, answer_choice, points_correct, points_incorrect, points_minimum):
+    score = 0
+    for q_id, corr in ((1, question.correct_1),
+                       (2, question.correct_2),
+                       (3, question.correct_3),
+                       (4, question.correct_4)):
+        if q_id in answer_choice:
+            score += points_correct if corr else points_incorrect
 
+    return max(score, points_minimum)
     
 @csrf_exempt
-def quiz_question_answer(request, question_id, answer_choice):
+def quiz_question_answer(request, question_id):
     if request.method == 'POST':
         game_session_id = request.session.get('game_session_id')
+        postdata = json.loads(request.body)
         
         if game_session_id:
             game_session = get_object_or_404(GameSession, session_id=game_session_id)
+            game = game_session.game.quizgame
             question = get_object_or_404(QuizQuestion, pk=question_id)
 
-            score = quiz_question_score(question, answer_choice)
+            score = quiz_question_score(question, postdata,
+                                        points_correct=game.points_correct,
+                                        points_incorrect=game.points_incorrect,
+                                        points_minimum=game.points_minimum)
             partial_result = GameSessionPartialResult.objects.create(game_session=game_session,
 	                                                             question=question,
 	                                                             result_number=score)
@@ -267,42 +275,16 @@ def quiz_question_answer(request, question_id, answer_choice):
 @csrf_exempt
 def game_session_statistics(request, game_session_id):
     game_session = get_object_or_404(GameSession, session_id=game_session_id)
+    game = game_session.game.quizgame
 
     # Score and count
-    game = game_session.game # An instance of Game superclass, not QuizGame
-    quiz_game = QuizGame.objects.get(pk=game.id)
-    question_count = quiz_game.questions.count()
-    agg = GameSessionPartialResult.objects \
-                                  .filter(game_session_id=game_session_id) \
-                                  .aggregate(answer_sum=Sum('result_number', default=0))
-    question_correct = agg['answer_sum']
-    score = question_correct / question_count
-
-    # Histogram base query
-    qs = GameSession.objects.annotate(
-        answer_correct=Sum("partial_results__result_number"),
-        answer_count=Count("partial_results"),
-        score=Sum("partial_results__result_number") / Count("partial_results")
-    )
-
-    # Generate histogram
-    bin_count = 7
-    hist = []
-    for i in range(0, bin_count):
-        mn = i / bin_count
-        mx = (i + 1) / bin_count
-        result = {
-            'from': mn,
-            'to': mx,
-            'count': qs.filter(score__gte=mn, score__lte=mx).count()
-        }
-        hist.append(result)
+    question_count = game.questions.count()
+    score = game_session.score()
 
     return JsonResponse({
         'question_count': question_count,
-        'question_correct': question_correct,
         'score': score,
-        'histogram': hist,
+        'histogram': game_session.histogram(game.points_per_question_max, game.histogram_bin_count),
         'game_session_id': game_session_id
     })
 

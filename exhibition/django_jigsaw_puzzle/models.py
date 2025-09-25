@@ -71,6 +71,49 @@ class GameSession(models.Model):
     ongoing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def score(self):
+        game = self.game.quizgame
+
+        # Score and count
+        question_count = game.questions.count()
+        max_score = question_count * game.points_per_question_max
+        agg = GameSessionPartialResult.objects \
+                                      .filter(game_session_id=self.session_id) \
+                                      .aggregate(answer_sum=models.Sum('result_number', default=0))
+        score = agg['answer_sum'] / max_score
+        return score
+
+
+    def histogram_bin(self, mn, mx, max_score):
+        # Histogram base query
+        qs = GameSession.objects.annotate(
+            score=models.Sum("partial_results__result_number") / max_score,
+            answer_count=models.Count("partial_results"),
+        )
+        return qs.filter(score__gte=mn, score__lte=mx).count()
+
+
+    def histogram(self, max_score, bins):
+        game = self.game.quizgame
+        hist = []
+        for i in range(0, bins):
+            mn = i / bins
+            mx = (i + 1) / bins
+            result = {
+                'from': mn,
+                'to': mx,
+                'count': self.histogram_bin(mn, mx, max_score),
+            }
+            hist.append(result)
+        return hist
+        
+
+    def __str__(self):
+        return self.game.name
+
+
+    objects = GameSessionManager()
+
 
 class GameSessionPartialResult(models.Model):
     """A partial result that occurs during a game session. It has a

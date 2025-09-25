@@ -59,7 +59,7 @@ function QuizResultPage({gameSessionId, onComplete}) {
             '#c8ff05',
             '#05ff05',
         ];
-        const scoreColor = scoreColorMap[Math.round(statistics.score * scoreColorMap.length-1)];
+        const scoreColor = scoreColorMap[Math.round(statistics.score * (scoreColorMap.length-1))];
 
         return (
             <Stack>
@@ -67,9 +67,8 @@ function QuizResultPage({gameSessionId, onComplete}) {
                     <Grid item>
                         <Box>
                             <h1>Thank you for playing!</h1>
-                            <p>You finished the game with a score of</p>
-                            <p style={{align: 'center', fontSize: '3em', color: scoreColor, margin: 10}}>{formatPercent(statistics.score)}</p>
-                            <p>by answering <strong>{statistics.question_correct}</strong> of <strong>{statistics.question_count}</strong> questions correctly.</p>
+                            <p style={{textAlign: 'center'}}>You finished the game with a score of</p>
+                            <p style={{textAlign: 'center', fontSize: '3em', color: scoreColor, margin: 10}}>{formatPercent(statistics.score)}</p>
                         </Box>
                     </Grid>
 

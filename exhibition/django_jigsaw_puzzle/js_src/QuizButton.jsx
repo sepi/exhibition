@@ -4,18 +4,18 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
 export default
-function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, disabled, ...otherProps}) {
+function QuizButton({label, answerIdx, answerChoices, onChoice, correctness, disabled, allowReset}) {
     const [ selected, setSelected ] = useState(false);
 
     useEffect(() => {
-	if (answerChoice !== answerIdx) {
+	if (!answerChoices.includes(answerIdx)) {
 	    setSelected(false);
 	}
-    }, [answerChoice]);
+    }, [answerChoices]);
     
     const toggleSelected = (state) => {
-	if (!selected) {
-	    onChoice(answerIdx);
+	if (allowReset || !selected) {
+	    onChoice(answerIdx, !selected);
 	    setSelected(!selected);
 	}
     }
@@ -38,11 +38,10 @@ function QuizButton({label, answerIdx, answerChoice, onChoice, correctness, disa
                  display: 'flex',
                  alignItems: 'center',
                  justifyContent: 'center',
-                 cursor: 'pointer',
+                 cursor: disabled ? 'wait' : 'pointer',
                  width: '100%', // Adjust as needed or make dynamic
                  height: 80,
-             }}
-             {...otherProps}>
+             }} >
             <span
                 style={{
                     color: 'white',

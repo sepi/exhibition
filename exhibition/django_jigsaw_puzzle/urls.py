@@ -19,7 +19,7 @@ urlpatterns = [
 
     path("quiz_game/", quiz_game_list, name='quiz_game_list'),
     path("quiz_game/<int:id>/", quiz_game_detail, name='quiz_game_detail'),
-    path("quiz_question/<int:question_id>/answer/<int:answer_choice>/", quiz_question_answer, name='quiz_question_answer'),
+    path("quiz_question/<int:question_id>/answer/", quiz_question_answer, name='quiz_question_answer'),
 
     # URLs supporting image based games
     path("image_set/<int:id>/", image_set_detail, name='image_set_detail'),

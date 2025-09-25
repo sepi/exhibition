@@ -11,7 +11,7 @@ import { QuizResultPage } from './QuizResultPage.jsx';
 import { fetchGameData, startGameSession, endGameSession } from './api.js';
 
 export default
-function QuizGameApp({indexUrl, title, gameId}) {
+function QuizGameApp({indexUrl, title, gameId, allowMultipleAnswers}) {
     const [screen, setScreen] = useState("loading");
     const [games, setGames] = useState([]);
     const [gameUrl, setGameUrl] = useState();
@@ -90,6 +90,7 @@ function QuizGameApp({indexUrl, title, gameId}) {
 		}
 		{ screen === 'game' &&
 		  <QuizGamePage gameUrl={gameUrl}
+                                allowMultipleAnswers={allowMultipleAnswers}
 			        onComplete={onGameComplete} />
 		}
                 { screen === 'results' &&
