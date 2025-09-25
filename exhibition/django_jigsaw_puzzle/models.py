@@ -59,6 +59,13 @@ class ImageGame(Game):
                                   on_delete=models.PROTECT)
 
 
+class GameSessionManager(models.Manager):
+    def top_n(self, game, n):
+        return GameSession.objects.filter(game=game) \
+                                  .annotate(score=models.Sum("partial_results__result_number")) \
+                                  .order_by('-score')[:n]
+
+
 class GameSession(models.Model):
     """A way to record data about a gaming session, eg. to calculate a high-score or similar.
     """
