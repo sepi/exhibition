@@ -7,7 +7,7 @@ from adminsortable2.admin import (SortableStackedInline, SortableAdminBase)
 
 from .models import (DifficultyLevel, GridDifficultyLevel, ImageSet,
                      ImageSetImage, JigsawPuzzle, MemoryGame, PaintGame,
-                     QuizGame, QuizQuestion)
+                     QuizGame, QuizQuestion, GameSession)
 
 
 class ImageSetImageInline(admin.TabularInline):
@@ -141,3 +141,16 @@ class QuizGameAdmin(InfoTextMixin, SortableAdminBase, admin.ModelAdmin):
     def get_game_link(self, obj):
         return reverse('quiz_game_detail', args=[obj.id])
 
+
+@admin.register(GameSession)
+class GameSessionAdmin(admin.ModelAdmin):
+    list_display = ("game", "partial_results", "created_at")
+    ordering = ('-created_at',)
+    
+    def partial_results(self, instance):
+        return instance.partial_results.count()
+
+    
+    # Readonly
+    def has_add_permission(self, request, obj=None):
+        return False
