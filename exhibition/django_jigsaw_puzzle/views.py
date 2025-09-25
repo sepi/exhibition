@@ -294,7 +294,7 @@ def game_session_statistics(request, game_session_id):
         result = {
             'from': mn,
             'to': mx,
-            'count': qs.filter(score__gt=mn, score__lte=mx).count()
+            'count': qs.filter(score__gte=mn, score__lte=mx).count()
         }
         hist.append(result)
 

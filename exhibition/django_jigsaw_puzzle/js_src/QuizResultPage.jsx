@@ -41,7 +41,7 @@ function QuizResultPage({gameSessionId, onComplete}) {
         let i;
         for (var h of statistics.histogram) {
             // we're in this bin
-            if (h.from < statistics.score && h.to >= statistics.score) {
+            if (h.from <= statistics.score && h.to >= statistics.score) {
                 histDataOur.push(h.count)
                 histDataOther.push(null);
             } else {
