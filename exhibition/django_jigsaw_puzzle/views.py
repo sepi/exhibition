@@ -205,7 +205,10 @@ def quiz_game_detail(request, id):
             } for q in questions]
         })
     else: # For browsers
-        return render(request, 'django_jigsaw_puzzle/quiz_game.html',
+        # TODO: This is a generic template that needs to be used for
+        # other games too, this makes passing data-attributes way
+        # easier
+        return render(request, 'django_jigsaw_puzzle/game.html',
                       quiz_game_context(game))
 
 

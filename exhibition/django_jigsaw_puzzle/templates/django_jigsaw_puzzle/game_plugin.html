@@ -1,0 +1,14 @@
+{% load static %}
+
+<form id="csrf-form" style="display: none;">
+  {% csrf_token %}
+</form>
+
+<div id="game"
+{% for att_name, att_value in data_attributes %}
+     data-{{ att_name }}="{{ att_value}}"
+{% endfor %}
+></div>
+
+<link rel="stylesheet" href="{% static stylesheet_path %}">
+<script src="{% static 'django_jigsaw_puzzle/js/bundle.js' %}"></script>

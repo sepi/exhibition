@@ -5,8 +5,8 @@ from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from cms.models.pluginmodel import CMSPlugin
 
-from .models import JigsawPuzzle, JigsawPuzzlePluginModel, MemoryGame, MemoryGamePluginModel, PaintGamePluginModel, GridDifficultyLevel
-from .views import jigsaw_puzzle_context, memory_game_context, paint_game_context
+from .models import JigsawPuzzle, JigsawPuzzlePluginModel, MemoryGame, MemoryGamePluginModel, PaintGamePluginModel, GridDifficultyLevel, QuizGamePluginModel
+from .views import jigsaw_puzzle_context, memory_game_context, paint_game_context, quiz_game_context
 
 
 class GamePlugin(CMSPluginBase):
@@ -50,4 +50,16 @@ class PaintGamePlugin(GamePlugin):
 
     def get_context(self, game):
         return paint_game_context(game)
+
     
+@plugin_pool.register_plugin
+class QuizGamePlugin(GamePlugin):
+    model = QuizGamePluginModel
+    render_template = 'django_jigsaw_puzzle/game_plugin.html'
+    name = _('Quiz Game')
+
+    def get_context(self, game):
+        return quiz_game_context(game)
+    
+
+
