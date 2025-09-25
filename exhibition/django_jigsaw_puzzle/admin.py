@@ -32,8 +32,13 @@ class GridDifficultyLevelInline(admin.TabularInline):
     extra = 0
 
 
-class BaseGameAdminMixin():
+class InfoTextMixin():
     readonly_fields = ('info_text',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        self.request = request
+        return qs
 
     def info_text(self, obj):
         if obj.id:
@@ -45,27 +50,23 @@ class BaseGameAdminMixin():
 
     info_text.short_description = "Direct link to game"
 
-    
-class GameAdminMixin(BaseGameAdminMixin):
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        self.request = request
-        return qs
-    
+
+class GridDifficultyLevelMixin():
     inlines = [
         GridDifficultyLevelInline
     ]
-
+    
+    
+class ColorMixin():
     # set type="color" to the color field so the color picker is used
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name.endswith('color'):
             kwargs['widget'] = forms.TextInput(attrs={'type': 'color'})
         return super().formfield_for_dbfield(db_field, request, **kwargs)
-
     
 
 @admin.register(JigsawPuzzle)
-class JigsawPuzzleAdmin(GameAdminMixin, admin.ModelAdmin):
+class JigsawPuzzleAdmin(InfoTextMixin, GridDifficultyLevelMixin, ColorMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('info_text', 'name', 'copyright_notice', 'color',
@@ -78,7 +79,7 @@ class JigsawPuzzleAdmin(GameAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(MemoryGame)
-class MemoryGameAdmin(GameAdminMixin, admin.ModelAdmin):
+class MemoryGameAdmin(InfoTextMixin, GridDifficultyLevelMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('info_text', 'name', 'copyright_notice',
@@ -93,7 +94,7 @@ class MemoryGameAdmin(GameAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(PaintGame)
-class PaintGameAdmin(GameAdminMixin, admin.ModelAdmin):
+class PaintGameAdmin(InfoTextMixin, ColorMixin, admin.ModelAdmin):
     inlines = []
 
     fieldsets = (
@@ -125,7 +126,7 @@ class QuizQuestionInline(SortableStackedInline):
 
 
 @admin.register(QuizGame)
-class QuizGameAdmin(BaseGameAdminMixin, SortableAdminBase, admin.ModelAdmin):
+class QuizGameAdmin(InfoTextMixin, SortableAdminBase, admin.ModelAdmin):
     inlines = [QuizQuestionInline]
 
     fieldsets = (
