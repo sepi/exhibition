@@ -225,6 +225,9 @@ def game_session_start(request, game_id):
         
         if game_session_id:
             game_session = get_object_or_404(GameSession, session_id=game_session_id)
+            if game_session.game.id != game_id: # May happen when reloading
+                game_session = GameSession.objects.create(ongoing=True, game_id=game_id)
+                request.session['game_session_id'] = str(game_session.session_id)
         else:
             game_session = GameSession.objects.create(ongoing=True, game_id=game_id)
             request.session['game_session_id'] = str(game_session.session_id)
