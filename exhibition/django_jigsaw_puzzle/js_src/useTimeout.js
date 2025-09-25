@@ -25,11 +25,11 @@ function useTimeout(showModal, clear,
 		setLastAction(now);
 
 		setShowTimeoutModal(false);
-		clear();
+		if (clear) clear();
 	    // First timeout occured, show warning.
 	    } else if (delta/1000 > firstTimeout && !showTimeoutModal) {
 		setShowTimeoutModal(true);
-		showModal(resetTimeout);
+		if (showModal) showModal(resetTimeout);
 	    }
 	}, 1000);
 

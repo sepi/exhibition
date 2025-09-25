@@ -22,7 +22,7 @@ function isAnswerCorrect(question, choice) {
 };
 
 export
-function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
+function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
     const [game, setGame] = useState();
 
     // Load game detail including questions from API when game selected
@@ -30,6 +30,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 	const get = async (gameUrl) => {
 	    const game = await fetchGameData(gameUrl);
 	    setGame(game);
+            setTitle(game.name);
 	}
 
 	if (gameUrl) {
@@ -73,6 +74,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 	}
 	
 	const navigateToNextQuestionOrFinish = () => {
+            resetTimeout()
             setActionButtonEnabled(false);
             setQuizButtonEnabled(false);
 	    handleChoice(answerChoices);
@@ -91,6 +93,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 	}
 
 	const setChoices = (answerIdx, newChoice) => {
+            resetTimeout();
 	    setAnswerChoices(answerChoices => {
                 const n = Array.from(answerChoices);
                 if (newChoice === true &&
@@ -123,6 +126,8 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 
         const quizProgress = (questionIdx + 0.5) / questionCount * 100;
         const justify = {display:'flex', justifyContent: 'center'};
+
+        const allowMultipleAnswers = game.allow_multiple_answers;
 
         // Specification for answer button markup
         const buttons = [
@@ -159,7 +164,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 				        answerChoices={answerChoices} onChoice={setChoices}
 				        correctness={correctness1}
                                         disabled={!quizButtonEnabled}
-                                        allowReset={true} />
+                                        allowReset={allowMultipleAnswers} />
 		        </Grid>
 		        <Grid item
                               key={2}
@@ -170,7 +175,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 				        answerChoices={answerChoices} onChoice={setChoices}
 				        correctness={correctness2}
                                         disabled={!quizButtonEnabled}
-                                        allowReset={true} />
+                                        allowReset={allowMultipleAnswers} />
 		        </Grid>
 		        <Grid item
                               key={3}
@@ -181,7 +186,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 				        answerChoices={answerChoices} onChoice={setChoices}
 				        correctness={correctness3}
                                         disabled={!quizButtonEnabled}
-                                        allowReset={true} />
+                                        allowReset={allowMultipleAnswers} />
 		        </Grid>
 		        <Grid item
                               key={4}
@@ -192,7 +197,7 @@ function QuizGamePage({gameUrl, onComplete, allowMultipleAnswers}) {
 				        answerChoices={answerChoices} onChoice={setChoices}
 				        correctness={correctness4}
                                         disabled={!quizButtonEnabled}
-                                        allowReset={true} />
+                                        allowReset={allowMultipleAnswers} />
 		        </Grid>
 		</Grid>
                 <Grid container

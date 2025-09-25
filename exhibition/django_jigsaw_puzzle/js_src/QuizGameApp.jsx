@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Alert, Button, CircularProgress, Container, Snackbar, Stack } from '@mui/material';
 
 import { Appbar } from './Appbar.jsx';
+import { ModalDialog } from './ModalDialog.jsx';
+import { useTimeout } from './useTimeout.js';
 import { QuizSelectPage } from './QuizSelectPage.jsx';
 import { QuizGamePage } from './QuizGamePage.jsx';
 import { QuizResultPage } from './QuizResultPage.jsx';
@@ -11,12 +13,18 @@ import { QuizResultPage } from './QuizResultPage.jsx';
 import { fetchGameData, startGameSession, endGameSession } from './api.js';
 
 export default
-function QuizGameApp({indexUrl, title, gameId, allowMultipleAnswers}) {
+function QuizGameApp({indexUrl, gameId}) {
     const [screen, setScreen] = useState("loading");
     const [games, setGames] = useState([]);
     const [gameUrl, setGameUrl] = useState();
     const [gameSessionId, setGameSessionId] = useState();
     const [reloadCount, setReloadCount] = useState(0);
+    const [title, setTitle] = useState("Quiz game");
+
+    const [ resetTimeout, showTimeoutModal ] = useTimeout(null, () => {
+        navigateToSelect();
+    }, 300, 330); // 5min and 5:30min
+
 
     const navigateToSelect = () => {
         setReloadCount((reloadCount) => reloadCount + 1);
@@ -24,11 +32,13 @@ function QuizGameApp({indexUrl, title, gameId, allowMultipleAnswers}) {
     };
 
     const navigateToGameScreen = (gameUrl) => {
+        resetTimeout();
 	setScreen("game");
 	setGameUrl(gameUrl);
     };
 
     const onGameComplete = () => {
+        resetTimeout();
 	setScreen("results");
         endGameSession(gameSessionId);
     };
@@ -49,6 +59,17 @@ function QuizGameApp({indexUrl, title, gameId, allowMultipleAnswers}) {
 
         get();
     }, [reloadCount]);
+
+    // Hack so that timout is deactivated on select screen
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (screen === 'select') {
+                resetTimeout()
+            }
+        }, 5000);
+
+        return () => clearInterval(interval); 
+    }, [screen]);
 
     // Start session whenever a new game is selected
     useEffect(() => {
@@ -73,14 +94,19 @@ function QuizGameApp({indexUrl, title, gameId, allowMultipleAnswers}) {
 		    onShowInfo={false}
 		    setShowHint={false}
 		    navbarBackgroundColor={"white"} />
-	    <Snackbar open={null} onClose={null}>
-		<Alert severity="success"
-		       variant="filled">
-		    {`Success, you completed the game in ${1} turns! Tap back to try another one.`}
-		</Alert>
-	    </Snackbar>
-
 	    <Container>
+                <ModalDialog
+		    show={showTimeoutModal}
+		    setShow={null}
+		    title={"Are you still playing"}
+		    rawBody={"You didn't play for some time now. Dou you still want to continue to play?"}
+		    actions={[{
+                        type: 'callback',
+                        caption: "Continue quiz!",
+                        callback: resetTimeout
+                    }]}
+	        />
+
 		{ screen === 'loading' && 
 		  <CircularProgress/>
 		}
@@ -90,8 +116,9 @@ function QuizGameApp({indexUrl, title, gameId, allowMultipleAnswers}) {
 		}
 		{ screen === 'game' &&
 		  <QuizGamePage gameUrl={gameUrl}
-                                allowMultipleAnswers={allowMultipleAnswers}
-			        onComplete={onGameComplete} />
+			        onComplete={onGameComplete}
+                                resetTimeout={resetTimeout}
+                                setTitle={setTitle} />
 		}
                 { screen === 'results' &&
                   <QuizResultPage gameSessionId={gameSessionId}

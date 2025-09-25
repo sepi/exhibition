@@ -164,12 +164,14 @@ def quiz_game_list(request):
                               'url': reverse('quiz_game_detail', args=[qg.id])}
                              for qg in qgs], safe=False)
     else: # For browsers
-        return render(request, 'django_jigsaw_puzzle/quiz_game.html',
+        return render(request, 'django_jigsaw_puzzle/game.html',
                       {
-                          'mode': 'QUIZ_GAME',
-                          'index_url': '/games/quiz_game/',
-                          'title': 'Quiz game',
-                          'game_id': None
+                          'data_attributes': [
+                              ('mode', 'QUIZ_GAME'),
+                              ('index-url', '/games/quiz_game/'),
+                              ('game-id', 'None'),
+                          ],
+                          'stylesheet_path': 'django_jigsaw_puzzle/css/quiz_game.css',
                       })
 
 
@@ -178,14 +180,7 @@ def quiz_game_context(game):
         'data_attributes': [
             ('mode', 'QUIZ_GAME'),
             ('index-url', '/games/quiz_game/'),
-            ('title', game.name),
             ('game-id', game.id),
-            ('allow-multiple-answers', game.allow_multiple_answers),
-            ('points-correct', game.points_correct),
-            ('points-incorrect', game.points_incorrect),
-            ('points-minimum', game.points_minimum),
-            ('points-per-question-max', game.points_per_question_max),
-            ('histogram-bin-count', game.histogram_bin_count),
         ],
         'stylesheet_path': 'django_jigsaw_puzzle/css/quiz_game.css',
     }
@@ -200,6 +195,7 @@ def quiz_game_detail(request, id):
         return JsonResponse({
             'id': game.id,
             'name': game.name,
+            'allow_multiple_answers': game.allow_multiple_answers,
             'questions': [{
                 "id": q.id,
                 "question": q.question,
