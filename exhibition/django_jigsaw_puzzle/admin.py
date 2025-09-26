@@ -131,7 +131,7 @@ class QuizGameAdmin(InfoTextMixin, SortableAdminBase, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': (('info_text'),
+            'fields': ('info_text', 'name',
                        ('allow_multiple_answers', 'histogram_bin_count'),
                        ('points_correct', 'points_incorrect'),
                        ('points_minimum', 'points_per_question_max'))
