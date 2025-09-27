@@ -24,12 +24,12 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     showgrid="true"
+     showgrid="false"
      inkscape:zoom="3.2565553"
-     inkscape:cx="143.71014"
-     inkscape:cy="5.5273129"
-     inkscape:window-width="1477"
-     inkscape:window-height="775"
+     inkscape:cx="144.17074"
+     inkscape:cy="-31.167903"
+     inkscape:window-width="2560"
+     inkscape:window-height="1384"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -46,11 +46,11 @@
        inkscape:collect="always"
        id="linearGradient2519">
       <stop
-         style="stop-color:#f5495b;stop-opacity:1;"
+         style="stop-color:#b60c1b;stop-opacity:0.29244626;"
          offset="0"
          id="stop2515" />
       <stop
-         style="stop-color:#960808;stop-opacity:1;"
+         style="stop-color:#960808;stop-opacity:0.26338574;"
          offset="1"
          id="stop2517" />
     </linearGradient>
@@ -69,7 +69,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:url(#linearGradient2521);fill-opacity:1;stroke:#ff2230;stroke-width:0.37041667;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:url(#linearGradient2521);fill-opacity:1;stroke:#ff2230;stroke-width:0.37;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.27713707"
        d="m 1.2379226,4.7311369 4.5043411,-4.00471901 53.1616433,0 5.067384,4.00471901 -5.067384,4.0047192 -53.1616433,0 z"
        id="path1887"
        sodipodi:nodetypes="ccccccc" />

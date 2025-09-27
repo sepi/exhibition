@@ -64,15 +64,10 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
 	const currentQuestion = game.questions[questionIdx];
 
 	const handleChoice = (choices) => {
-            for (var c of choices) {
-                const v = isAnswerCorrect(currentQuestion, c) ? 'correct' : 'incorrect';
-                switch (c) {
-                case 1: setCorrectness1(v); break;
-                case 2: setCorrectness2(v); break;
-                case 3: setCorrectness3(v); break;
-                case 4: setCorrectness4(v); break;
-                }
-            }
+            setCorrectness1(isAnswerCorrect(currentQuestion, 1)  ? 'correct' : 'incorrect');
+            setCorrectness2(isAnswerCorrect(currentQuestion, 2)  ? 'correct' : 'incorrect');
+            setCorrectness3(isAnswerCorrect(currentQuestion, 3)  ? 'correct' : 'incorrect');
+            setCorrectness4(isAnswerCorrect(currentQuestion, 4)  ? 'correct' : 'incorrect');
 	}
 	
 	const navigateToNextQuestionOrFinish = () => {
@@ -169,7 +164,8 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
                               sx={justify}>
 			    <QuizButton answerIdx={1}
 				        label={"A: " + currentQuestion.answer_1}
-				        answerChoices={answerChoices} onChoice={setChoices}
+                                        onChoice={setChoices}
+				        selected={answerChoices.includes(1)}
 				        correctness={correctness1}
                                         disabled={!quizButtonEnabled}
                                         allowReset={allowMultipleAnswers} />
@@ -180,7 +176,8 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
                               sx={justify}>
 			    <QuizButton answerIdx={2}
 				        label={"B: " + currentQuestion.answer_2}
-				        answerChoices={answerChoices} onChoice={setChoices}
+                                        onChoice={setChoices}
+				        selected={answerChoices.includes(2)}
 				        correctness={correctness2}
                                         disabled={!quizButtonEnabled}
                                         allowReset={allowMultipleAnswers} />
@@ -191,7 +188,8 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
                               sx={justify}>
 			    <QuizButton answerIdx={3}
 				        label={"C: " + currentQuestion.answer_3}
-				        answerChoices={answerChoices} onChoice={setChoices}
+                                        onChoice={setChoices}
+				        selected={answerChoices.includes(3)}
 				        correctness={correctness3}
                                         disabled={!quizButtonEnabled}
                                         allowReset={allowMultipleAnswers} />
@@ -202,7 +200,8 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
                               sx={justify}>
 			    <QuizButton answerIdx={4}
 				        label={"C: " + currentQuestion.answer_4}
-				        answerChoices={answerChoices} onChoice={setChoices}
+                                        onChoice={setChoices}
+				        selected={answerChoices.includes(4)}
 				        correctness={correctness4}
                                         disabled={!quizButtonEnabled}
                                         allowReset={allowMultipleAnswers} />

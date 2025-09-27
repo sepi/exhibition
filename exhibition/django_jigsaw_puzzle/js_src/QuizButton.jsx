@@ -4,19 +4,19 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
 export default
-function QuizButton({label, answerIdx, answerChoices, onChoice, correctness, disabled, allowReset}) {
-    const [ selected, setSelected ] = useState(false);
+function QuizButton({label, answerIdx, selected, onChoice, correctness, disabled, allowReset}) {
+    // const [ selected, setSelected ] = useState(false);
 
-    useEffect(() => {
-	if (!answerChoices.includes(answerIdx)) {
-	    setSelected(false);
-	}
-    }, [answerChoices]);
+    // useEffect(() => {
+    //     if (!answerChoices.includes(answerIdx)) {
+    //         setSelected(false);
+    //     }
+    // }, [answerChoices]);
     
     const toggleSelected = (state) => {
 	if (allowReset || !selected) {
 	    onChoice(answerIdx, !selected);
-	    setSelected(!selected);
+	    // setSelected(!selected);
 	}
     }
 

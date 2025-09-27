@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="button-answer-correct.svg"
+   sodipodi:docname="button-answer-selected-correct.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -26,8 +26,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="3.2565553"
-     inkscape:cx="141.10001"
-     inkscape:cy="2.61012"
+     inkscape:cx="144.17074"
+     inkscape:cy="5.6808493"
      inkscape:window-width="2560"
      inkscape:window-height="1384"
      inkscape:window-x="0"
@@ -46,11 +46,11 @@
        inkscape:collect="always"
        id="linearGradient2519">
       <stop
-         style="stop-color:#446c2f;stop-opacity:0.31007415;"
+         style="stop-color:#538738;stop-opacity:1;"
          offset="0"
          id="stop2515" />
       <stop
-         style="stop-color:#53ff63;stop-opacity:0.3585166;"
+         style="stop-color:#53ff63;stop-opacity:1;"
          offset="1"
          id="stop2517" />
     </linearGradient>
@@ -69,7 +69,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:url(#linearGradient2521);fill-opacity:1;stroke:#c7ffcc;stroke-width:0.37;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.53322381"
+       style="fill:url(#linearGradient2521);fill-opacity:1;stroke:#c7ffcc;stroke-width:0.57;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="m 1.2379226,4.7311369 4.5043411,-4.00471901 53.1616433,0 5.067384,4.00471901 -5.067384,4.0047192 -53.1616433,0 z"
        id="path1887"
        sodipodi:nodetypes="ccccccc" />
