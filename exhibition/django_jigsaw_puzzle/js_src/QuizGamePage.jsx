@@ -134,78 +134,36 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
 
         // Specification for answer button markup
         const buttons = [
-            {'index': 1, 'label': "A: " + currentQuestion.answer_1, 'correctness': correctness1},
-            {'index': 2, 'label': "B: " + currentQuestion.answer_2, 'correctness': correctness2},
-            {'index': 3, 'label': "C: " + currentQuestion.answer_3, 'correctness': correctness3},
-            {'index': 4, 'label': "D: " + currentQuestion.answer_4, 'correctness': correctness4},
+            {'index': 1, 'label': "A: " + currentQuestion.answer_1,
+             'selected': answerChoices.includes(1), 'correctness': correctness1},
+            {'index': 2, 'label': "B: " + currentQuestion.answer_2,
+             'selected': answerChoices.includes(2), 'correctness': correctness2},
+            {'index': 3, 'label': "C: " + currentQuestion.answer_3,
+             'selected': answerChoices.includes(3), 'correctness': correctness3},
+            {'index': 4, 'label': "D: " + currentQuestion.answer_4,
+             'selected': answerChoices.includes(4), 'correctness': correctness4},
         ];
         
-                    // { buttons.map((b) =>
-		    //     <Grid item
-                    //           key={b.index}
-                    //           xs={6}
-                    //           sx={justify}>
-		    //         <QuizButton answerIdx={b.index}
-		    //     	        label={b.label}
-		    //     	        answerChoices={answerChoices} onChoice={setChoices}
-		    //     	        correctness={b.correctness}
-                    //                     disabled={!quizButtonEnabled}
-                    //                     allowReset={true} />
-		    //     </Grid>
-                    // )}
+
 	return (
 	    <Stack spacing={3} sx={{width: "100%"}}>
 		<h4>{ currentQuestion.question }</h4>
 		<Grid id="answer-buttons"
                       container spacing={2}>
+                    { buttons.map((b) =>
 		        <Grid item
-                              key={1}
+                              key={b.index}
                               xs={6}
                               sx={justify}>
-			    <QuizButton answerIdx={1}
-				        label={"A: " + currentQuestion.answer_1}
+		            <QuizButton answerIdx={b.index}
+		        	        label={b.label}
                                         onChoice={setChoices}
-				        selected={answerChoices.includes(1)}
-				        correctness={correctness1}
+		        	        selected={b.selected}
+		        	        correctness={b.correctness}
                                         disabled={!quizButtonEnabled}
-                                        allowReset={allowMultipleAnswers} />
+                                        allowReset={true} />
 		        </Grid>
-		        <Grid item
-                              key={2}
-                              xs={6}
-                              sx={justify}>
-			    <QuizButton answerIdx={2}
-				        label={"B: " + currentQuestion.answer_2}
-                                        onChoice={setChoices}
-				        selected={answerChoices.includes(2)}
-				        correctness={correctness2}
-                                        disabled={!quizButtonEnabled}
-                                        allowReset={allowMultipleAnswers} />
-		        </Grid>
-		        <Grid item
-                              key={3}
-                              xs={6}
-                              sx={justify}>
-			    <QuizButton answerIdx={3}
-				        label={"C: " + currentQuestion.answer_3}
-                                        onChoice={setChoices}
-				        selected={answerChoices.includes(3)}
-				        correctness={correctness3}
-                                        disabled={!quizButtonEnabled}
-                                        allowReset={allowMultipleAnswers} />
-		        </Grid>
-		        <Grid item
-                              key={4}
-                              xs={6}
-                              sx={justify}>
-			    <QuizButton answerIdx={4}
-				        label={"C: " + currentQuestion.answer_4}
-                                        onChoice={setChoices}
-				        selected={answerChoices.includes(4)}
-				        correctness={correctness4}
-                                        disabled={!quizButtonEnabled}
-                                        allowReset={allowMultipleAnswers} />
-		        </Grid>
+                    )}
 		</Grid>
                 <Grid container
                       justifyContent='space-between'
