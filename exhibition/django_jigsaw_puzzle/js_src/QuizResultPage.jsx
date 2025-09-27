@@ -62,60 +62,52 @@ function QuizResultPage({gameSessionId, onComplete}) {
         const scoreColor = scoreColorMap[Math.round(statistics.score * (scoreColorMap.length-1))];
 
         return (
-            <Stack>
-                <Grid container spacing={10}>
-                    <Grid item>
-                        <Box>
-                            <h1>Thank you for playing!</h1>
-                            <p style={{textAlign: 'center'}}>You finished the game with a score of</p>
-                            <p style={{textAlign: 'center', fontSize: '3em', color: scoreColor, margin: 10}}>{formatPercent(statistics.score)}</p>
-                        </Box>
+            <Stack sx={{margin: 10, minWidth: "100%"}}>
+                <Grid container spacing={0}>
+                    <Grid item sx={{margin: 3}}>
+                        <h1>Thank you for playing!</h1>
+                        <p style={{textAlign: 'center'}}>You finished the game with a score of</p>
+                        <p style={{textAlign: 'center', fontSize: '3em', color: scoreColor, margin: 10}}>{formatPercent(statistics.score)}</p>
                     </Grid>
 
-                    <Grid item>
-                        <Box>
-                            <h1>Compare yourself to others!</h1>
-                            <BarChart
-                                xAxis={[
-                                    { scaleType: 'band',
-                                      data: labels,
-                                      valueFormatter: peopleRangeFormatter,
-                                    }
-                                ]}
-                                series={[
-                                    { id: 'other',
-                                      data: histDataOther,
-                                      stack: 'a',
-                                      valueFormatter: playerFormatter,
+                    <Grid item sx={{margin: 3}}>
+                        <h1>Compare yourself to others!</h1>
+                        <BarChart
+                            xAxis={[
+                                { scaleType: 'band',
+                                  data: labels,
+                                  valueFormatter: peopleRangeFormatter,
+                                }
+                            ]}
+                            series={[
+                                { id: 'other',
+                                  data: histDataOther,
+                                  stack: 'a',
+                                  valueFormatter: playerFormatter,
+                                },
+                                { id: 'my',
+                                  data: histDataOur,
+                                  stack:'a',
+                                  valueFormatter: playerFormatter,
+                                },
+                            ]}
+                            height={300}
+                            width={500}
+                            sx={{
+                                [`.${axisClasses.root}`]: {
+                                    [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                                        stroke: 'white',
+                                        strokeWidth: 1,
                                     },
-                                    { id: 'my',
-                                      data: histDataOur,
-                                      stack:'a',
-                                      valueFormatter: playerFormatter,
+                                    [`.${axisClasses.tickLabel}`]: {
+                                        fill: 'white',
                                     },
-                                ]}
-                                height={350}
-                                width={550}
-                                sx={{
-                                    [`& .${axisClasses.root}`]: {
-                                        stroke: 'white', // Axis lines
-                                    },
-                                    [`& .${axisClasses.tickLabel}`]: {
-                                        fill: '!white',   // Tick label text color
-                                        fontSize: 14,
-                                    },
-                                    [`& .${axisClasses.line}`]: {
-                                        stroke: 'white', // Axis line color
-                                    },
-                                    [`& .${axisClasses.tick}`]: {
-                                        stroke: 'white', // Tick mark color
-                                    },
-                                }}
-                                slots={{
-                                    tooltip: null,
-                                }}
-                            />
-                        </Box>
+                                },
+                            }}
+                            slots={{
+                                tooltip: null,
+                            }}
+                        />
                     </Grid>
                 </Grid>
                 <Button variant="contained"

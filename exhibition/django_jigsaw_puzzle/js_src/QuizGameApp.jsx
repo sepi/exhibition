@@ -93,7 +93,8 @@ function QuizGameApp({indexUrl, gameId}) {
 		    onBack={false}
 		    onShowInfo={false}
 		    setShowHint={false}
-		    navbarBackgroundColor={"white"} />
+		    navbarBackgroundColor={"white"}
+                    fixed={true} />
 	    <Container>
                 <ModalDialog
 		    show={showTimeoutModal}

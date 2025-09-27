@@ -10,9 +10,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 
-export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint, navbarBackgroundColor}) {
+export function Appbar({title, logoUrl, onBack, onShowInfo, setShowHint, navbarBackgroundColor, fixed}) {
+    const position = fixed ? 'fixed' : 'sticky';
     return (
-	<AppBar position="sticky" sx={{top: 0, left: 0}} >
+	<AppBar position={position} sx={{top: 0, left: 0}} >
 	    <Toolbar variant="dense"
 		     sx={{backgroundColor: navbarBackgroundColor,
 			  color: '#333',

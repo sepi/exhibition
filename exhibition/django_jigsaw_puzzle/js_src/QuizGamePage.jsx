@@ -147,7 +147,7 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
 	    <Stack spacing={3} sx={{width: "100%"}}>
 		<h4>{ currentQuestion.question }</h4>
 		<Grid id="answer-buttons"
-                      container spacing={2}>
+                      container spacing={0}>
                     { buttons.map((b) =>
 		        <Grid item
                               key={b.index}
