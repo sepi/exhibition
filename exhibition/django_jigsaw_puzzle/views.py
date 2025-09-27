@@ -196,6 +196,7 @@ def quiz_game_detail(request, id):
             'id': game.id,
             'name': game.name,
             'allow_multiple_answers': game.allow_multiple_answers,
+            'next_question_timeout': game.next_question_timeout,
             'questions': [{
                 "id": q.id,
                 "question": q.question,

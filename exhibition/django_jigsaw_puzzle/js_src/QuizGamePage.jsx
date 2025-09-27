@@ -10,8 +10,6 @@ import ArrowForward from '@mui/icons-material/ArrowForward';
 
 import { fetchGameData, sendQuestionAnswers } from './api.js';
 
-const navigationTimeout = 1700;
-
 function isAnswerCorrect(question, choice) {
     switch (choice) {
     case 1: return question.correct_1;
@@ -86,7 +84,7 @@ function QuizGamePage({gameUrl, onComplete, resetTimeout, setTitle}) {
 	        if (wasLastQuestion) {
                     onComplete();
 	        }
-	    }, navigationTimeout);
+	    }, game.next_question_timeout * 1000);
 	}
 
 	const setChoices = (answerIdx, newChoice) => {

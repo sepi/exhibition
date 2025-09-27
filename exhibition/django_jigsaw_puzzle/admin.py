@@ -134,7 +134,8 @@ class QuizGameAdmin(InfoTextMixin, SortableAdminBase, admin.ModelAdmin):
             'fields': ('info_text', 'name',
                        ('allow_multiple_answers', 'histogram_bin_count'),
                        ('points_correct', 'points_incorrect'),
-                       ('points_minimum', 'points_per_question_max'))
+                       ('points_minimum', 'points_per_question_max'),
+                       'next_question_timeout')
         }),
     )
 

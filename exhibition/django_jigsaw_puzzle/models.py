@@ -222,6 +222,9 @@ class QuizGame(Game):
     histogram_bin_count = models.PositiveIntegerField(default=7,
                                                       verbose_name=_("Result screen histogram bins count"),
                                                       help_text=_("Use a low nuber to show less detail in the result screen score distribution."))
+    next_question_timeout = models.FloatField(default=2,
+                                              verbose_name=_("Next question timeout (seconds)"),
+                                              help_text=_("The amount of time between the user pressing the 'next' button and the following question showing up. If this is too short, the user cannot see what answers were right or wrong, if it's too long, the user game is too slow"))
 
 
 class QuizGamePluginModel(CMSPlugin):
